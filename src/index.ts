@@ -1,3 +1,4 @@
+
 requirejs.config({
     shim: {
         ace: {
@@ -28,6 +29,7 @@ requirejs.config({
         text: 'js/text'
     }
 });
+
 
 requirejs(['application', 'knockout', 'menus', 'ace'], (app: chitu.Application, ko: KnockoutStatic, menus) => {
     if (!location.hash) {

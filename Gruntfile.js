@@ -9,7 +9,7 @@ var ts_options = {
     ],
     sourceMap: false,
 };
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     grunt.initConfig({
         ts: {
             app: {
@@ -28,13 +28,13 @@ module.exports = function(grunt) {
                 ]
             }
         },
-        less: {
+        stylus: {
             app: {
                 files: [{
                     expand: true,
-                    cwd: src_root + '/css/app',
-                    src: ['**/*.less'],
-                    dest: dest_root + '/css/app',
+                    cwd: src_root + '/css',
+                    src: ['**/*.styl'],
+                    dest: dest_root + '/css',
                     ext: '.css'
                 }]
             },
@@ -54,6 +54,6 @@ module.exports = function(grunt) {
     });
     grunt.loadNpmTasks('grunt-ts');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-less');
-    grunt.registerTask('default', ['ts', 'copy', 'less']);
+    grunt.loadNpmTasks('grunt-contrib-stylus');
+    grunt.registerTask('default', ['ts', 'copy', 'stylus']);
 }

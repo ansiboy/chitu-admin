@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "es2016",
-        "module": "amd",
+        "module": "commonjs",
         "sourceMap": false,
         "jsx": "react",
         "outDir": "../out",

@@ -1,5 +1,5 @@
 
-import { config } from "config";
+import { config } from "../config";
 import Service from "./service";
 
 let { protocol } = location;

@@ -6,12 +6,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <meta name="description" content="overview &amp; stats" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <script src="node_modules/requirejs/require.js" data-main="index"></script>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css" />
 </head>
 
 <body>
-
+    <script>
+        window['adminConfig'] = {
+            firstPanelWidth: "130px",   // 第一级菜单宽度
+            menuType: "platform"        // 菜单类型
+        }
+    </script>
+    <script src="node_modules/less/dist/less.js"></script>
+    <!-- <script src="dist/bundle.js"></script> -->
+    <script src="node_modules/requirejs/require.js" data-main="out/bundle.js"></script>
 </body>
 
 </html>

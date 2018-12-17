@@ -1,9 +1,8 @@
 
 
-import { Application } from './application';
 import React = require('react');
 import * as chitu from 'maishu-chitu'
-import { UserService } from 'services/user';
+import { UserService } from './services/user';
 
 export type Menu = {
     id?: string,
@@ -30,7 +29,7 @@ interface Props {
 
 export class MasterPage extends React.Component<Props, State> {
     pageContainer: HTMLElement;
-    private app: Application;
+    private app: chitu.Application;
 
     constructor(props) {
         super(props);
@@ -45,7 +44,7 @@ export class MasterPage extends React.Component<Props, State> {
 
     }
 
-    init(app: Application) {
+    init(app: chitu.Application) {
         this.app = app;
         this.loadMenus()
     }

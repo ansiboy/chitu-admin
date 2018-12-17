@@ -2,7 +2,6 @@
 
 import React = require('react');
 import * as chitu from 'maishu-chitu'
-import { UserService } from './services/user';
 
 export type Menu = {
     id?: string,
@@ -18,13 +17,12 @@ interface State {
     currentMenu: Menu,
     username: string,
     hideExistsButton: boolean,
-    hideStoreButton: boolean,
+    // hideStoreButton: boolean,
     menuShown: boolean,
     menus: Menu[],
 }
 
 interface Props {
-    // app: Application
 }
 
 export class MasterPage extends React.Component<Props, State> {
@@ -37,16 +35,8 @@ export class MasterPage extends React.Component<Props, State> {
 
         this.state = {
             currentMenu: null, username: '',
-            hideExistsButton: false, hideStoreButton: false, menuShown: true, menus: []
+            hideExistsButton: false, menuShown: true, menus: []
         }
-
-        // this.loadMenus()
-
-    }
-
-    init(app: chitu.Application) {
-        this.app = app;
-        this.loadMenus()
     }
 
     get showExistsButton() {
@@ -82,45 +72,24 @@ export class MasterPage extends React.Component<Props, State> {
         return null;
     }
     showPageByNode(node: Menu) {
-        let url = node.name;
-        if (url == null && node.children.length > 0) {
+        let pageName = node.path;
+        if (pageName == null && node.children.length > 0) {
             node = node.children[0];
-            url = node.name;
+            pageName = node.name;
         }
 
-        if (url == null && node.children.length > 0) {
+        if (pageName == null && node.children.length > 0) {
             node = node.children[0];
-            url = node.name;
+            pageName = node.name;
         }
 
-        if (url) {
+        if (pageName) {
+            this.app.redirect(pageName)
         }
 
-        // this.state.currentNode = node;
-        // this.setState(this.state);
+        this.setState({ currentMenu: node })
     }
-    async loadMenus() {
-
-        let userService = this.app.currentPage.createService(UserService)
-        let resources = await userService.resources()
-
-        let menus = resources.filter(o => o.parent_id == null)
-            .map(o => ({
-                name: o.name,
-                children: []
-            } as Menu))
-
-        this.setState({ menus })
-
-
-        // setTimeout(() => {
-        //     let menus: Menu[] = [
-        //         { name: "经销商", children: [], visible: true },
-        //         { name: "经销商", children: [], visible: true },
-        //     ]
-        //     this.setState({ menus })
-        // }, 500)
-    }
+   
     render() {
         let currentNode = this.state.currentMenu;
         let menuData = this.state.menus
@@ -175,7 +144,7 @@ export class MasterPage extends React.Component<Props, State> {
         }
 
 
-        let { hideExistsButton, hideStoreButton, menuShown } = this.state;
+        let { hideExistsButton, menuShown } = this.state;
 
         return (
             <div className={nodeClassName}>
@@ -204,25 +173,12 @@ export class MasterPage extends React.Component<Props, State> {
                 </div>
                 <div className={secondLevelNodes.length == 0 ? "main hideSecond" : 'main'} >
                     <nav className="navbar navbar-default" style={{ padding: "10px 10px 10px 10px" }}>
-                        <div className="pull-left">
-                            <ul key={40} className="dropdown-menu" aria-labelledby="dropdownMenu1"
-                                style={{ display: menuShown ? 'block' : null }}>
-                                {}
-                            </ul>
-                        </div>
                         <ul className="nav navbar-nav pull-right" >
                             {!hideExistsButton ?
                                 <li className="light-blue pull-right" style={{ color: 'white', paddingTop: 4, cursor: 'pointer' }}
                                     onClick={() => { }}>
                                     <i className="icon-off"></i>
                                     <span style={{ paddingLeft: 4 }}>退出</span>
-                                </li> : null
-                            }
-                            {!hideStoreButton ?
-                                <li className="light-blue pull-right" style={{ color: 'white', paddingTop: 4, cursor: 'pointer' }}
-                                    onClick={() => { }}>
-                                    <i className="icon-building"></i>
-                                    <span style={{ paddingLeft: 4, paddingRight: 10 }}>店铺管理</span>
                                 </li> : null
                             }
                         </ul>

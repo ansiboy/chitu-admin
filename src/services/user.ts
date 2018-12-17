@@ -16,7 +16,7 @@ interface Resource {
 
 export class UserService extends Service {
     url(path: string) {
-        return `${protocol}//${config.serviceHost}/${path}`
+        return `${protocol}//${config.authServiceHost}/${path}`
     }
     resources() {
         let url = this.url('resource/list')

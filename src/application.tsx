@@ -1,36 +1,24 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { MasterPage } from './masterPage';
+import { MasterPage, Menu } from './masterPage';
 import * as chitu_react from 'maishu-chitu-react';
 import * as fs from 'fs';
+import { config } from './config';
+import { UserService } from './services/user';
 
 let element = document.createElement('div');
 document.body.insertBefore(element, document.body.children[0]);
 let masterPage = ReactDOM.render(<MasterPage />, element) as MasterPage;
 
-interface Config {
-    firstPanelWidth: string
-}
-
 
 export class Application extends chitu_react.Application {
-    private config: Config;
 
     constructor() {
         super({ container: masterPage.pageContainer })
 
-        this.loadConfig()
-        this.loadStyle()
     }
 
-    loadConfig(): Config {
-        if (!this.config) {
-            this.config = window['adminConfig'] || {}
-        }
-
-        return this.config
-    }
 
     protected defaultPageNodeParser() {
         let nodes: { [key: string]: chitu.PageNode } = {}
@@ -39,7 +27,7 @@ export class Application extends chitu_react.Application {
             parse: (pageName) => {
                 let node = nodes[pageName];
                 if (node == null) {
-                    let path = `modules_${pageName}`.split('_').join('/');
+                    let path = `modules/${pageName}`;
                     node = { action: this.createDefaultAction(path, loadjs), name: pageName };
                     nodes[pageName] = node;
                 }
@@ -52,7 +40,6 @@ export class Application extends chitu_react.Application {
     /** 加载样式文件 */
     loadStyle() {
         let str = fs.readFileSync("content/admin_style_default.less").toString();
-        let config = this.config
         if (config.firstPanelWidth) {
             str = str + `\r\n@firstPanelWidth: ${config.firstPanelWidth};`
         }
@@ -69,14 +56,28 @@ export class Application extends chitu_react.Application {
         })
     }
 
+    async loadMenus() {
+
+        let userService = this.currentPage.createService(UserService)
+        let resources = await userService.resources()
+
+        let menus = resources.filter(o => o.parent_id == null)
+            .map(o => ({
+                name: o.name,
+                path: o.path,
+                children: []
+            } as Menu))
+
+        masterPage.setState({ menus })
+    }
+
     createMasterPage() {
-
-
     }
 
     run() {
         super.run()
-        masterPage.init(this)
+        this.loadStyle()
+        this.loadMenus()
     }
 }
 
@@ -92,8 +93,6 @@ function loadjs(path: string): Promise<any> {
     });
 }
 
-// let app = new Application()
-// export default app;
 
 
 

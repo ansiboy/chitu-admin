@@ -1,0 +1,4 @@
+{
+    firstPanelWidth: "130px", // 第一级菜单宽度
+    menuType: "platform"
+}

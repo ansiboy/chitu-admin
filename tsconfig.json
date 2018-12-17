@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "target": "es2016",
+        "module": "amd",
+        "sourceMap": false,
+        "jsx": "react",
+        "baseUrl": ".",
+        "paths": {
+            "maishu-chitu": [
+                "node_modules/maishu-chitu/dist/chitu.d.ts"
+            ],
+            "maishu-chitu-react": [
+                "node_modules/maishu-chitu-react/out/index.d.ts"
+            ]
+        }
+    },
+    "exclude": [
+        "lib",
+        "node_modules"
+    ]
+}

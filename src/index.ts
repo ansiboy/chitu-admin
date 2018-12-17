@@ -1,4 +1,4 @@
-let modules = 'modules'
+// let modules = 'modules'
 requirejs.config({
     shim: {
     },
@@ -19,20 +19,24 @@ requirejs.config({
 });
 
 
-requirejs(['text!bootstrap/dist/css/bootstrap.css'], async (str) => {
-    let style = document.createElement('style')
-    document.head.appendChild(style)
-    style.innerText = str
-})
+// requirejs(['text!bootstrap/dist/css/bootstrap.css'], async (str) => {
+//     let style = document.createElement('style')
+//     document.head.appendChild(style)
+//     style.innerText = str
+// })
 
-var references = ['react', 'react-dom', 'application'];
-requirejs(references, function (React, ReactDOM, app) {
-    window['React'] = React;
-    window['ReactDOM'] = ReactDOM;
-    window['h'] = React.createElement;
-    app.default.run();
+// var references = ['react', 'react-dom', 'application'];
+// requirejs(references, function (React, ReactDOM, app) {
+//     window['React'] = React;
+//     window['ReactDOM'] = ReactDOM;
+//     window['h'] = React.createElement;
+//     app.default.run();
 
-});
+// });
+
+// import app from './application'
+// app.run()
+
 
 
 

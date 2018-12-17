@@ -61,35 +61,7 @@ export class Application extends chitu_react.Application {
 
     createMasterPage() {
 
-        // document.title = shopName;
 
-        // this.pageCreated.add((sender, page) => {
-
-        //     let register = siteMap.nodes.user_register;
-        //     let login = siteMap.nodes.user_login;
-
-        //     console.assert(register.name != null);
-        //     console.assert(login.name != null);
-
-        //     let anonymousPages = siteMap.anonymous.map(o => o.name);
-        //     if (!Service.token.value && anonymousPages.indexOf(page.name) < 0) {
-        //         this.redirect(siteMap.nodes.user_login);
-        //         return;
-        //     }
-
-        //     page.showing.add((sender) => this.masterPage.updateMenu(sender));
-        //     page.hiding.add((sender) => this.masterPage.updateMenu(sender));
-        //     page.shown.add((sender) => this.pageShown.fire(this, sender));
-
-        //     page.load.add((sender, args) => {
-        //         let node = siteMap.nodes.user_login;
-        //         console.assert(node.name != null);
-        //         console.assert(app.currentPage != null);
-
-        //         this.masterPage.state.hideExistsButton = app.currentPage.name == node.name || !Service.token.value;
-        //         this.masterPage.setState(this.masterPage.state);
-        //     });
-        // })
     }
 
     run() {

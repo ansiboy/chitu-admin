@@ -1,8 +1,9 @@
 {
     "compilerOptions": {
         "target": "es2016",
-        "module": "commonjs",
+        "module": "none",
         "sourceMap": false,
+        "declaration": false,
         "jsx": "react",
         "outDir": "../out",
         "baseUrl": "../",

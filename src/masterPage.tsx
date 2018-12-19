@@ -1,77 +1,33 @@
 
 
 import React = require('react');
-import * as chitu from 'maishu-chitu'
+import * as chitu_react from 'maishu-chitu-react';
+import * as fs from 'fs';
+import { config } from './config';
 
-export type Menu = {
-    id?: string,
-    name: string,
-    path?: string,
-    icon?: string,
-    parent?: Menu,
-    children: Menu[],
-    visible: boolean,
-};
+type Menu = chitu_admin.Menu
 
 interface State {
-    currentMenu: Menu,
-    username: string,
-    hideExistsButton: boolean,
-    // hideStoreButton: boolean,
-    menuShown: boolean,
+    currentPageName?: string,
+    toolbar?: JSX.Element,
     menus: Menu[],
 }
 
 interface Props {
 }
 
-export class MasterPage extends React.Component<Props, State> {
+export class MasterPage extends React.Component<Props, State> implements chitu_admin.MasterPage {
     pageContainer: HTMLElement;
-    private app: chitu.Application;
+    private app: Application;
 
     constructor(props) {
         super(props);
 
+        this.state = { menus: [] }
 
-        this.state = {
-            currentMenu: null, username: '',
-            hideExistsButton: false, menuShown: true, menus: []
-        }
     }
 
-    get showExistsButton() {
-        return !this.state.hideExistsButton;
-    }
-    set showExistsButton(value) {
-        this.setState({ hideExistsButton: !value })
-    }
-
-    updateMenu(page: chitu.Page) {
-        let url = page.name.replace(/\./, '/');
-        let currentNode = this.findNodeByName(url);
-
-        this.setState({ currentMenu: currentNode })
-    }
-
-    findNodeByName(name: string): Menu {
-        let stack = new Array<Menu>();
-        let menuData = this.state.menus;
-        for (let i = 0; i < menuData.length; i++) {
-            stack.push(menuData[i]);
-        }
-        while (stack.length > 0) {
-            let node = stack.pop();
-            if (node.name == name) {
-                return node;
-            }
-            let children = node.children || [];
-            for (let j = 0; j < children.length; j++) {
-                stack.push(children[j]);
-            }
-        }
-        return null;
-    }
-    showPageByNode(node: Menu) {
+    private showPageByNode(node: Menu) {
         let pageName = node.path;
         if (pageName == null && node.children.length > 0) {
             node = node.children[0];
@@ -87,71 +43,55 @@ export class MasterPage extends React.Component<Props, State> {
             this.app.redirect(pageName)
         }
 
-        this.setState({ currentMenu: node })
     }
-   
-    render() {
-        let currentNode = this.state.currentMenu;
-        let menuData = this.state.menus
 
-        let firstLevelNode: Menu;
-        let secondLevelNode: Menu;
-        let thirdLevelNode: Menu;
+    /** 设置工具栏 */
+    setToolbar(toolbar: JSX.Element) {
+        this.setState({ toolbar })
+    }
+
+    /** 设置菜单 */
+    setMenus(menus: Menu[]) {
+        menus = menus || []
+
+        let currentPageName = this.app.currentPage ? this.app.currentPage.name : null;
+        this.setState({ menus, currentPageName })
+    }
+
+    get application() {
+        return this.app;
+    }
+
+    componentDidMount() {
+        this.app = new Application(this)
+        this.app.pageCreated.add((sender, page) => {
+            page.shown.add(() => {
+                this.setState({ currentPageName: page.name })
+            })
+        })
+    }
+
+    render() {
+        let menuData = this.state.menus;
+        let currentPageName: string = this.state.currentPageName;
+        let currentNode = currentPageName ? menuData.filter(o => o.path == currentPageName)[0] : null;
 
         let firstLevelNodes = menuData.filter(o => o.visible == null || o.visible == true);
-        let secondLevelNodes: Array<Menu> = [];
-        let thirdLevelNodes: Array<Menu> = [];
-        if (currentNode != null) {
-            if (currentNode.parent == null) {
-                firstLevelNode = currentNode;
-                secondLevelNode = currentNode;
-            }
-            else if (currentNode.parent.parent == null) {
-                firstLevelNode = currentNode.parent;
-                secondLevelNode = currentNode;
-            }
-            else if (currentNode.parent.parent.parent == null) {
-                thirdLevelNode = currentNode;
-                secondLevelNode = thirdLevelNode.parent;
-                firstLevelNode = secondLevelNode.parent;
-            }
-            else if (currentNode.parent.parent.parent.parent == null) {
-                thirdLevelNode = currentNode.parent;
-                secondLevelNode = thirdLevelNode.parent;
-                firstLevelNode = secondLevelNode.parent;
-            }
-            else {
-                throw new Error('not implement')
-            }
-        }
-
-        if (firstLevelNode != null) {
-            secondLevelNodes = firstLevelNode.children || [].filter(o => o.Visible == null || o.Visible == true);
-            thirdLevelNodes = (secondLevelNode.children || []).filter(o => o.visible == null || o.visible == true);
-        }
-
-        if (thirdLevelNodes.length == 0) {
-            thirdLevelNodes.push(secondLevelNode);
-            thirdLevelNode = secondLevelNode;
-        }
-
         let nodeClassName = '';
-        if (firstLevelNode != null && firstLevelNode.name == 'Others') {
+
+        if (currentNode == null) {
             nodeClassName = 'hideFirst';
         }
-        else if (secondLevelNodes.length == 0) {
+        else if ((currentNode.children || []).length == 0) {
             nodeClassName = 'hideSecond';
         }
-
-
-        let { hideExistsButton, menuShown } = this.state;
 
         return (
             <div className={nodeClassName}>
                 <div className="first">
                     <ul className="list-group" style={{ margin: 0 }}>
                         {firstLevelNodes.map((o, i) =>
-                            <li key={i} className={o == firstLevelNode ? "list-group-item active" : "list-group-item"}
+                            <li key={i} className={o == currentNode || (currentNode || { parent: null }).parent ? "list-group-item active" : "list-group-item"}
                                 style={{ cursor: 'pointer', display: o.visible == false ? "none" : null }}
                                 onClick={() => this.showPageByNode(o)}>
                                 <i className={o.icon} style={{ fontSize: 16 }}></i>
@@ -162,8 +102,8 @@ export class MasterPage extends React.Component<Props, State> {
                 </div>
                 <div className="second">
                     <ul className="list-group" style={{ margin: 0 }}>
-                        {secondLevelNodes.map((o, i) =>
-                            <li key={i} className={o == secondLevelNode ? "list-group-item active" : "list-group-item"}
+                        {(currentNode ? currentNode.children : []).map((o, i) =>
+                            <li key={i} className={o == currentNode ? "list-group-item active" : "list-group-item"}
                                 style={{ cursor: 'pointer', display: o.visible == false ? "none" : null }}
                                 onClick={() => this.showPageByNode(o)}>
                                 <span style={{ paddingLeft: 8, fontSize: 14 }}>{o.name}</span>
@@ -171,17 +111,9 @@ export class MasterPage extends React.Component<Props, State> {
                         )}
                     </ul>
                 </div>
-                <div className={secondLevelNodes.length == 0 ? "main hideSecond" : 'main'} >
+                <div className="main" >
                     <nav className="navbar navbar-default" style={{ padding: "10px 10px 10px 10px" }}>
-                        <ul className="nav navbar-nav pull-right" >
-                            {!hideExistsButton ?
-                                <li className="light-blue pull-right" style={{ color: 'white', paddingTop: 4, cursor: 'pointer' }}
-                                    onClick={() => { }}>
-                                    <i className="icon-off"></i>
-                                    <span style={{ paddingLeft: 4 }}>退出</span>
-                                </li> : null
-                            }
-                        </ul>
+                        {this.state.toolbar}
                     </nav>
                     <div style={{ padding: 20 }}
                         ref={(e: HTMLElement) => this.pageContainer = e || this.pageContainer}>
@@ -191,3 +123,75 @@ export class MasterPage extends React.Component<Props, State> {
         );
     }
 }
+
+export class Application extends chitu_react.Application {
+    private _masterPage: MasterPage;
+
+    constructor(masterPage: MasterPage) {
+        super({ container: masterPage.pageContainer })
+
+        this._masterPage = masterPage;
+    }
+
+    get masterPage() {
+        return this._masterPage;
+    }
+
+    protected defaultPageNodeParser() {
+        let nodes: { [key: string]: chitu.PageNode } = {}
+        let p: chitu.PageNodeParser = {
+            actions: {},
+            parse: (pageName) => {
+                let node = nodes[pageName];
+                if (node == null) {
+                    let path = `modules/${pageName}`;
+                    node = { action: this.createDefaultAction(path, loadjs), name: pageName };
+                    nodes[pageName] = node;
+                }
+                return node;
+            }
+        }
+        return p
+    }
+
+    /** 加载样式文件 */
+    loadStyle() {
+        let str = fs.readFileSync("content/admin_style_default.less").toString();
+        if (config.firstPanelWidth) {
+            str = str + `\r\n@firstPanelWidth: ${config.firstPanelWidth};`
+        }
+        let less = window['less']
+        less.render(str, function (e, result) {
+            if (e) {
+                console.error(e)
+                return
+            }
+
+            let style = document.createElement('style')
+            document.head.appendChild(style)
+            style.innerText = result.css
+        })
+    }
+
+    createMasterPage() {
+    }
+
+    run() {
+        super.run()
+        this.loadStyle()
+        // this.loadMenus()
+    }
+}
+
+function loadjs(path: string): Promise<any> {
+    return new Promise<Array<any>>((reslove, reject) => {
+        requirejs([path],
+            function (result: any) {
+                reslove(result);
+            },
+            function (err: Error) {
+                reject(err);
+            });
+    });
+}
+

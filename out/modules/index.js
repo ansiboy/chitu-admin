@@ -1,7 +1,10 @@
-define(['exports', 'react', 'react-dom'], function (exports, React, ReactDOM) {
-    exports.default = class IndexPage extends React.Component {
+define(["require", "exports", "react"], function (require, exports, React) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    class IndexPage extends React.Component {
         render() {
-            return React.createElement("div", null);
+            return React.createElement("div", null, "Index Page");
         }
-    };
+    }
+    exports.default = IndexPage;
 });

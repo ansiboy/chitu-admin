@@ -1,4 +1,11 @@
 declare module chitu_admin {
+
+    export interface Config {
+        firstPanelWidth: string,
+        authServiceHost: string,
+        menuType: string,
+    }
+
     export type Menu = {
         id?: string,
         name: string,
@@ -16,7 +23,8 @@ declare module chitu_admin {
         setToolbar(toolbar: JSX.Element)
     }
     export interface Application extends chitu.Application {
-        masterPage: MasterPage
+        masterPage: MasterPage,
+        config: Config,
     }
     export let app: chitu_admin.Application
 }

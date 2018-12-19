@@ -3,7 +3,6 @@
 import React = require('react');
 import * as chitu_react from 'maishu-chitu-react';
 import * as fs from 'fs';
-import { config } from './config';
 
 type Menu = chitu_admin.Menu
 
@@ -58,7 +57,7 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
         this.setState({ menus, currentPageName })
     }
 
-    get application() {
+    get application(): Application {
         return this.app;
     }
 
@@ -124,7 +123,7 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
     }
 }
 
-export class Application extends chitu_react.Application {
+export class Application extends chitu_react.Application implements chitu_admin.Application {
     private _masterPage: MasterPage;
 
     constructor(masterPage: MasterPage) {
@@ -135,6 +134,11 @@ export class Application extends chitu_react.Application {
 
     get masterPage() {
         return this._masterPage;
+    }
+
+    get config() {
+        window['maishu-chitu-admin-config'] = window['maishu-chitu-admin-config'] || {}
+        return window['maishu-chitu-admin-config']
     }
 
     protected defaultPageNodeParser() {
@@ -157,8 +161,8 @@ export class Application extends chitu_react.Application {
     /** 加载样式文件 */
     loadStyle() {
         let str = fs.readFileSync("content/admin_style_default.less").toString();
-        if (config.firstPanelWidth) {
-            str = str + `\r\n@firstPanelWidth: ${config.firstPanelWidth};`
+        if (this.config.firstPanelWidth) {
+            str = str + `\r\n@firstPanelWidth: ${this.config.firstPanelWidth};`
         }
         let less = window['less']
         less.render(str, function (e, result) {
@@ -179,7 +183,6 @@ export class Application extends chitu_react.Application {
     run() {
         super.run()
         this.loadStyle()
-        // this.loadMenus()
     }
 }
 

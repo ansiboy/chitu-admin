@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const chitu_react = require("maishu-chitu-react");
 const fs = require("fs");
-const config_1 = require("./config");
 class MasterPage extends React.Component {
     constructor(props) {
         super(props);
@@ -78,6 +77,10 @@ class Application extends chitu_react.Application {
     get masterPage() {
         return this._masterPage;
     }
+    get config() {
+        window['maishu-chitu-admin-config'] = window['maishu-chitu-admin-config'] || {};
+        return window['maishu-chitu-admin-config'];
+    }
     defaultPageNodeParser() {
         let nodes = {};
         let p = {
@@ -97,8 +100,8 @@ class Application extends chitu_react.Application {
     /** 加载样式文件 */
     loadStyle() {
         let str = fs.readFileSync("content/admin_style_default.less").toString();
-        if (config_1.config.firstPanelWidth) {
-            str = str + `\r\n@firstPanelWidth: ${config_1.config.firstPanelWidth};`;
+        if (this.config.firstPanelWidth) {
+            str = str + `\r\n@firstPanelWidth: ${this.config.firstPanelWidth};`;
         }
         let less = window['less'];
         less.render(str, function (e, result) {
@@ -116,7 +119,6 @@ class Application extends chitu_react.Application {
     run() {
         super.run();
         this.loadStyle();
-        // this.loadMenus()
     }
 }
 exports.Application = Application;

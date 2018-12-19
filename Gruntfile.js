@@ -57,7 +57,7 @@ module.exports = function (grunt) {
                     browserifyOptions: {
                         standalone: 'chitu_admin',
                     },
-                    external: ['react', 'react-dom']
+                    external: ['react', 'react-dom', 'maishu-chitu', 'maishu-chitu-react']
                 }
             }
         },

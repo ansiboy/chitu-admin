@@ -13,7 +13,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /*!
- * CHITU-ADMIN v1.0.17
+ * CHITU-ADMIN v1.0.21
  * https://github.com/ansiboy/chitu-admin
  *
  * Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -1963,1151 +1963,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         buffer[offset + i - d] |= s * 128;
       };
     }, {}], 4: [function (require, module, exports) {
-      var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
-        return new (P || (P = Promise))(function (resolve, reject) {
-          function fulfilled(value) {
-            try {
-              step(generator.next(value));
-            } catch (e) {
-              reject(e);
-            }
-          }
-          function rejected(value) {
-            try {
-              step(generator["throw"](value));
-            } catch (e) {
-              reject(e);
-            }
-          }
-          function step(result) {
-            result.done ? resolve(result.value) : new P(function (resolve) {
-              resolve(result.value);
-            }).then(fulfilled, rejected);
-          }
-          step((generator = generator.apply(thisArg, _arguments || [])).next());
-        });
-      };
-      (function (factory) {
-        if ((typeof module === "undefined" ? "undefined" : _typeof(module)) === "object" && _typeof(module.exports) === "object") {
-          var v = factory(require, exports);
-          if (v !== undefined) module.exports = v;
-        } else if (typeof define === "function" && define.amd) {
-          define(["require", "exports", "react", "react-dom", "maishu-chitu"], factory);
-        }
-      })(function (require, exports) {
-        "use strict";
-
-        Object.defineProperty(exports, "__esModule", { value: true });
-        var React = require("react");
-        var ReactDOM = require("react-dom");
-        var chitu = require("maishu-chitu");
-
-        var Application = function (_chitu$Application) {
-          _inherits(Application, _chitu$Application);
-
-          function Application() {
-            _classCallCheck(this, Application);
-
-            return _possibleConstructorReturn(this, (Application.__proto__ || Object.getPrototypeOf(Application)).apply(this, arguments));
-          }
-
-          _createClass(Application, [{
-            key: "createDefaultAction",
-            value: function createDefaultAction(url, loadjs) {
-              var _this2 = this;
-
-              return function (page) {
-                return __awaiter(_this2, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-                  var actionExports, _action, action, app, props, element;
-
-                  return regeneratorRuntime.wrap(function _callee$(_context) {
-                    while (1) {
-                      switch (_context.prev = _context.next) {
-                        case 0:
-                          _context.next = 2;
-                          return loadjs(url);
-
-                        case 2:
-                          actionExports = _context.sent;
-
-                          if (actionExports) {
-                            _context.next = 5;
-                            break;
-                          }
-
-                          throw chitu.Errors.exportsCanntNull(url);
-
-                        case 5:
-                          _action = actionExports['default'];
-
-                          if (!(_action == null)) {
-                            _context.next = 8;
-                            break;
-                          }
-
-                          throw chitu.Errors.canntFindAction(page.name);
-
-                        case 8:
-                          action = void 0;
-
-                          if (chitu.PageMaster.isClass(_action)) {
-                            action = _action;
-                          } else {
-                            action = _action;
-                          }
-                          app = this;
-                          props = Object.assign({}, page.data, { app: app });
-                          element = React.createElement(action, props);
-
-                          ReactDOM.render(element, page.element);
-                          return _context.abrupt("return", element);
-
-                        case 15:
-                        case "end":
-                          return _context.stop();
-                      }
-                    }
-                  }, _callee, this);
-                }));
-              };
-            }
-          }]);
-
-          return Application;
-        }(chitu.Application);
-
-        exports.Application = Application;
-      });
-    }, { "maishu-chitu": 5, "react": "react", "react-dom": "react-dom" }], 5: [function (require, module, exports) {
-
-      /*!
-       * CHITU v2.0.10
-       * https://github.com/ansiboy/ChiTu
-       *
-       * Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
-       * Licensed under the MIT License.
-       *
-       */
-
-      (function (factory) {
-        if (typeof require === 'function' && (typeof exports === "undefined" ? "undefined" : _typeof(exports)) === 'object' && (typeof module === "undefined" ? "undefined" : _typeof(module)) === 'object') {
-          // [1] CommonJS/Node.js 
-          var target = module['exports'] || exports;
-          var chitu = factory(target, require);
-          Object.assign(target, chitu);
-        } else if (typeof define === 'function' && define['amd']) {
-          define(factory);
-        } else {
-          factory();
-        }
-      })(function () {
-        "use strict";
-
-        var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
-          return new (P || (P = Promise))(function (resolve, reject) {
-            function fulfilled(value) {
-              try {
-                step(generator.next(value));
-              } catch (e) {
-                reject(e);
-              }
-            }
-            function rejected(value) {
-              try {
-                step(generator["throw"](value));
-              } catch (e) {
-                reject(e);
-              }
-            }
-            function step(result) {
-              result.done ? resolve(result.value) : new P(function (resolve) {
-                resolve(result.value);
-              }).then(fulfilled, rejected);
-            }
-            step((generator = generator.apply(thisArg, _arguments || [])).next());
-          });
-        };
-        var chitu;
-        (function (chitu) {
-          var PageMaster = function () {
-            function PageMaster(container, parser) {
-              _classCallCheck(this, PageMaster);
-
-              this.pageCreated = chitu.Callbacks();
-              this.pageShowing = chitu.Callbacks();
-              this.pageShown = chitu.Callbacks();
-              this.pageType = chitu.Page;
-              this.pageDisplayType = PageDisplayerImplement;
-              this.cachePages = {};
-              this.page_stack = new Array();
-              this.nodes = {};
-              this.error = chitu.Callbacks();
-              this.parser = parser || this.defaultPageNodeParser();
-              if (!container) throw chitu.Errors.argumentNull("container");
-              this.parser.actions = this.parser.actions || {};
-              this.container = container;
-            }
-
-            _createClass(PageMaster, [{
-              key: "defaultPageNodeParser",
-              value: function defaultPageNodeParser() {
-                var _this3 = this;
-
-                var nodes = {};
-                var p = {
-                  actions: {},
-                  parse: function parse(pageName) {
-                    var node = nodes[pageName];
-                    if (node == null) {
-                      var path = ("modules_" + pageName).split('_').join('/');
-                      node = { action: _this3.createDefaultAction(path, chitu.loadjs), name: pageName };
-                      nodes[pageName] = node;
-                    }
-                    return node;
-                  }
-                };
-                return p;
-              }
-            }, {
-              key: "createDefaultAction",
-              value: function createDefaultAction(url, loadjs) {
-                var _this4 = this;
-
-                return function (page) {
-                  return __awaiter(_this4, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-                    var actionExports, _action, result, action, _action2;
-
-                    return regeneratorRuntime.wrap(function _callee2$(_context2) {
-                      while (1) {
-                        switch (_context2.prev = _context2.next) {
-                          case 0:
-                            _context2.next = 2;
-                            return loadjs(url);
-
-                          case 2:
-                            actionExports = _context2.sent;
-
-                            if (actionExports) {
-                              _context2.next = 5;
-                              break;
-                            }
-
-                            throw chitu.Errors.exportsCanntNull(url);
-
-                          case 5:
-                            _action = actionExports.default;
-
-                            if (!(_action == null)) {
-                              _context2.next = 8;
-                              break;
-                            }
-
-                            throw chitu.Errors.canntFindAction(page.name);
-
-                          case 8:
-                            result = void 0;
-
-                            if (PageMaster.isClass(_action)) {
-                              action = _action;
-
-                              result = new action(page, this);
-                            } else {
-                              _action2 = _action;
-
-                              result = _action2(page, this);
-                            }
-                            return _context2.abrupt("return", result);
-
-                          case 11:
-                          case "end":
-                            return _context2.stop();
-                        }
-                      }
-                    }, _callee2, this);
-                  }));
-                };
-              }
-            }, {
-              key: "on_pageCreated",
-              value: function on_pageCreated(page) {
-                return this.pageCreated.fire(this, page);
-              }
-            }, {
-              key: "getPage",
-              value: function getPage(node, values) {
-                console.assert(node != null);
-                values = values || {};
-                var pageName = node.name;
-                var cachePage = this.cachePages[pageName];
-                if (cachePage != null) {
-                  cachePage.data = Object.assign(cachePage.data || {}, values);
-                  return { page: cachePage, isNew: false };
-                }
-                var page = this.createPage(pageName, values);
-                this.cachePages[pageName] = page;
-                this.on_pageCreated(page);
-                return { page: page, isNew: true };
-              }
-            }, {
-              key: "createPage",
-              value: function createPage(pageName, values) {
-                var _this5 = this;
-
-                if (!pageName) throw chitu.Errors.argumentNull('pageName');
-                values = values || {};
-                var element = this.createPageElement(pageName);
-                var displayer = new this.pageDisplayType(this);
-                console.assert(this.pageType != null);
-                var page = new this.pageType({
-                  app: this,
-                  name: pageName,
-                  data: values,
-                  displayer: displayer,
-                  element: element
-                });
-                var showing = function showing(sender) {
-                  _this5.pageShowing.fire(_this5, sender);
-                };
-                var shown = function shown(sender) {
-                  _this5.pageShown.fire(_this5, sender);
-                };
-                page.showing.add(showing);
-                page.shown.add(shown);
-                page.closed.add(function () {
-                  page.showing.remove(showing);
-                  page.shown.remove(shown);
-                });
-                return page;
-              }
-            }, {
-              key: "createPageElement",
-              value: function createPageElement(pageName) {
-                var element = document.createElement(chitu.Page.tagName);
-                this.container.appendChild(element);
-                return element;
-              }
-            }, {
-              key: "showPage",
-              value: function showPage(pageName, args, rerender) {
-                args = args || {};
-                rerender = rerender == null ? false : true;
-                if (!pageName) throw chitu.Errors.argumentNull('pageName');
-                var node = this.findSiteMapNode(pageName);
-                if (node == null) throw chitu.Errors.pageNodeNotExists(pageName);
-                if (this.currentPage != null && this.currentPage.name == pageName) return this.currentPage;
-                args = args || {};
-
-                var _getPage = this.getPage(node, args),
-                    page = _getPage.page,
-                    isNew = _getPage.isNew;
-
-                if (isNew || rerender) {
-                  var siteMapNode = this.findSiteMapNode(pageName);
-                  if (siteMapNode == null) throw chitu.Errors.pageNodeNotExists(pageName);
-                  var action = siteMapNode.action;
-                  if (action == null) throw chitu.Errors.actionCanntNull(pageName);
-                  action(page, this);
-                }
-                page.show();
-                this.pushPage(page);
-                console.assert(page == this.currentPage, "page is not current page");
-                return page;
-              }
-            }, {
-              key: "closePage",
-              value: function closePage(page) {
-                if (page == null) throw chitu.Errors.argumentNull('page');
-                page.close();
-                delete this.cachePages[page.name];
-                this.page_stack = this.page_stack.filter(function (o) {
-                  return o != page;
-                });
-              }
-            }, {
-              key: "pushPage",
-              value: function pushPage(page) {
-                this.page_stack.push(page);
-              }
-            }, {
-              key: "findSiteMapNode",
-              value: function findSiteMapNode(pageName) {
-                if (this.nodes[pageName]) return this.nodes[pageName];
-                var node = null;
-                var action = this.parser.actions ? this.parser.actions[pageName] : null;
-                if (action != null) {
-                  node = { action: action, name: pageName };
-                }
-                if (node == null && this.parser.parse != null) {
-                  node = this.parser.parse(pageName);
-                  console.assert(node.action != null);
-                }
-                if (node != null) this.nodes[pageName] = node;
-                return node;
-              }
-            }, {
-              key: "closeCurrentPage",
-              value: function closeCurrentPage(passData) {
-                var page = this.page_stack.pop();
-                if (page == null) return;
-                this.closePage(page);
-                if (this.currentPage) {
-                  if (passData) {
-                    console.assert(this.currentPage.data != null);
-                    this.currentPage.data = Object.assign(this.currentPage.data, passData);
-                  }
-                  this.currentPage.show();
-                }
-              }
-            }, {
-              key: "currentPage",
-              get: function get() {
-                if (this.page_stack.length > 0) return this.page_stack[this.page_stack.length - 1];
-                return null;
-              }
-            }, {
-              key: "pageStack",
-              get: function get() {
-                return this.page_stack;
-              }
-            }]);
-
-            return PageMaster;
-          }();
-
-          PageMaster.isClass = function () {
-            var toString = Function.prototype.toString;
-            function fnBody(fn) {
-              return toString.call(fn).replace(/^[^{]*{\s*/, '').replace(/\s*}[^}]*$/, '');
-            }
-            function isClass(fn) {
-              return typeof fn === 'function' && (/^class(\s|\{\}$)/.test(toString.call(fn)) || /^.*classCallCheck\(/.test(fnBody(fn)));
-            }
-            return isClass;
-          }();
-          chitu.PageMaster = PageMaster;
-        })(chitu || (chitu = {}));
-        var chitu;
-        (function (chitu) {
-          var EmtpyStateData = "";
-          var DefaultPageName = "index";
-          function _parseUrl(app, url) {
-            var sharpIndex = url.indexOf('#');
-            if (sharpIndex < 0) {
-              var _pageName = DefaultPageName;
-              return { pageName: _pageName, values: {} };
-            }
-            var routeString = url.substr(sharpIndex + 1);
-            if (!routeString) throw chitu.Errors.canntParseRouteString(url);
-            if (routeString.startsWith('!')) {
-              throw chitu.Errors.canntParseRouteString(routeString);
-            }
-            var routePath = void 0;
-            var search = null;
-            var param_spliter_index = routeString.indexOf('?');
-            if (param_spliter_index > 0) {
-              search = routeString.substr(param_spliter_index + 1);
-              routePath = routeString.substring(0, param_spliter_index);
-            } else {
-              routePath = routeString;
-            }
-            if (!routePath) throw chitu.Errors.canntParseRouteString(routeString);
-            var values = {};
-            if (search) {
-              values = pareeUrlQuery(search);
-            }
-            var pageName = routePath;
-            return { pageName: pageName, values: values };
-          }
-          function pareeUrlQuery(query) {
-            var match = void 0,
-                pl = /\+/g,
-                search = /([^&=]+)=?([^&]*)/g,
-                decode = function decode(s) {
-              return decodeURIComponent(s.replace(pl, " "));
-            };
-            var urlParams = {};
-            while (match = search.exec(query)) {
-              urlParams[decode(match[1])] = decode(match[2]);
-            }return urlParams;
-          }
-          function _createUrl(pageName, params) {
-            var path_parts = pageName.split('.');
-            var path = path_parts.join('/');
-            if (!params) return "#" + path;
-            var paramsText = '';
-            for (var key in params) {
-              var value = params[key];
-              var type = _typeof(params[key]);
-              if (type != 'string' || value == null) {
-                continue;
-              }
-              paramsText = paramsText == '' ? "?" + key + "=" + params[key] : paramsText + ("&" + key + "=" + params[key]);
-            }
-            return "#" + path + paramsText;
-          }
-
-          var Application = function (_chitu$PageMaster) {
-            _inherits(Application, _chitu$PageMaster);
-
-            function Application(args) {
-              _classCallCheck(this, Application);
-
-              var _this6 = _possibleConstructorReturn(this, (Application.__proto__ || Object.getPrototypeOf(Application)).call(this, (args || {}).container || document.body, (args || {}).parser));
-
-              _this6._runned = false;
-              _this6.closeCurrentOnBack = null;
-              _this6.tempPageData = undefined;
-              return _this6;
-            }
-
-            _createClass(Application, [{
-              key: "parseUrl",
-              value: function parseUrl(url) {
-                var routeData = _parseUrl(this, url);
-                return routeData;
-              }
-            }, {
-              key: "createUrl",
-              value: function createUrl(pageName, values) {
-                return _createUrl(pageName, values);
-              }
-            }, {
-              key: "run",
-              value: function run() {
-                var _this7 = this;
-
-                if (this._runned) return;
-                this.showPageByUrl(location.href, false);
-                window.addEventListener('popstate', function () {
-                  var url = location.href;
-                  var sharpIndex = url.indexOf('#');
-                  var routeString = url.substr(sharpIndex + 1);
-                  if (routeString.startsWith('!')) {
-                    return;
-                  }
-                  if (sharpIndex < 0) {
-                    url = '#' + DefaultPageName;
-                  }
-                  _this7.showPageByUrl(url, true);
-                });
-                this._runned = true;
-              }
-            }, {
-              key: "showPageByUrl",
-              value: function showPageByUrl(url, fromCache) {
-                if (!url) throw chitu.Errors.argumentNull('url');
-                var routeData = this.parseUrl(url);
-                if (routeData == null) {
-                  throw chitu.Errors.noneRouteMatched(url);
-                }
-                var tempPageData = this.fetchTemplatePageData();
-                var result = null;
-                if (this.closeCurrentOnBack == true) {
-                  this.closeCurrentOnBack = null;
-                  if (tempPageData == null) this.closeCurrentPage();else this.closeCurrentPage(tempPageData);
-                  result = this.currentPage;
-                } else if (this.closeCurrentOnBack == false) {
-                  this.closeCurrentOnBack = null;
-                  var page = this.pageStack.pop();
-                  if (page == null) throw new Error('page is null');
-                  page.hide(this.currentPage);
-                  result = this.currentPage;
-                }
-                if (result == null) {
-                  var args = routeData.values || {};
-                  if (tempPageData) {
-                    args = Object.assign(args, tempPageData);
-                  }
-                  result = this.showPage(routeData.pageName, args);
-                }
-                return result;
-              }
-            }, {
-              key: "fetchTemplatePageData",
-              value: function fetchTemplatePageData() {
-                if (this.tempPageData == null) {
-                  return null;
-                }
-                var data = this.tempPageData;
-                this.tempPageData = undefined;
-                return data;
-              }
-            }, {
-              key: "setLocationHash",
-              value: function setLocationHash(url) {
-                history.pushState(EmtpyStateData, "", url);
-              }
-            }, {
-              key: "redirect",
-              value: function redirect(pageName, args) {
-                var result = this.showPage(pageName, args);
-                var url = this.createUrl(pageName, args);
-                this.setLocationHash(url);
-                return result;
-              }
-            }, {
-              key: "forward",
-              value: function forward(pageName, args) {
-                var result = this.showPage(pageName, args, true);
-                var url = this.createUrl(pageName, args);
-                this.setLocationHash(url);
-                return result;
-              }
-            }, {
-              key: "reload",
-              value: function reload(pageName, args) {
-                var result = this.showPage(pageName, args, true);
-                return result;
-              }
-            }, {
-              key: "back",
-              value: function back(closeCurrentPage, data) {
-                var closeCurrentPageDefault = true;
-                if ((typeof closeCurrentPage === "undefined" ? "undefined" : _typeof(closeCurrentPage)) == 'object') {
-                  data = closeCurrentPage;
-                  closeCurrentPage = null;
-                }
-                this.closeCurrentOnBack = closeCurrentPage == null ? closeCurrentPageDefault : closeCurrentPage;
-                this.tempPageData = data;
-                history.back();
-              }
-            }]);
-
-            return Application;
-          }(chitu.PageMaster);
-
-          chitu.Application = Application;
-        })(chitu || (chitu = {}));
-        var chitu;
-        (function (chitu) {
-          var Errors = function () {
-            function Errors() {
-              _classCallCheck(this, Errors);
-            }
-
-            _createClass(Errors, null, [{
-              key: "pageNodeNotExists",
-              value: function pageNodeNotExists(pageName) {
-                var msg = "Page node named " + pageName + " is not exists.";
-                return new Error(msg);
-              }
-            }, {
-              key: "actionCanntNull",
-              value: function actionCanntNull(pageName) {
-                var msg = "Action of '" + pageName + "' can not be null.";
-                return new Error(msg);
-              }
-            }, {
-              key: "argumentNull",
-              value: function argumentNull(paramName) {
-                var msg = "The argument \"" + paramName + "\" cannt be null.";
-                return new Error(msg);
-              }
-            }, {
-              key: "modelFileExpecteFunction",
-              value: function modelFileExpecteFunction(script) {
-                var msg = "The eval result of script file \"" + script + "\" is expected a function.";
-                return new Error(msg);
-              }
-            }, {
-              key: "paramTypeError",
-              value: function paramTypeError(paramName, expectedType) {
-                var msg = "The param \"" + paramName + "\" is expected \"" + expectedType + "\" type.";
-                return new Error(msg);
-              }
-            }, {
-              key: "paramError",
-              value: function paramError(msg) {
-                return new Error(msg);
-              }
-            }, {
-              key: "pathPairRequireView",
-              value: function pathPairRequireView(index) {
-                var msg = "The view value is required for path pair, but the item with index \"" + index + "\" is miss it.";
-                return new Error(msg);
-              }
-            }, {
-              key: "notImplemented",
-              value: function notImplemented(name) {
-                var msg = "'The method \"" + name + "\" is not implemented.'";
-                return new Error(msg);
-              }
-            }, {
-              key: "routeExists",
-              value: function routeExists(name) {
-                var msg = "Route named \"" + name + "\" is exists.";
-                return new Error(msg);
-              }
-            }, {
-              key: "noneRouteMatched",
-              value: function noneRouteMatched(url) {
-                var msg = "None route matched with url \"" + url + "\".";
-                var error = new Error(msg);
-                return error;
-              }
-            }, {
-              key: "emptyStack",
-              value: function emptyStack() {
-                return new Error('The stack is empty.');
-              }
-            }, {
-              key: "canntParseUrl",
-              value: function canntParseUrl(url) {
-                var msg = "Can not parse the url \"" + url + "\" to route data.";
-                return new Error(msg);
-              }
-            }, {
-              key: "canntParseRouteString",
-              value: function canntParseRouteString(routeString) {
-                var msg = "Can not parse the route string \"" + routeString + "\" to route data.;";
-                return new Error(msg);
-              }
-            }, {
-              key: "routeDataRequireController",
-              value: function routeDataRequireController() {
-                var msg = 'The route data does not contains a "controller" file.';
-                return new Error(msg);
-              }
-            }, {
-              key: "routeDataRequireAction",
-              value: function routeDataRequireAction() {
-                var msg = 'The route data does not contains a "action" file.';
-                return new Error(msg);
-              }
-            }, {
-              key: "viewCanntNull",
-              value: function viewCanntNull() {
-                var msg = 'The view or viewDeferred of the page cannt null.';
-                return new Error(msg);
-              }
-            }, {
-              key: "createPageFail",
-              value: function createPageFail(pageName) {
-                var msg = "Create page \"" + pageName + "\" fail.";
-                return new Error(msg);
-              }
-            }, {
-              key: "actionTypeError",
-              value: function actionTypeError(pageName) {
-                var msg = "The action in page '" + pageName + "' is expect as function.";
-                return new Error(msg);
-              }
-            }, {
-              key: "canntFindAction",
-              value: function canntFindAction(pageName) {
-                var msg = "Cannt find action in page '" + pageName + "', is the exports has default field?";
-                return new Error(msg);
-              }
-            }, {
-              key: "exportsCanntNull",
-              value: function exportsCanntNull(pageName) {
-                var msg = "Exports of page '" + pageName + "' is null.";
-                return new Error(msg);
-              }
-            }, {
-              key: "scrollerElementNotExists",
-              value: function scrollerElementNotExists() {
-                var msg = "Scroller element is not exists.";
-                return new Error(msg);
-              }
-            }, {
-              key: "resourceExists",
-              value: function resourceExists(resourceName, pageName) {
-                var msg = "Rosource '" + resourceName + "' is exists in the resources of page '" + pageName + "'.";
-                return new Error(msg);
-              }
-            }, {
-              key: "siteMapRootCanntNull",
-              value: function siteMapRootCanntNull() {
-                var msg = "The site map root node can not be null.";
-                return new Error(msg);
-              }
-            }, {
-              key: "duplicateSiteMapNode",
-              value: function duplicateSiteMapNode(name) {
-                var msg = "The site map node " + name + " is exists.";
-                return new Error(name);
-              }
-            }]);
-
-            return Errors;
-          }();
-
-          chitu.Errors = Errors;
-        })(chitu || (chitu = {}));
-        var chitu;
-        (function (chitu) {
-          var Callback = function () {
-            function Callback() {
-              _classCallCheck(this, Callback);
-
-              this.funcs = new Array();
-            }
-
-            _createClass(Callback, [{
-              key: "add",
-              value: function add(func) {
-                this.funcs.push(func);
-              }
-            }, {
-              key: "remove",
-              value: function remove(func) {
-                this.funcs = this.funcs.filter(function (o) {
-                  return o != func;
-                });
-              }
-            }, {
-              key: "fire",
-              value: function fire() {
-                for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-                  args[_key] = arguments[_key];
-                }
-
-                this.funcs.forEach(function (o) {
-                  return o.apply(undefined, args);
-                });
-              }
-            }]);
-
-            return Callback;
-          }();
-
-          chitu.Callback = Callback;
-          function Callbacks() {
-            return new Callback();
-          }
-          chitu.Callbacks = Callbacks;
-
-          var ValueStore = function () {
-            function ValueStore(value) {
-              _classCallCheck(this, ValueStore);
-
-              this.items = new Array();
-              this._value = value === undefined ? null : value;
-            }
-
-            _createClass(ValueStore, [{
-              key: "add",
-              value: function add(func, sender) {
-                this.items.push({ func: func, sender: sender });
-                return func;
-              }
-            }, {
-              key: "remove",
-              value: function remove(func) {
-                this.items = this.items.filter(function (o) {
-                  return o.func != func;
-                });
-              }
-            }, {
-              key: "fire",
-              value: function fire(value) {
-                this.items.forEach(function (o) {
-                  return o.func(value, o.sender);
-                });
-              }
-            }, {
-              key: "value",
-              get: function get() {
-                if (this._value === undefined) return null;
-                return this._value;
-              },
-              set: function set(value) {
-                this._value = value;
-                this.fire(value);
-              }
-            }]);
-
-            return ValueStore;
-          }();
-
-          chitu.ValueStore = ValueStore;
-          function loadjs(path) {
-            return new Promise(function (reslove, reject) {
-              require([path], function (result) {
-                reslove(result);
-              }, function (err) {
-                reject(err);
-              });
-            });
-          }
-          chitu.loadjs = loadjs;
-        })(chitu || (chitu = {}));
-        var chitu;
-        (function (chitu) {
-          var Page = function () {
-            function Page(params) {
-              _classCallCheck(this, Page);
-
-              this.data = {};
-              this.showing = chitu.Callbacks();
-              this.shown = chitu.Callbacks();
-              this.hiding = chitu.Callbacks();
-              this.hidden = chitu.Callbacks();
-              this.closing = chitu.Callbacks();
-              this.closed = chitu.Callbacks();
-              this._element = params.element;
-              this._app = params.app;
-              this._displayer = params.displayer;
-              this.data = params.data;
-              this._name = params.name;
-            }
-
-            _createClass(Page, [{
-              key: "on_showing",
-              value: function on_showing() {
-                return this.showing.fire(this, this.data);
-              }
-            }, {
-              key: "on_shown",
-              value: function on_shown() {
-                return this.shown.fire(this, this.data);
-              }
-            }, {
-              key: "on_hiding",
-              value: function on_hiding() {
-                return this.hiding.fire(this, this.data);
-              }
-            }, {
-              key: "on_hidden",
-              value: function on_hidden() {
-                return this.hidden.fire(this, this.data);
-              }
-            }, {
-              key: "on_closing",
-              value: function on_closing() {
-                return this.closing.fire(this, this.data);
-              }
-            }, {
-              key: "on_closed",
-              value: function on_closed() {
-                return this.closed.fire(this, this.data);
-              }
-            }, {
-              key: "show",
-              value: function show() {
-                var _this8 = this;
-
-                this.on_showing();
-                var currentPage = this._app.currentPage;
-                if (this == currentPage) {
-                  currentPage = null;
-                }
-                return this._displayer.show(this, currentPage).then(function (o) {
-                  _this8.on_shown();
-                });
-              }
-            }, {
-              key: "hide",
-              value: function hide(currentPage) {
-                var _this9 = this;
-
-                this.on_hiding();
-                return this._displayer.hide(this, currentPage).then(function (o) {
-                  _this9.on_hidden();
-                });
-              }
-            }, {
-              key: "close",
-              value: function close() {
-                this.on_closing();
-                this._element.remove();
-                this.on_closed();
-                return Promise.resolve();
-              }
-            }, {
-              key: "createService",
-              value: function createService(type) {
-                var _this10 = this;
-
-                type = type || chitu.Service;
-                var service = new type();
-                service.error.add(function (ender, error) {
-                  _this10._app.error.fire(_this10._app, error, _this10);
-                });
-                return service;
-              }
-            }, {
-              key: "element",
-              get: function get() {
-                return this._element;
-              }
-            }, {
-              key: "name",
-              get: function get() {
-                return this._name;
-              }
-            }, {
-              key: "app",
-              get: function get() {
-                return this._app;
-              }
-            }]);
-
-            return Page;
-          }();
-
-          Page.tagName = 'div';
-          chitu.Page = Page;
-        })(chitu || (chitu = {}));
-
-        var PageDisplayerImplement = function () {
-          function PageDisplayerImplement() {
-            _classCallCheck(this, PageDisplayerImplement);
-          }
-
-          _createClass(PageDisplayerImplement, [{
-            key: "show",
-            value: function show(page, previous) {
-              page.element.style.display = 'block';
-              if (previous != null) {
-                previous.element.style.display = 'none';
-              }
-              return Promise.resolve();
-            }
-          }, {
-            key: "hide",
-            value: function hide(page, previous) {
-              page.element.style.display = 'none';
-              if (previous != null) {
-                previous.element.style.display = 'block';
-              }
-              return Promise.resolve();
-            }
-          }]);
-
-          return PageDisplayerImplement;
-        }();
-
-        function ajax(url, options) {
-          return __awaiter(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-            var response, responseText, p, text, textObject, isJSONContextType, err;
-            return regeneratorRuntime.wrap(function _callee3$(_context3) {
-              while (1) {
-                switch (_context3.prev = _context3.next) {
-                  case 0:
-                    _context3.next = 2;
-                    return fetch(url, options);
-
-                  case 2:
-                    response = _context3.sent;
-                    responseText = response.text();
-                    p = void 0;
-
-                    if (typeof responseText == 'string') {
-                      p = new Promise(function (reslove, reject) {
-                        reslove(responseText);
-                      });
-                    } else {
-                      p = responseText;
-                    }
-                    _context3.next = 8;
-                    return responseText;
-
-                  case 8:
-                    text = _context3.sent;
-                    textObject = void 0;
-                    isJSONContextType = (response.headers.get('content-type') || '').indexOf('json') >= 0;
-
-                    if (isJSONContextType) {
-                      textObject = JSON.parse(text);
-                    } else {
-                      textObject = text;
-                    }
-
-                    if (!(response.status >= 300)) {
-                      _context3.next = 19;
-                      break;
-                    }
-
-                    err = new Error();
-
-                    err.method = options.method;
-                    err.name = "" + response.status;
-                    err.message = isJSONContextType ? textObject.Message || textObject.message : textObject;
-                    err.message = err.message || response.statusText;
-                    throw err;
-
-                  case 19:
-                    return _context3.abrupt("return", textObject);
-
-                  case 20:
-                  case "end":
-                    return _context3.stop();
-                }
-              }
-            }, _callee3, this);
-          }));
-        }
-        function callAjax(url, options, service, error) {
-          return new Promise(function (reslove, reject) {
-            var timeId = void 0;
-            if (options.method == 'get') {
-              timeId = setTimeout(function () {
-                var err = new Error();
-                err.name = 'timeout';
-                err.message = '网络连接超时';
-                reject(err);
-                error.fire(service, err);
-                clearTimeout(timeId);
-              }, chitu.Service.settings.ajaxTimeout * 1000);
-            }
-            ajax(url, options).then(function (data) {
-              reslove(data);
-              if (timeId) clearTimeout(timeId);
-            }).catch(function (err) {
-              reject(err);
-              error.fire(service, err);
-              if (timeId) clearTimeout(timeId);
-            });
-          });
-        }
-        var chitu;
-        (function (chitu) {
-          var Service = function () {
-            function Service() {
-              _classCallCheck(this, Service);
-
-              this.error = chitu.Callbacks();
-            }
-
-            _createClass(Service, [{
-              key: "ajax",
-              value: function ajax(url, options) {
-                if (options === undefined) options = {};
-                var data = options.data;
-                var method = options.method;
-                var headers = options.headers || {};
-                var body = void 0;
-                if (data != null) {
-                  var is_json = (headers['content-type'] || '').indexOf('json') >= 0;
-                  if (is_json) {
-                    body = JSON.stringify(data);
-                  } else {
-                    body = new URLSearchParams();
-                    for (var key in data) {
-                      body.append(key, data[key]);
-                    }
-                  }
-                }
-                return callAjax(url, { headers: headers, body: body, method: method }, this, this.error);
-              }
-            }]);
-
-            return Service;
-          }();
-
-          Service.settings = {
-            ajaxTimeout: 30
-          };
-          chitu.Service = Service;
-        })(chitu || (chitu = {}));
-
-        window['chitu'] = window['chitu'] || chitu;
-
-        return chitu;
-      });
-    }, {}], 6: [function (require, module, exports) {
       "use strict";
 
       Object.defineProperty(exports, "__esModule", { value: true });
@@ -3118,12 +1973,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       document.body.insertBefore(element, document.body.children[0]);
       var masterPage = ReactDOM.render(React.createElement(masterPage_1.MasterPage, null), element);
       exports.app = masterPage.application;
-    }, { "./masterPage": 9, "react": "react", "react-dom": "react-dom" }], 7: [function (require, module, exports) {
-      "use strict";
-
-      Object.defineProperty(exports, "__esModule", { value: true });
-      exports.config = window['adminConfig'] || {};
-    }, {}], 8: [function (require, module, exports) {
+    }, { "./masterPage": 6, "react": "react", "react-dom": "react-dom" }], 5: [function (require, module, exports) {
       "use strict";
 
       Object.defineProperty(exports, "__esModule", { value: true });
@@ -3131,7 +1981,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       var application_2 = require("./application");
       exports.app = application_2.app;
       application_1.app.run();
-    }, { "./application": 6 }], 9: [function (require, module, exports) {
+    }, { "./application": 4 }], 6: [function (require, module, exports) {
       (function (Buffer) {
         "use strict";
 
@@ -3139,18 +1989,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         var React = require("react");
         var chitu_react = require("maishu-chitu-react");
 
-        var config_1 = require("./config");
-
         var MasterPage = function (_React$Component) {
           _inherits(MasterPage, _React$Component);
 
           function MasterPage(props) {
             _classCallCheck(this, MasterPage);
 
-            var _this11 = _possibleConstructorReturn(this, (MasterPage.__proto__ || Object.getPrototypeOf(MasterPage)).call(this, props));
+            var _this = _possibleConstructorReturn(this, (MasterPage.__proto__ || Object.getPrototypeOf(MasterPage)).call(this, props));
 
-            _this11.state = { menus: [] };
-            return _this11;
+            _this.state = { menus: [] };
+            return _this;
           }
 
           _createClass(MasterPage, [{
@@ -3188,19 +2036,19 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           }, {
             key: "componentDidMount",
             value: function componentDidMount() {
-              var _this12 = this;
+              var _this2 = this;
 
               this.app = new Application(this);
               this.app.pageCreated.add(function (sender, page) {
                 page.shown.add(function () {
-                  _this12.setState({ currentPageName: page.name });
+                  _this2.setState({ currentPageName: page.name });
                 });
               });
             }
           }, {
             key: "render",
             value: function render() {
-              var _this13 = this;
+              var _this3 = this;
 
               var menuData = this.state.menus;
               var currentPageName = this.state.currentPageName;
@@ -3218,14 +2066,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
               }
               return React.createElement("div", { className: nodeClassName }, React.createElement("div", { className: "first" }, React.createElement("ul", { className: "list-group", style: { margin: 0 } }, firstLevelNodes.map(function (o, i) {
                 return React.createElement("li", { key: i, className: o == currentNode || (currentNode || { parent: null }).parent ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: function onClick() {
-                    return _this13.showPageByNode(o);
+                    return _this3.showPageByNode(o);
                   } }, React.createElement("i", { className: o.icon, style: { fontSize: 16 } }), React.createElement("span", { style: { paddingLeft: 8, fontSize: 14 } }, o.name));
               }))), React.createElement("div", { className: "second" }, React.createElement("ul", { className: "list-group", style: { margin: 0 } }, (currentNode ? currentNode.children : []).map(function (o, i) {
                 return React.createElement("li", { key: i, className: o == currentNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: function onClick() {
-                    return _this13.showPageByNode(o);
+                    return _this3.showPageByNode(o);
                   } }, React.createElement("span", { style: { paddingLeft: 8, fontSize: 14 } }, o.name));
               }))), React.createElement("div", { className: "main" }, React.createElement("nav", { className: "navbar navbar-default", style: { padding: "10px 10px 10px 10px" } }, this.state.toolbar), React.createElement("div", { style: { padding: 20 }, ref: function ref(e) {
-                  return _this13.pageContainer = e || _this13.pageContainer;
+                  return _this3.pageContainer = e || _this3.pageContainer;
                 } })));
             }
           }, {
@@ -3246,16 +2094,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           function Application(masterPage) {
             _classCallCheck(this, Application);
 
-            var _this14 = _possibleConstructorReturn(this, (Application.__proto__ || Object.getPrototypeOf(Application)).call(this, { container: masterPage.pageContainer }));
+            var _this4 = _possibleConstructorReturn(this, (Application.__proto__ || Object.getPrototypeOf(Application)).call(this, { container: masterPage.pageContainer }));
 
-            _this14._masterPage = masterPage;
-            return _this14;
+            _this4._masterPage = masterPage;
+            return _this4;
           }
 
           _createClass(Application, [{
             key: "defaultPageNodeParser",
             value: function defaultPageNodeParser() {
-              var _this15 = this;
+              var _this5 = this;
 
               var nodes = {};
               var p = {
@@ -3264,7 +2112,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                   var node = nodes[pageName];
                   if (node == null) {
                     var path = "modules/" + pageName;
-                    node = { action: _this15.createDefaultAction(path, loadjs), name: pageName };
+                    node = { action: _this5.createDefaultAction(path, loadjs), name: pageName };
                     nodes[pageName] = node;
                   }
                   return node;
@@ -3278,8 +2126,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             key: "loadStyle",
             value: function loadStyle() {
               var str = Buffer("aHRtbCB7DQogICAgZm9udC1mYW1pbHk6IHNhbnMtc2VyaWY7IC8vIDENCiAgICAtbXMtdGV4dC1zaXplLWFkanVzdDogMTAwJTsgLy8gMg0KICAgIC13ZWJraXQtdGV4dC1zaXplLWFkanVzdDogMTAwJTsgLy8gMg0KfQ0KDQpib2R5IHsNCiAgICBtYXJnaW46IDA7DQp9DQoNCnRhYmxlIHsNCiAgICBib3JkZXItY29sbGFwc2U6IGNvbGxhcHNlOw0KICAgIGJvcmRlci1zcGFjaW5nOiAwOw0KfQ0KDQp0ZCwNCnRoIHsNCiAgICBwYWRkaW5nOiAwOw0KfQ0KDQouYnRuLW1pbmllciB7DQogICAgcGFkZGluZzogMCA0cHg7DQogICAgbGluZS1oZWlnaHQ6IDE4cHg7DQogICAgYm9yZGVyLXdpZHRoOiAycHg7DQogICAgZm9udC1zaXplOiAxMnB4Ow0KfQ0KDQouYnRuLXB1cnBsZSwNCi5idG4tcHVycGxlOmZvY3VzIHsNCiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjOTU4NWJmOw0KICAgIGJvcmRlci1jb2xvcjogIzk1ODViZjsNCiAgICBjb2xvcjogd2hpdGU7DQp9DQoNCi50YWJsZSB7DQogICAgdGhlYWQgdHIgew0KICAgICAgICBjb2xvcjogIzcwNzA3MDsNCiAgICAgICAgZm9udC13ZWlnaHQ6IG5vcm1hbDsNCiAgICAgICAgYmFja2dyb3VuZDogI2YyZjJmMjsNCiAgICAgICAgYmFja2dyb3VuZC1pbWFnZTogLXdlYmtpdC1ncmFkaWVudChsaW5lYXIsIGxlZnQgMCwgbGVmdCAxMDAlLCBmcm9tKCNmOGY4ZjgpLCB0bygjZWNlY2VjKSk7DQogICAgICAgIGJhY2tncm91bmQtaW1hZ2U6IC13ZWJraXQtbGluZWFyLWdyYWRpZW50KHRvcCwgI2Y4ZjhmOCwgMCUsICNlY2VjZWMsIDEwMCUpOw0KICAgICAgICBiYWNrZ3JvdW5kLWltYWdlOiAtbW96LWxpbmVhci1ncmFkaWVudCh0b3AsICNmOGY4ZjggMCwgI2VjZWNlYyAxMDAlKTsNCiAgICAgICAgYmFja2dyb3VuZC1pbWFnZTogbGluZWFyLWdyYWRpZW50KHRvIGJvdHRvbSwgI2Y4ZjhmOCAwLCAjZWNlY2VjIDEwMCUpOw0KICAgICAgICBiYWNrZ3JvdW5kLXJlcGVhdDogcmVwZWF0LXg7DQogICAgICAgIGZpbHRlcjogcHJvZ2lkOkRYSW1hZ2VUcmFuc2Zvcm0uTWljcm9zb2Z0LmdyYWRpZW50KHN0YXJ0Q29sb3JzdHI9JyNmZmY4ZjhmOCcsIGVuZENvbG9yc3RyPScjZmZlY2VjZWMnLCBHcmFkaWVudFR5cGU9MCk7DQogICAgICAgIHRoIHsNCiAgICAgICAgICAgIGJvcmRlci1jb2xvcjogI2RkZDsNCiAgICAgICAgICAgIGZvbnQtd2VpZ2h0OiBib2xkOw0KICAgICAgICAgICAgdGV4dC1hbGlnbjogY2VudGVyOw0KICAgICAgICB9DQogICAgfQ0KICAgIHRib2R5IHRyIHsNCiAgICAgICAgJi5lbXB0eSB0ZCB7DQogICAgICAgICAgICBoZWlnaHQ6IDMwMHB4Ow0KICAgICAgICAgICAgdGV4dC1hbGlnbjogY2VudGVyOw0KICAgICAgICAgICAgcGFkZGluZy10b3A6IDEyMHB4Ow0KICAgICAgICB9DQogICAgfQ0KICAgIHRmb290IHRyIHsNCiAgICAgICAgLy8gdGQucGFnaW5nQmFyIC50b3RhbCB7DQogICAgICAgIC8vICAgICBmbG9hdDogcmlnaHQ7DQogICAgICAgIC8vIH0NCiAgICB9DQp9DQoNCi52YWxpZGF0aW9uTWVzc2FnZSB7DQogICAgYm9yZGVyOiAxcHggc29saWQgI2ZmNmEwMDsNCiAgICBiYWNrZ3JvdW5kLWNvbG9yOiByZWQ7DQogICAgY29sb3I6ICNmZmYgIWltcG9ydGFudDsNCiAgICBib3JkZXItcmFkaXVzOiAwcHg7IC8vIHBvc2l0aW9uOiBhYnNvbHV0ZTsNCiAgICAvLyB0b3A6IC0yOHB4Ow0KICAgIC8vIGxlZnQ6IDE2cHg7DQogICAgbGluZS1oZWlnaHQ6IDI0cHg7DQogICAgZm9udC1zaXplOiAxMnB4Ow0KICAgIHBhZGRpbmc6IDAgMTBweDsNCiAgICB6LWluZGV4OiAyOw0KICAgIGRpc3BsYXk6IGJsb2NrOw0KfQ0KDQovLyB9DQpAYm9yZGVyLXJhZGl1cy1iYXNlOiAwcHg7DQpAYm9yZGVyLXJhZGl1cy1sYXJnZTogMHB4Ow0KQGJvcmRlci1yYWRpdXMtc21hbGw6IDBweDsNCkBpY29uLWZvbnQtcGF0aDogImZvbnQvIjsNCkBtb2RhbC1iYWNrZHJvcC1vcGFjaXR5OiAwOw0KQHNjcmVlbi1sZzogMTYwMHB4Ow0KQHNjcmVlbi1tZDogMTQwMHB4Ow0KQHNjcmVlbi1zbTogMTAwMHB4Ow0KLm1haW4gew0KICAgIC5uYXZiYXIgew0KICAgICAgICBtYXJnaW46IDA7DQogICAgICAgIGJvcmRlcjogMDsNCiAgICAgICAgLXdlYmtpdC1ib3gtc2hhZG93OiBub25lOw0KICAgICAgICBib3gtc2hhZG93OiBub25lOw0KICAgICAgICBib3JkZXItcmFkaXVzOiAwOw0KICAgICAgICBtYXJnaW46IDA7DQogICAgICAgIHBhZGRpbmctbGVmdDogMDsNCiAgICAgICAgcGFkZGluZy1yaWdodDogMDsNCiAgICAgICAgbWluLWhlaWdodDogNDVweDsNCiAgICAgICAgcG9zaXRpb246IHJlbGF0aXZlOw0KICAgICAgICBiYWNrZ3JvdW5kOiAjNDM4ZWI5Ow0KICAgICAgICBpbWcgew0KICAgICAgICAgICAgQGltZy13aWR0aDogMzBweDsNCiAgICAgICAgICAgIHdpZHRoOiBAaW1nLXdpZHRoOw0KICAgICAgICAgICAgaGVpZ2h0OiBAaW1nLXdpZHRoOw0KICAgICAgICAgICAgYm9yZGVyLXJhZGl1czogQGltZy13aWR0aCAvIDI7DQogICAgICAgIH0NCiAgICAgICAgPmxpIHsNCiAgICAgICAgICAgIGZsb2F0OiBsZWZ0Ow0KICAgICAgICAgICAgPmEgew0KICAgICAgICAgICAgICAgIHBhZGRpbmctdG9wOiAxNXB4Ow0KICAgICAgICAgICAgICAgIHBhZGRpbmctYm90dG9tOiAxNXB4Ow0KICAgICAgICAgICAgfQ0KICAgICAgICB9IC8vIHVsIHsNCiAgICAgICAgLy8gICAgIGxpc3Qtc3R5bGU6IG5vbmU7DQogICAgICAgIC8vICAgICBsaSB7DQogICAgICAgIC8vICAgICAgICAgcG9zaXRpb246IHJlbGF0aXZlOw0KICAgICAgICAvLyAgICAgICAgIGRpc3BsYXk6IGJsb2NrOw0KICAgICAgICAvLyAgICAgICAgIGZsb2F0OiBsZWZ0Ow0KICAgICAgICAvLyAgICAgICAgID4gYSB7DQogICAgICAgIC8vICAgICAgICAgICAgIGNvbG9yOiAjNTU1Ow0KICAgICAgICAvLyAgICAgICAgICAgICBiYWNrZ3JvdW5kOiAjZTdlN2U3Ow0KICAgICAgICAvLyAgICAgICAgICAgICAvLyBkaXNwbGF5OiBibG9jazsNCiAgICAgICAgLy8gICAgICAgICAgICAgcGFkZGluZzogMTBweCAxNXB4Ow0KICAgICAgICAvLyAgICAgICAgIH0NCiAgICAgICAgLy8gICAgIH0NCiAgICAgICAgLy8gfQ0KICAgIH0NCiAgICAubmF2LXRhYnMgew0KICAgICAgICBib3JkZXItY29sb3I6ICNjNWQwZGM7DQogICAgICAgIG1hcmdpbi1ib3R0b206IDA7DQogICAgICAgIG1hcmdpbi1sZWZ0OiAwOw0KICAgICAgICBwb3NpdGlvbjogcmVsYXRpdmU7DQogICAgICAgIHRvcDogMXB4Ow0KICAgIH0NCiAgICAubmF2LXRhYnM+bGk+YSB7DQogICAgICAgIHBhZGRpbmc6IDhweCAxMnB4Ow0KICAgIH0NCiAgICAubmF2LXRhYnM+bGk+YSwNCiAgICAubmF2LXRhYnM+bGk+YTpmb2N1cyB7DQogICAgICAgIGJvcmRlci1yYWRpdXM6IDAgIWltcG9ydGFudDsNCiAgICAgICAgYmFja2dyb3VuZC1jb2xvcjogI2Y5ZjlmOTsNCiAgICAgICAgY29sb3I6ICM5OTk7DQogICAgICAgIG1hcmdpbi1yaWdodDogLTFweDsNCiAgICAgICAgbGluZS1oZWlnaHQ6IDE2cHg7DQogICAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTsNCiAgICAgICAgei1pbmRleDogMTE7DQogICAgICAgIGJvcmRlci1jb2xvcjogI2M1ZDBkYzsNCiAgICB9DQogICAgLm5hdi10YWJzPmxpPmE6aG92ZXIgew0KICAgICAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjRkZGOw0KICAgICAgICBjb2xvcjogIzRjOGZiZDsNCiAgICAgICAgYm9yZGVyLWNvbG9yOiAjYzVkMGRjOw0KICAgIH0NCiAgICAubmF2LXRhYnM+bGk+YTphY3RpdmUsDQogICAgLm5hdi10YWJzPmxpPmE6Zm9jdXMgew0KICAgICAgICBvdXRsaW5lOiBub25lICFpbXBvcnRhbnQ7DQogICAgfQ0KICAgIC5uYXYtdGFicz5saTpmaXJzdC1jaGlsZD5hIHsNCiAgICAgICAgbWFyZ2luLWxlZnQ6IDA7DQogICAgfQ0KICAgIC5uYXYtdGFicz5saS5hY3RpdmU+YSwNCiAgICAubmF2LXRhYnM+bGkuYWN0aXZlPmE6aG92ZXIsDQogICAgLm5hdi10YWJzPmxpLmFjdGl2ZT5hOmZvY3VzIHsNCiAgICAgICAgY29sb3I6ICM1NzYzNzM7DQogICAgICAgIGJvcmRlci1jb2xvcjogI2M1ZDBkYzsNCiAgICAgICAgYm9yZGVyLXRvcDogMnB4IHNvbGlkICM0YzhmYmQ7DQogICAgICAgIGJvcmRlci1ib3R0b20tY29sb3I6IHRyYW5zcGFyZW50Ow0KICAgICAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjRkZGOw0KICAgICAgICB6LWluZGV4OiAxMjsNCiAgICAgICAgbGluZS1oZWlnaHQ6IDE2cHg7DQogICAgICAgIG1hcmdpbi10b3A6IC0xcHg7DQogICAgICAgIGJveC1zaGFkb3c6IDAgLTJweCAzcHggMCByZ2JhKDAsIDAsIDAsIDAuMTUpOw0KICAgIH0NCiAgICAucGFnaW5nQmFyIHsNCiAgICAgICAgYmFja2dyb3VuZC1jb2xvcjogI2VmZjNmODsNCiAgICAgICAgdGV4dC1hbGlnbjogcmlnaHQ7DQogICAgICAgIC50b3RhbCB7DQogICAgICAgICAgICBmbG9hdDogbGVmdDsNCiAgICAgICAgfQ0KICAgICAgICAuYnV0dG9ucyB7DQogICAgICAgICAgICBmbG9hdDogcmlnaHQ7DQogICAgICAgIH0NCiAgICAgICAgYSB7DQogICAgICAgICAgICAvKmJhY2tncm91bmQtY29sb3I6ICNmYWZhZmE7DQogICAgICAgICAgICBjb2xvcjogIzIyODNjNTsqLw0KICAgICAgICAgICAgbWFyZ2luLXJpZ2h0OiA0cHg7DQogICAgICAgICAgICAmLmFjdGl2ZSB7DQogICAgICAgICAgICAgICAgY29sb3I6IHJlZDsNCiAgICAgICAgICAgIH0NCiAgICAgICAgfQ0KICAgIH0gLy8gLnBhZ2luZ0JhciAudG90YWwgew0KICAgIC8vICAgICBmbG9hdDogbGVmdDsNCiAgICAvLyB9DQogICAgLy8gLnBhZ2luZ0JhciBhIHsNCiAgICAvLyAgICAgLypiYWNrZ3JvdW5kLWNvbG9yOiAjZmFmYWZhOw0KICAgIC8vICAgICBjb2xvcjogIzIyODNjNTsqLw0KICAgIC8vICAgICBtYXJnaW4tcmlnaHQ6IDRweDsNCiAgICAvLyB9DQogICAgLy8gLnBhZ2luZ0JhciBhLmFjdGl2ZXsNCiAgICAvLyAgICAgY29sb3I6IHJlZDsNCiAgICAvLyB9DQogICAgLy8gTGlua3MNCiAgICAvLyBhIHsNCiAgICAvLyAgICAgY29sb3I6IEBsaW5rLWNvbG9yOw0KICAgIC8vICAgICB0ZXh0LWRlY29yYXRpb246IG5vbmU7DQogICAgLy8gICAgICY6aG92ZXIsDQogICAgLy8gICAgICY6Zm9jdXMgew0KICAgIC8vICAgICBjb2xvcjogQGxpbmstaG92ZXItY29sb3I7DQogICAgLy8gICAgIHRleHQtZGVjb3JhdGlvbjogQGxpbmstaG92ZXItZGVjb3JhdGlvbjsNCiAgICAvLyAgICAgfQ0KICAgIC8vICAgICAmOmZvY3VzIHsNCiAgICAvLyAgICAgLnRhYi1mb2N1cygpOw0KICAgIC8vICAgICB9DQogICAgLy8gfQ0KICAgIHVsIHsNCiAgICAgICAgcGFkZGluZzogMDsNCiAgICAgICAgbGkgew0KICAgICAgICAgICAgbGlzdC1zdHlsZTogbm9uZTsNCiAgICAgICAgfQ0KICAgIH0NCn0NCg0KQGZpcnN0UGFuZWxXaWR0aDogMTEwcHg7DQpAc2Vjb25kUGFuZWxXaWR0aDogMTIwcHg7DQouZmlyc3Qgew0KICAgIGJhY2tncm91bmQtY29sb3I6ICM3Nzc2NzY7DQogICAgcG9zaXRpb246IGFic29sdXRlOw0KICAgIGhlaWdodDogMTAwJTsNCiAgICB3aWR0aDogQGZpcnN0UGFuZWxXaWR0aDsNCn0NCg0KLmZpcnN0IC5saXN0LWdyb3VwLWl0ZW0gew0KICAgIGJhY2tncm91bmQtY29sb3I6ICM3Nzc2NzY7DQogICAgYm9yZGVyLWNvbG9yOiAjNzc3Njc2Ow0KICAgIGNvbG9yOiB3aGl0ZTsNCn0NCg0KLmZpcnN0IC5saXN0LWdyb3VwLWl0ZW0uYWN0aXZlIHsNCiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjZTdlN2U3Ow0KICAgIGJvcmRlci1jb2xvcjogI2U3ZTdlNzsNCiAgICBjb2xvcjogYmxhY2s7DQogICAgYm9yZGVyLXRvcC1yaWdodC1yYWRpdXM6IDA7DQogICAgYm9yZGVyLXRvcC1sZWZ0LXJhZGl1czogMDsNCn0NCg0KLnNlY29uZCB7DQogICAgd2lkdGg6IEBzZWNvbmRQYW5lbFdpZHRoOw0KICAgIGJhY2tncm91bmQtY29sb3I6ICNlN2U3ZTc7DQogICAgcG9zaXRpb246IGFic29sdXRlOw0KICAgIGhlaWdodDogMTAwJTsNCiAgICBtYXJnaW4tbGVmdDogQGZpcnN0UGFuZWxXaWR0aDsNCn0NCg0KLnNlY29uZCAubGlzdC1ncm91cC1pdGVtIHsNCiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjZTdlN2U3Ow0KICAgIGJvcmRlci1jb2xvcjogI2U3ZTdlNzsNCiAgICBjb2xvcjogYmxhY2s7DQp9DQoNCi5zZWNvbmQgLmxpc3QtZ3JvdXAtaXRlbS5hY3RpdmUsDQouc2Vjb25kIC5saXN0LWdyb3VwLWl0ZW0uYWN0aXZlOmhvdmVyIHsNCiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjZTdlN2U3Ow0KICAgIGJvcmRlci1jb2xvcjogI2U3ZTdlNzsNCiAgICBjb2xvcjogaW5oZXJpdDsNCiAgICBmb250LXdlaWdodDogYm9sZDsNCiAgICB0ZXh0LWRlY29yYXRpb246IHVuZGVybGluZTsNCn0NCg0KLy89PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCi8vIOmhtemdouahhuaetuagt+W8jw0KLm1haW4gew0KICAgIG1hcmdpbi1sZWZ0OiBAZmlyc3RQYW5lbFdpZHRoICsgQHNlY29uZFBhbmVsV2lkdGg7DQp9DQoNCi5oaWRlRmlyc3Qgew0KICAgIC5maXJzdCB7DQogICAgICAgIGRpc3BsYXk6IG5vbmU7DQogICAgfQ0KICAgIC5zZWNvbmQgew0KICAgICAgICBkaXNwbGF5OiBub25lOw0KICAgIH0NCiAgICAubWFpbiB7DQogICAgICAgIG1hcmdpbi1sZWZ0OiAwOw0KICAgIH0NCn0NCg0KLmhpZGVTZWNvbmQgew0KICAgIC5zZWNvbmQgew0KICAgICAgICBkaXNwbGF5OiBub25lOw0KICAgIH0NCiAgICAubWFpbiB7DQogICAgICAgIG1hcmdpbi1sZWZ0OiBAZmlyc3RQYW5lbFdpZHRoOw0KICAgIH0NCn0NCg0KLy89PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQovKiDnp7vliqjnq6/pooTop4jpobXpnaLmu5rliqjmnaHmoLflvI8gKi8NCg0KLm1vYmlsZS1wYWdlIHNlY3Rpb246Oi13ZWJraXQtc2Nyb2xsYmFyLXRyYWNrLXBpZWNlIHsNCiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjZmZmOw0KfQ0KDQoubW9iaWxlLXBhZ2Ugc2VjdGlvbjo6LXdlYmtpdC1zY3JvbGxiYXIgew0KICAgIHdpZHRoOiA0cHg7DQp9DQoNCi5tb2JpbGUtcGFnZSBzZWN0aW9uOjotd2Via2l0LXNjcm9sbGJhci10aHVtYiB7DQogICAgYmFja2dyb3VuZDogIzk5OTsNCn0NCg0KLy89PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCi8vIGNoZWNrYm94IOaMiemSruagt+W8jw0KbGFiZWwuc3dpdGNoIHsNCiAgICBtYXJnaW4tYm90dG9tOiAwOw0KICAgIG1hcmdpbi10b3A6IC02cHg7DQogICAgaW5wdXRbdHlwZT1jaGVja2JveF0uYWNlIHsNCiAgICAgICAgei1pbmRleDogLTEwMCAhaW1wb3J0YW50Ow0KICAgICAgICB3aWR0aDogMXB4ICFpbXBvcnRhbnQ7DQogICAgICAgIGhlaWdodDogMXB4ICFpbXBvcnRhbnQ7DQogICAgICAgIGNsaXA6IHJlY3QoMXB4LCAxcHgsIDFweCwgMXB4KTsNCiAgICAgICAgcG9zaXRpb246IGFic29sdXRlOw0KICAgIH0NCiAgICBpbnB1dFt0eXBlPWNoZWNrYm94XS5hY2UrLmxibCB7DQogICAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTsNCiAgICAgICAgZGlzcGxheTogaW5saW5lLWJsb2NrOw0KICAgICAgICBtYXJnaW46IDA7DQogICAgICAgIGxpbmUtaGVpZ2h0OiAyMHB4Ow0KICAgICAgICBtaW4taGVpZ2h0OiAxOHB4Ow0KICAgICAgICBtaW4td2lkdGg6IDE4cHg7DQogICAgICAgIGZvbnQtd2VpZ2h0OiBub3JtYWw7DQogICAgICAgIGN1cnNvcjogcG9pbnRlcjsNCiAgICAgICAgdG9wOiA4cHg7DQogICAgfQ0KICAgIGlucHV0W3R5cGU9Y2hlY2tib3hdLmFjZS5hY2Utc3dpdGNoKy5sYmw6OmFmdGVyIHsNCiAgICAgICAgZm9udC1mYW1pbHk6ICdPcGVuIFNhbnMnOw0KICAgICAgICBjb250ZW50OiAnSUlJJzsNCiAgICAgICAgZm9udC1zaXplOiAxMnB4Ow0KICAgICAgICBmb250LXdlaWdodDogbm9ybWFsOw0KICAgICAgICBsZXR0ZXItc3BhY2luZzogMDsNCiAgICAgICAgY29sb3I6ICNBQUE7DQogICAgICAgIHRleHQtc2hhZG93OiBub25lOw0KICAgICAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjRkZGOw0KICAgICAgICBib3JkZXItcmFkaXVzOiAxMDAlOw0KICAgICAgICB3aWR0aDogMjJweDsNCiAgICAgICAgaGVpZ2h0OiAyMnB4Ow0KICAgICAgICBsaW5lLWhlaWdodDogMjJweDsNCiAgICAgICAgdGV4dC1hbGlnbjogY2VudGVyOw0KICAgICAgICBwb3NpdGlvbjogYWJzb2x1dGU7DQogICAgICAgIHRvcDogLTJweDsNCiAgICAgICAgbGVmdDogLTNweDsNCiAgICAgICAgLXdlYmtpdC1ib3gtc2hhZG93OiAwcHggMXB4IDFweCAxcHggcmdiYSgwLCAwLCAwLCAuMyk7DQogICAgICAgIGJveC1zaGFkb3c6IDBweCAxcHggMXB4IDFweCByZ2JhKDAsIDAsIDAsIC4zKTsNCiAgICAgICAgLXdlYmtpdC10cmFuc2l0aW9uOiBsZWZ0IC4zcyBlYXNlOw0KICAgICAgICAtby10cmFuc2l0aW9uOiBsZWZ0IC4zcyBlYXNlOw0KICAgICAgICB0cmFuc2l0aW9uOiBsZWZ0IC4zcyBlYXNlOw0KICAgIH0NCiAgICBpbnB1dFt0eXBlPWNoZWNrYm94XS5hY2UuYWNlLXN3aXRjaDpjaGVja2VkKy5sYmw6OmJlZm9yZSB7DQogICAgICAgIHRleHQtaW5kZW50OiA4cHg7DQogICAgICAgIGNvbG9yOiAjRkZGOw0KICAgICAgICB0ZXh0LXNoYWRvdzogMCAwIDAgI0ZGRjsNCiAgICAgICAgYmFja2dyb3VuZC1jb2xvcjogIzhhYjJjOTsNCiAgICAgICAgYm9yZGVyLWNvbG9yOiAjNmE4Y2E4Ow0KICAgIH0NCiAgICBpbnB1dFt0eXBlPWNoZWNrYm94XS5hY2UuYWNlLXN3aXRjaC5hY2Utc3dpdGNoLTUrLmxibDo6YmVmb3JlIHsNCiAgICAgICAgY29udGVudDogIlxhMOaYr1xhMFxhMFxhMFxhMFxhMFxhMFxhMFxhMFxhMFxhMFxhMFxhMOWQpiI7DQogICAgICAgIGZvbnQtc2l6ZTogMTJweDsNCiAgICAgICAgbGluZS1oZWlnaHQ6IDIxcHg7DQogICAgICAgIGhlaWdodDogMjRweDsNCiAgICAgICAgb3ZlcmZsb3c6IGhpZGRlbjsNCiAgICAgICAgYm9yZGVyLXJhZGl1czogMTJweDsNCiAgICAgICAgYmFja2dyb3VuZC1jb2xvcjogIzhiOWFhMzsNCiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgIzhiOWFhMzsNCiAgICAgICAgY29sb3I6ICNGRkY7DQogICAgICAgIHdpZHRoOiA1NnB4Ow0KICAgICAgICB0ZXh0LWluZGVudDogLTI1cHg7DQogICAgICAgIHRleHQtc2hhZG93OiAwIDAgMCAjRkZGOw0KICAgICAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7DQogICAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTsNCiAgICAgICAgYm94LXNoYWRvdzogbm9uZTsNCiAgICAgICAgLXdlYmtpdC10cmFuc2l0aW9uOiBhbGwgLjNzIGVhc2U7DQogICAgICAgIC1vLXRyYW5zaXRpb246IGFsbCAuM3MgZWFzZTsNCiAgICAgICAgdHJhbnNpdGlvbjogYWxsIC4zcyBlYXNlOw0KICAgIH0NCiAgICBpbnB1dFt0eXBlPWNoZWNrYm94XS5hY2UuYWNlLXN3aXRjaC5hY2Utc3dpdGNoLTUrLmxibDo6YWZ0ZXIgew0KICAgICAgICBjb250ZW50OiAnSUlJJzsNCiAgICAgICAgZm9udC1zaXplOiAxMXB4Ow0KICAgICAgICBwb3NpdGlvbjogYWJzb2x1dGU7DQogICAgICAgIHRvcDogMnB4Ow0KICAgICAgICBsZWZ0OiAycHg7DQogICAgICAgIGxldHRlci1zcGFjaW5nOiAwOw0KICAgICAgICB3aWR0aDogMjBweDsNCiAgICAgICAgaGVpZ2h0OiAyMHB4Ow0KICAgICAgICBsaW5lLWhlaWdodDogMTlweDsNCiAgICAgICAgdGV4dC1zaGFkb3c6IG5vbmUgIWltcG9ydGFudDsNCiAgICAgICAgY29sb3I6ICM5MzkzOTM7DQogICAgICAgIGJhY2tncm91bmQtY29sb3I6ICNGRkY7DQogICAgICAgIC13ZWJraXQtdHJhbnNpdGlvbjogYWxsIC4zcyBlYXNlOw0KICAgICAgICAtby10cmFuc2l0aW9uOiBhbGwgLjNzIGVhc2U7DQogICAgICAgIHRyYW5zaXRpb246IGFsbCAuM3MgZWFzZTsNCiAgICB9DQogICAgaW5wdXRbdHlwZT1jaGVja2JveF0uYWNlLmFjZS1zd2l0Y2guYWNlLXN3aXRjaC01OmNoZWNrZWQrLmxibDo6YmVmb3JlIHsNCiAgICAgICAgdGV4dC1pbmRlbnQ6IDlweDsNCiAgICAgICAgYmFja2dyb3VuZC1jb2xvcjogIzQ2OGZjYzsNCiAgICAgICAgYm9yZGVyLWNvbG9yOiAjNDY4RkNDOw0KICAgIH0NCiAgICBpbnB1dFt0eXBlPWNoZWNrYm94XS5hY2UuYWNlLXN3aXRjaC5hY2Utc3dpdGNoLTU6Y2hlY2tlZCsubGJsOjphZnRlciB7DQogICAgICAgIGxlZnQ6IDM0cHg7DQogICAgICAgIGJhY2tncm91bmQtY29sb3I6ICNGRkY7DQogICAgICAgIGNvbG9yOiAjODQ4NDg0Ow0KICAgIH0NCn0gLy89PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCmJ1dHRvbi5idG4tc20gc3BhbiB7DQogICAgcGFkZGluZy1sZWZ0OiA0cHg7DQp9DQoNCmJ1dHRvbi5idG4tbWluaWVyIHNwYW4gew0KICAgIHBhZGRpbmctbGVmdDogMnB4Ow0KfQ==", "base64").toString();
-              if (config_1.config.firstPanelWidth) {
-                str = str + ("\r\n@firstPanelWidth: " + config_1.config.firstPanelWidth + ";");
+              if (this.config.firstPanelWidth) {
+                str = str + ("\r\n@firstPanelWidth: " + this.config.firstPanelWidth + ";");
               }
               var less = window['less'];
               less.render(str, function (e, result) {
@@ -3300,12 +2148,17 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             value: function run() {
               _get(Application.prototype.__proto__ || Object.getPrototypeOf(Application.prototype), "run", this).call(this);
               this.loadStyle();
-              // this.loadMenus()
             }
           }, {
             key: "masterPage",
             get: function get() {
               return this._masterPage;
+            }
+          }, {
+            key: "config",
+            get: function get() {
+              window['maishu-chitu-admin-config'] = window['maishu-chitu-admin-config'] || {};
+              return window['maishu-chitu-admin-config'];
             }
           }]);
 
@@ -3323,5 +2176,5 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           });
         }
       }).call(this, require("buffer").Buffer);
-    }, { "./config": 7, "buffer": 2, "maishu-chitu-react": 4, "react": "react" }] }, {}, [8])(8);
+    }, { "buffer": 2, "maishu-chitu-react": "maishu-chitu-react", "react": "react" }] }, {}, [5])(5);
 });

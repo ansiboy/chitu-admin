@@ -4,12 +4,12 @@ import React = require('react');
 import * as chitu_react from 'maishu-chitu-react';
 import * as fs from 'fs';
 
-type Menu = chitu_admin.Menu
+type MenuItem = chitu_admin.MenuItem
 
 interface State {
     currentPageName?: string,
     toolbar?: JSX.Element,
-    menus: Menu[],
+    menus: MenuItem[],
 }
 
 interface Props {
@@ -26,7 +26,7 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
 
     }
 
-    private showPageByNode(node: Menu) {
+    private showPageByNode(node: MenuItem) {
         let pageName = node.path;
         if (pageName == null && node.children.length > 0) {
             node = node.children[0];
@@ -44,13 +44,29 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
 
     }
 
+    private findMenuItem(menuItems: MenuItem[], pageName: string) {
+        // let currentNode = currentPageName ? menuData.filter(o => o.path == currentPageName)[0] : null;
+        let stack = new Array<MenuItem>()
+        stack.push(...menuItems)
+        while (stack.length > 0) {
+            let item = stack.pop()
+            if (item.path == pageName)
+                return item
+
+            let children = item.children || []
+            stack.push(...children)
+        }
+
+        return null
+    }
+
     /** 设置工具栏 */
     setToolbar(toolbar: JSX.Element) {
         this.setState({ toolbar })
     }
 
     /** 设置菜单 */
-    setMenus(menus: Menu[]) {
+    setMenus(menus: MenuItem[]) {
         menus = menus || []
 
         let currentPageName = this.app.currentPage ? this.app.currentPage.name : null;
@@ -73,15 +89,28 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
     render() {
         let menuData = this.state.menus;
         let currentPageName: string = this.state.currentPageName;
-        let currentNode = currentPageName ? menuData.filter(o => o.path == currentPageName)[0] : null;
 
         let firstLevelNodes = menuData.filter(o => o.visible == null || o.visible == true);
-        let nodeClassName = '';
+        let currentNode = currentPageName ? this.findMenuItem(firstLevelNodes, currentPageName) : null //menuData.filter(o => o.path == currentPageName)[0] : null;
+        let firstLevelNode: MenuItem;
+        let secondLevelNode: MenuItem;
 
-        if (currentNode == null) {
+
+        if (currentNode != null) {
+            if (currentNode.parent == null) {
+                firstLevelNode = currentNode
+            }
+            else if (currentNode.parent.parent == null) {
+                firstLevelNode = currentNode.parent
+                secondLevelNode = currentNode
+            }
+        }
+
+        let nodeClassName = '';
+        if (firstLevelNode == null) {
             nodeClassName = 'hideFirst';
         }
-        else if ((currentNode.children || []).length == 0) {
+        else if ((firstLevelNode.children || []).filter(o => o.visible != false).length == 0) {
             nodeClassName = 'hideSecond';
         }
 
@@ -90,7 +119,7 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
                 <div className="first">
                     <ul className="list-group" style={{ margin: 0 }}>
                         {firstLevelNodes.map((o, i) =>
-                            <li key={i} className={o == currentNode || (currentNode || { parent: null }).parent ? "list-group-item active" : "list-group-item"}
+                            <li key={i} className={o == firstLevelNode ? "list-group-item active" : "list-group-item"}
                                 style={{ cursor: 'pointer', display: o.visible == false ? "none" : null }}
                                 onClick={() => this.showPageByNode(o)}>
                                 <i className={o.icon} style={{ fontSize: 16 }}></i>
@@ -101,8 +130,8 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
                 </div>
                 <div className="second">
                     <ul className="list-group" style={{ margin: 0 }}>
-                        {(currentNode ? currentNode.children : []).map((o, i) =>
-                            <li key={i} className={o == currentNode ? "list-group-item active" : "list-group-item"}
+                        {(firstLevelNode ? firstLevelNode.children : []).filter(o => o.visible != false).map((o, i) =>
+                            <li key={i} className={o == secondLevelNode ? "list-group-item active" : "list-group-item"}
                                 style={{ cursor: 'pointer', display: o.visible == false ? "none" : null }}
                                 onClick={() => this.showPageByNode(o)}>
                                 <span style={{ paddingLeft: 8, fontSize: 14 }}>{o.name}</span>

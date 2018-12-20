@@ -2033,7 +2033,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const application_1 = require("./application");
 var application_2 = require("./application");
 exports.app = application_2.app;
-application_1.app.run();
+exports.config = application_1.app.config;
 
 },{"./application":4}],6:[function(require,module,exports){
 (function (Buffer){
@@ -2061,6 +2061,19 @@ class MasterPage extends React.Component {
             this.app.redirect(pageName);
         }
     }
+    findMenuItem(menuItems, pageName) {
+        // let currentNode = currentPageName ? menuData.filter(o => o.path == currentPageName)[0] : null;
+        let stack = new Array();
+        stack.push(...menuItems);
+        while (stack.length > 0) {
+            let item = stack.pop();
+            if (item.path == pageName)
+                return item;
+            let children = item.children || [];
+            stack.push(...children);
+        }
+        return null;
+    }
     /** 设置工具栏 */
     setToolbar(toolbar) {
         this.setState({ toolbar });
@@ -2085,22 +2098,33 @@ class MasterPage extends React.Component {
     render() {
         let menuData = this.state.menus;
         let currentPageName = this.state.currentPageName;
-        let currentNode = currentPageName ? menuData.filter(o => o.path == currentPageName)[0] : null;
         let firstLevelNodes = menuData.filter(o => o.visible == null || o.visible == true);
+        let currentNode = currentPageName ? this.findMenuItem(firstLevelNodes, currentPageName) : null; //menuData.filter(o => o.path == currentPageName)[0] : null;
+        let firstLevelNode;
+        let secondLevelNode;
+        if (currentNode != null) {
+            if (currentNode.parent == null) {
+                firstLevelNode = currentNode;
+            }
+            else if (currentNode.parent.parent == null) {
+                firstLevelNode = currentNode.parent;
+                secondLevelNode = currentNode;
+            }
+        }
         let nodeClassName = '';
-        if (currentNode == null) {
+        if (firstLevelNode == null) {
             nodeClassName = 'hideFirst';
         }
-        else if ((currentNode.children || []).length == 0) {
+        else if ((firstLevelNode.children || []).filter(o => o.visible != false).length == 0) {
             nodeClassName = 'hideSecond';
         }
         return (React.createElement("div", { className: nodeClassName },
             React.createElement("div", { className: "first" },
-                React.createElement("ul", { className: "list-group", style: { margin: 0 } }, firstLevelNodes.map((o, i) => React.createElement("li", { key: i, className: o == currentNode || (currentNode || { parent: null }).parent ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: () => this.showPageByNode(o) },
+                React.createElement("ul", { className: "list-group", style: { margin: 0 } }, firstLevelNodes.map((o, i) => React.createElement("li", { key: i, className: o == firstLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: () => this.showPageByNode(o) },
                     React.createElement("i", { className: o.icon, style: { fontSize: 16 } }),
                     React.createElement("span", { style: { paddingLeft: 8, fontSize: 14 } }, o.name))))),
             React.createElement("div", { className: "second" },
-                React.createElement("ul", { className: "list-group", style: { margin: 0 } }, (currentNode ? currentNode.children : []).map((o, i) => React.createElement("li", { key: i, className: o == currentNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: () => this.showPageByNode(o) },
+                React.createElement("ul", { className: "list-group", style: { margin: 0 } }, (firstLevelNode ? firstLevelNode.children : []).filter(o => o.visible != false).map((o, i) => React.createElement("li", { key: i, className: o == secondLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: () => this.showPageByNode(o) },
                     React.createElement("span", { style: { paddingLeft: 8, fontSize: 14 } }, o.name))))),
             React.createElement("div", { className: "main" },
                 React.createElement("nav", { className: "navbar navbar-default", style: { padding: "10px 10px 10px 10px" } }, this.state.toolbar),

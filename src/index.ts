@@ -1,4 +1,3 @@
 import { app } from './application'
 export { app } from './application'
-
-app.run()
+export let config = app.config

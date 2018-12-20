@@ -6,19 +6,19 @@ declare module chitu_admin {
         menuType: string,
     }
 
-    export type Menu = {
+    export type MenuItem = {
         id?: string,
         name: string,
         path?: string,
         icon?: string,
-        parent?: Menu,
-        children: Menu[],
+        parent?: MenuItem,
+        children: MenuItem[],
         visible: boolean,
     };
 
     export interface MasterPage {
         /** 设置菜单 */
-        setMenus(menus: Menu[])
+        setMenus(menus: MenuItem[])
         /** 设置工具栏 */
         setToolbar(toolbar: JSX.Element)
     }

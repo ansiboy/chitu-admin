@@ -4,7 +4,7 @@
     "scripts": {
         "build": "grunt"
     },
-    "version": "1.0.21",
+    "version": "1.0.28",
     "devDependencies": {
         "@types/node": "^10.12.15",
         "@types/react": "^16.7.17",

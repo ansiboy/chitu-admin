@@ -6,6 +6,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -13,7 +15,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /*!
- * CHITU-ADMIN v1.0.21
+ * CHITU-ADMIN v1.0.28
  * https://github.com/ansiboy/chitu-admin
  *
  * Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -1980,7 +1982,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       var application_1 = require("./application");
       var application_2 = require("./application");
       exports.app = application_2.app;
-      application_1.app.run();
+      exports.config = application_1.app.config;
     }, { "./application": 4 }], 6: [function (require, module, exports) {
       (function (Buffer) {
         "use strict";
@@ -2017,6 +2019,20 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                 this.app.redirect(pageName);
               }
             }
+          }, {
+            key: "findMenuItem",
+            value: function findMenuItem(menuItems, pageName) {
+              // let currentNode = currentPageName ? menuData.filter(o => o.path == currentPageName)[0] : null;
+              var stack = new Array();
+              stack.push.apply(stack, _toConsumableArray(menuItems));
+              while (stack.length > 0) {
+                var item = stack.pop();
+                if (item.path == pageName) return item;
+                var children = item.children || [];
+                stack.push.apply(stack, _toConsumableArray(children));
+              }
+              return null;
+            }
             /** 设置工具栏 */
 
           }, {
@@ -2052,24 +2068,36 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
               var menuData = this.state.menus;
               var currentPageName = this.state.currentPageName;
-              var currentNode = currentPageName ? menuData.filter(function (o) {
-                return o.path == currentPageName;
-              })[0] : null;
               var firstLevelNodes = menuData.filter(function (o) {
                 return o.visible == null || o.visible == true;
               });
+              var currentNode = currentPageName ? this.findMenuItem(firstLevelNodes, currentPageName) : null; //menuData.filter(o => o.path == currentPageName)[0] : null;
+              var firstLevelNode = void 0;
+              var secondLevelNode = void 0;
+              if (currentNode != null) {
+                if (currentNode.parent == null) {
+                  firstLevelNode = currentNode;
+                } else if (currentNode.parent.parent == null) {
+                  firstLevelNode = currentNode.parent;
+                  secondLevelNode = currentNode;
+                }
+              }
               var nodeClassName = '';
-              if (currentNode == null) {
+              if (firstLevelNode == null) {
                 nodeClassName = 'hideFirst';
-              } else if ((currentNode.children || []).length == 0) {
+              } else if ((firstLevelNode.children || []).filter(function (o) {
+                return o.visible != false;
+              }).length == 0) {
                 nodeClassName = 'hideSecond';
               }
               return React.createElement("div", { className: nodeClassName }, React.createElement("div", { className: "first" }, React.createElement("ul", { className: "list-group", style: { margin: 0 } }, firstLevelNodes.map(function (o, i) {
-                return React.createElement("li", { key: i, className: o == currentNode || (currentNode || { parent: null }).parent ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: function onClick() {
+                return React.createElement("li", { key: i, className: o == firstLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: function onClick() {
                     return _this3.showPageByNode(o);
                   } }, React.createElement("i", { className: o.icon, style: { fontSize: 16 } }), React.createElement("span", { style: { paddingLeft: 8, fontSize: 14 } }, o.name));
-              }))), React.createElement("div", { className: "second" }, React.createElement("ul", { className: "list-group", style: { margin: 0 } }, (currentNode ? currentNode.children : []).map(function (o, i) {
-                return React.createElement("li", { key: i, className: o == currentNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: function onClick() {
+              }))), React.createElement("div", { className: "second" }, React.createElement("ul", { className: "list-group", style: { margin: 0 } }, (firstLevelNode ? firstLevelNode.children : []).filter(function (o) {
+                return o.visible != false;
+              }).map(function (o, i) {
+                return React.createElement("li", { key: i, className: o == secondLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: function onClick() {
                     return _this3.showPageByNode(o);
                   } }, React.createElement("span", { style: { paddingLeft: 8, fontSize: 14 } }, o.name));
               }))), React.createElement("div", { className: "main" }, React.createElement("nav", { className: "navbar navbar-default", style: { padding: "10px 10px 10px 10px" } }, this.state.toolbar), React.createElement("div", { style: { padding: 20 }, ref: function ref(e) {

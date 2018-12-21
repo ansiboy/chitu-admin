@@ -45,12 +45,16 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
     }
 
     private findMenuItem(menuItems: MenuItem[], pageName: string) {
-        // let currentNode = currentPageName ? menuData.filter(o => o.path == currentPageName)[0] : null;
         let stack = new Array<MenuItem>()
         stack.push(...menuItems)
         while (stack.length > 0) {
             let item = stack.pop()
-            if (item.path == pageName)
+
+            if (!item.path)
+                continue
+
+            let obj = this.app.parseUrl(item.path)
+            if (obj.pageName == pageName)
                 return item
 
             let children = item.children || []
@@ -130,7 +134,7 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
                 </div>
                 <div className="second">
                     <ul className="list-group" style={{ margin: 0 }}>
-                        {(firstLevelNode ? firstLevelNode.children : []).filter(o => o.visible != false).map((o, i) =>
+                        {(firstLevelNode ? (firstLevelNode.children || []) : []).filter(o => o.visible != false).map((o, i) =>
                             <li key={i} className={o == secondLevelNode ? "list-group-item active" : "list-group-item"}
                                 style={{ cursor: 'pointer', display: o.visible == false ? "none" : null }}
                                 onClick={() => this.showPageByNode(o)}>

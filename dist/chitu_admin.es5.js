@@ -15,7 +15,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /*!
- * CHITU-ADMIN v1.0.28
+ * CHITU-ADMIN v1.0.30
  * https://github.com/ansiboy/chitu-admin
  *
  * Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -2022,12 +2022,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           }, {
             key: "findMenuItem",
             value: function findMenuItem(menuItems, pageName) {
-              // let currentNode = currentPageName ? menuData.filter(o => o.path == currentPageName)[0] : null;
               var stack = new Array();
               stack.push.apply(stack, _toConsumableArray(menuItems));
               while (stack.length > 0) {
                 var item = stack.pop();
-                if (item.path == pageName) return item;
+                if (!item.path) continue;
+                var obj = this.app.parseUrl(item.path);
+                if (obj.pageName == pageName) return item;
                 var children = item.children || [];
                 stack.push.apply(stack, _toConsumableArray(children));
               }
@@ -2094,7 +2095,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                 return React.createElement("li", { key: i, className: o == firstLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: function onClick() {
                     return _this3.showPageByNode(o);
                   } }, React.createElement("i", { className: o.icon, style: { fontSize: 16 } }), React.createElement("span", { style: { paddingLeft: 8, fontSize: 14 } }, o.name));
-              }))), React.createElement("div", { className: "second" }, React.createElement("ul", { className: "list-group", style: { margin: 0 } }, (firstLevelNode ? firstLevelNode.children : []).filter(function (o) {
+              }))), React.createElement("div", { className: "second" }, React.createElement("ul", { className: "list-group", style: { margin: 0 } }, (firstLevelNode ? firstLevelNode.children || [] : []).filter(function (o) {
                 return o.visible != false;
               }).map(function (o, i) {
                 return React.createElement("li", { key: i, className: o == secondLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: function onClick() {

@@ -23,12 +23,14 @@ class MasterPage extends React.Component {
         }
     }
     findMenuItem(menuItems, pageName) {
-        // let currentNode = currentPageName ? menuData.filter(o => o.path == currentPageName)[0] : null;
         let stack = new Array();
         stack.push(...menuItems);
         while (stack.length > 0) {
             let item = stack.pop();
-            if (item.path == pageName)
+            if (!item.path)
+                continue;
+            let obj = this.app.parseUrl(item.path);
+            if (obj.pageName == pageName)
                 return item;
             let children = item.children || [];
             stack.push(...children);
@@ -85,7 +87,7 @@ class MasterPage extends React.Component {
                     React.createElement("i", { className: o.icon, style: { fontSize: 16 } }),
                     React.createElement("span", { style: { paddingLeft: 8, fontSize: 14 } }, o.name))))),
             React.createElement("div", { className: "second" },
-                React.createElement("ul", { className: "list-group", style: { margin: 0 } }, (firstLevelNode ? firstLevelNode.children : []).filter(o => o.visible != false).map((o, i) => React.createElement("li", { key: i, className: o == secondLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: () => this.showPageByNode(o) },
+                React.createElement("ul", { className: "list-group", style: { margin: 0 } }, (firstLevelNode ? (firstLevelNode.children || []) : []).filter(o => o.visible != false).map((o, i) => React.createElement("li", { key: i, className: o == secondLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: () => this.showPageByNode(o) },
                     React.createElement("span", { style: { paddingLeft: 8, fontSize: 14 } }, o.name))))),
             React.createElement("div", { className: "main" },
                 React.createElement("nav", { className: "navbar navbar-default", style: { padding: "10px 10px 10px 10px" } }, this.state.toolbar),

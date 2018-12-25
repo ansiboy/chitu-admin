@@ -10,6 +10,9 @@ interface State {
     currentPageName?: string,
     toolbar?: JSX.Element,
     menus: MenuItem[],
+
+    /** 不显示菜单的页面 */
+    hideMenuPages?: string[],
 }
 
 interface Props {
@@ -77,6 +80,10 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
         this.setState({ menus, currentPageName })
     }
 
+    setHideMenuPages(pageNames: string[]) {
+        this.setState({ hideMenuPages: pageNames || [] })
+    }
+
     get application(): Application {
         return this.app;
     }
@@ -111,10 +118,11 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
         }
 
         let nodeClassName = '';
-        if (firstLevelNode == null) {
+        let hideMenuPages = this.state.hideMenuPages || []
+        if (hideMenuPages.indexOf(currentPageName) >= 0) {
             nodeClassName = 'hideFirst';
         }
-        else if ((firstLevelNode.children || []).filter(o => o.visible != false).length == 0) {
+        else if (firstLevelNode == null || (firstLevelNode.children || []).filter(o => o.visible != false).length == 0) {
             nodeClassName = 'hideSecond';
         }
 

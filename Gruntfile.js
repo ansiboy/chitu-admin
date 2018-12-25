@@ -71,7 +71,7 @@ module.exports = function (grunt) {
             },
             declare: {
                 options: {
-                    banner:`/// <reference path="../../../node_modules/maishu-chitu/dist/chitu.d.ts"/>`
+                    banner:`/// <reference path="../../../node_modules/maishu-chitu/dist/chitu.d.ts"/>\r\n`
                 },
                 src: ['src/declare.d.ts'],
                 dest: `${release_dir}/${lib_name}.d.ts`

@@ -2086,6 +2086,9 @@ class MasterPage extends React.Component {
         let currentPageName = this.app.currentPage ? this.app.currentPage.name : null;
         this.setState({ menus, currentPageName });
     }
+    setHideMenuPages(pageNames) {
+        this.setState({ hideMenuPages: pageNames || [] });
+    }
     get application() {
         return this.app;
     }
@@ -2114,10 +2117,11 @@ class MasterPage extends React.Component {
             }
         }
         let nodeClassName = '';
-        if (firstLevelNode == null) {
+        let hideMenuPages = this.state.hideMenuPages || [];
+        if (hideMenuPages.indexOf(currentPageName) >= 0) {
             nodeClassName = 'hideFirst';
         }
-        else if ((firstLevelNode.children || []).filter(o => o.visible != false).length == 0) {
+        else if (firstLevelNode == null || (firstLevelNode.children || []).filter(o => o.visible != false).length == 0) {
             nodeClassName = 'hideSecond';
         }
         return (React.createElement("div", { className: nodeClassName },

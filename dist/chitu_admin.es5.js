@@ -2051,6 +2051,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
               this.setState({ menus: menus, currentPageName: currentPageName });
             }
           }, {
+            key: "setHideMenuPages",
+            value: function setHideMenuPages(pageNames) {
+              this.setState({ hideMenuPages: pageNames || [] });
+            }
+          }, {
             key: "componentDidMount",
             value: function componentDidMount() {
               var _this2 = this;
@@ -2084,9 +2089,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                 }
               }
               var nodeClassName = '';
-              if (firstLevelNode == null) {
+              var hideMenuPages = this.state.hideMenuPages || [];
+              if (hideMenuPages.indexOf(currentPageName) >= 0) {
                 nodeClassName = 'hideFirst';
-              } else if ((firstLevelNode.children || []).filter(function (o) {
+              } else if (firstLevelNode == null || (firstLevelNode.children || []).filter(function (o) {
                 return o.visible != false;
               }).length == 0) {
                 nodeClassName = 'hideSecond';

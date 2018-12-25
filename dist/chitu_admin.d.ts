@@ -1,4 +1,5 @@
-/// <reference path="../../../node_modules/maishu-chitu/dist/chitu.d.ts"/>declare module chitu_admin {
+/// <reference path="../../../node_modules/maishu-chitu/dist/chitu.d.ts"/>
+declare module chitu_admin {
 
     export interface Config {
         firstPanelWidth: string,

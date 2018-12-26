@@ -15,7 +15,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /*!
- * CHITU-ADMIN v1.0.30
+ * CHITU-ADMIN v1.0.34
  * https://github.com/ansiboy/chitu-admin
  *
  * Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -1968,28 +1968,22 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       "use strict";
 
       Object.defineProperty(exports, "__esModule", { value: true });
-      var React = require("react");
-      var ReactDOM = require("react-dom");
       var masterPage_1 = require("./masterPage");
-      var element = document.createElement('div');
-      document.body.insertBefore(element, document.body.children[0]);
-      var masterPage = ReactDOM.render(React.createElement(masterPage_1.MasterPage, null), element);
-      exports.app = masterPage.application;
-    }, { "./masterPage": 6, "react": "react", "react-dom": "react-dom" }], 5: [function (require, module, exports) {
-      "use strict";
-
-      Object.defineProperty(exports, "__esModule", { value: true });
-      var application_1 = require("./application");
-      var application_2 = require("./application");
-      exports.app = application_2.app;
-      exports.config = application_1.app.config;
-    }, { "./application": 4 }], 6: [function (require, module, exports) {
+      var masterPage_2 = require("./masterPage");
+      exports.app = masterPage_2.app;
+      var masterPage_3 = require("./masterPage");
+      exports.MasterPage = masterPage_3.MasterPage;
+      exports.Application = masterPage_3.Application;
+      exports.config = masterPage_1.app.config;
+    }, { "./masterPage": 5 }], 5: [function (require, module, exports) {
       (function (Buffer) {
         "use strict";
 
         Object.defineProperty(exports, "__esModule", { value: true });
         var React = require("react");
         var chitu_react = require("maishu-chitu-react");
+
+        var ReactDOM = require("react-dom");
 
         var MasterPage = function (_React$Component) {
           _inherits(MasterPage, _React$Component);
@@ -2006,6 +2000,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           _createClass(MasterPage, [{
             key: "showPageByNode",
             value: function showPageByNode(node) {
+              if (!node.path && (node.children || []).length > 0) {
+                this.showPageByNode(node.children[0]);
+                return;
+              }
               var pageName = node.path;
               if (pageName == null && node.children.length > 0) {
                 node = node.children[0];
@@ -2020,15 +2018,34 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
               }
             }
           }, {
-            key: "findMenuItem",
-            value: function findMenuItem(menuItems, pageName) {
+            key: "findMenuItemByResourceId",
+            value: function findMenuItemByResourceId(menuItems, resourceId) {
               var stack = new Array();
               stack.push.apply(stack, _toConsumableArray(menuItems));
               while (stack.length > 0) {
                 var item = stack.pop();
-                if (!item.path) continue;
-                var obj = this.app.parseUrl(item.path);
-                if (obj.pageName == pageName) return item;
+                // if (item.path) {
+                //     let obj = this.app.parseUrl(item.path)
+                // if (obj.pageName == pageName)
+                //     return item
+                // }
+                if (item.id == resourceId) return item;
+                var children = item.children || [];
+                stack.push.apply(stack, _toConsumableArray(children));
+              }
+              return null;
+            }
+          }, {
+            key: "findMenuItemByPageName",
+            value: function findMenuItemByPageName(menuItems, pageName) {
+              var stack = new Array();
+              stack.push.apply(stack, _toConsumableArray(menuItems));
+              while (stack.length > 0) {
+                var item = stack.pop();
+                if (item.path) {
+                  var obj = this.app.parseUrl(item.path);
+                  if (obj.pageName == pageName) return item;
+                }
                 var children = item.children || [];
                 stack.push.apply(stack, _toConsumableArray(children));
               }
@@ -2048,7 +2065,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             value: function setMenus(menus) {
               menus = menus || [];
               var currentPageName = this.app.currentPage ? this.app.currentPage.name : null;
-              this.setState({ menus: menus, currentPageName: currentPageName });
+              var resourceId = this.app.currentPage ? this.app.currentPage.data.resourceId || this.app.currentPage.data.resource_id : null;
+              this.setState({ menus: menus, currentPageName: currentPageName, resourceId: resourceId });
             }
           }, {
             key: "setHideMenuPages",
@@ -2064,6 +2082,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
               this.app.pageCreated.add(function (sender, page) {
                 page.shown.add(function () {
                   _this2.setState({ currentPageName: page.name });
+                  _this2.setState({ resourceId: page.data.resourceId || page.data.resource_id });
                 });
               });
             }
@@ -2077,7 +2096,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
               var firstLevelNodes = menuData.filter(function (o) {
                 return o.visible == null || o.visible == true;
               });
-              var currentNode = currentPageName ? this.findMenuItem(firstLevelNodes, currentPageName) : null; //menuData.filter(o => o.path == currentPageName)[0] : null;
+              var currentNode = void 0;
+              if (this.state.resourceId) {
+                currentNode = this.findMenuItemByResourceId(firstLevelNodes, this.state.resourceId);
+              } else if (currentPageName) {
+                currentNode = this.findMenuItemByPageName(firstLevelNodes, currentPageName);
+              }
               var firstLevelNode = void 0;
               var secondLevelNode = void 0;
               if (currentNode != null) {
@@ -2210,6 +2234,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             });
           });
         }
+        var element = document.createElement('div');
+        document.body.insertBefore(element, document.body.children[0]);
+        var masterPage = ReactDOM.render(React.createElement(MasterPage, null), element);
+        exports.app = masterPage.application;
       }).call(this, require("buffer").Buffer);
-    }, { "buffer": 2, "maishu-chitu-react": "maishu-chitu-react", "react": "react" }] }, {}, [5])(5);
+    }, { "buffer": 2, "maishu-chitu-react": "maishu-chitu-react", "react": "react", "react-dom": "react-dom" }] }, {}, [4])(4);
 });

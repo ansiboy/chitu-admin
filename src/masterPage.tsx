@@ -3,14 +3,23 @@
 import React = require('react');
 import * as chitu_react from 'maishu-chitu-react';
 import * as fs from 'fs';
+import * as ReactDOM from 'react-dom';
 
-type MenuItem = chitu_admin.MenuItem
+export type MenuItem = {
+    id?: string,
+    name: string,
+    path?: string,
+    icon?: string,
+    parent?: MenuItem,
+    children: MenuItem[],
+    visible: boolean,
+};
 
 interface State {
     currentPageName?: string,
     toolbar?: JSX.Element,
     menus: MenuItem[],
-
+    resourceId?: string,
     /** 不显示菜单的页面 */
     hideMenuPages?: string[],
 }
@@ -18,7 +27,7 @@ interface State {
 interface Props {
 }
 
-export class MasterPage extends React.Component<Props, State> implements chitu_admin.MasterPage {
+export class MasterPage extends React.Component<Props, State>  {
     pageContainer: HTMLElement;
     private app: Application;
 
@@ -30,6 +39,10 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
     }
 
     private showPageByNode(node: MenuItem) {
+        if (!node.path && (node.children || []).length > 0) {
+            this.showPageByNode(node.children[0])
+            return
+        }
         let pageName = node.path;
         if (pageName == null && node.children.length > 0) {
             node = node.children[0];
@@ -47,18 +60,38 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
 
     }
 
-    private findMenuItem(menuItems: MenuItem[], pageName: string) {
+    private findMenuItemByResourceId(menuItems: MenuItem[], resourceId: string) {
         let stack = new Array<MenuItem>()
         stack.push(...menuItems)
         while (stack.length > 0) {
             let item = stack.pop()
 
-            if (!item.path)
-                continue
-
-            let obj = this.app.parseUrl(item.path)
-            if (obj.pageName == pageName)
+            // if (item.path) {
+            //     let obj = this.app.parseUrl(item.path)
+            // if (obj.pageName == pageName)
+            //     return item
+            // }
+            if (item.id == resourceId)
                 return item
+
+            let children = item.children || []
+            stack.push(...children)
+        }
+
+        return null
+    }
+
+    private findMenuItemByPageName(menuItems: MenuItem[], pageName: string) {
+        let stack = new Array<MenuItem>()
+        stack.push(...menuItems)
+        while (stack.length > 0) {
+            let item = stack.pop()
+
+            if (item.path) {
+                let obj = this.app.parseUrl(item.path)
+                if (obj.pageName == pageName)
+                    return item
+            }
 
             let children = item.children || []
             stack.push(...children)
@@ -77,7 +110,8 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
         menus = menus || []
 
         let currentPageName = this.app.currentPage ? this.app.currentPage.name : null;
-        this.setState({ menus, currentPageName })
+        let resourceId = this.app.currentPage ? this.app.currentPage.data.resourceId || this.app.currentPage.data.resource_id : null
+        this.setState({ menus, currentPageName, resourceId })
     }
 
     setHideMenuPages(pageNames: string[]) {
@@ -93,6 +127,7 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
         this.app.pageCreated.add((sender, page) => {
             page.shown.add(() => {
                 this.setState({ currentPageName: page.name })
+                this.setState({ resourceId: page.data.resourceId || page.data.resource_id })
             })
         })
     }
@@ -102,7 +137,13 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
         let currentPageName: string = this.state.currentPageName;
 
         let firstLevelNodes = menuData.filter(o => o.visible == null || o.visible == true);
-        let currentNode = currentPageName ? this.findMenuItem(firstLevelNodes, currentPageName) : null //menuData.filter(o => o.path == currentPageName)[0] : null;
+        let currentNode: MenuItem
+        if (this.state.resourceId) {
+            currentNode = this.findMenuItemByResourceId(firstLevelNodes, this.state.resourceId)
+        }
+        else if (currentPageName) {
+            currentNode = this.findMenuItemByPageName(firstLevelNodes, currentPageName)
+        }
         let firstLevelNode: MenuItem;
         let secondLevelNode: MenuItem;
 
@@ -164,7 +205,7 @@ export class MasterPage extends React.Component<Props, State> implements chitu_a
     }
 }
 
-export class Application extends chitu_react.Application implements chitu_admin.Application {
+export class Application extends chitu_react.Application {
     private _masterPage: MasterPage;
 
     constructor(masterPage: MasterPage) {
@@ -239,3 +280,8 @@ function loadjs(path: string): Promise<any> {
     });
 }
 
+let element = document.createElement('div');
+document.body.insertBefore(element, document.body.children[0]);
+let masterPage = ReactDOM.render(<MasterPage />, element) as MasterPage;
+
+export let app = masterPage.application;

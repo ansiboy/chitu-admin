@@ -4,9 +4,8 @@
     "scripts": {
         "build": "grunt"
     },
-    "version": "1.0.30",
+    "version": "1.0.34",
     "devDependencies": {
-        "@types/node": "^10.12.15",
         "@types/react": "^16.7.17",
         "@types/react-dom": "^16.0.11",
         "@types/requirejs": "^2.1.31",
@@ -26,6 +25,7 @@
         "load-grunt-tasks": "^4.0.0"
     },
     "dependencies": {
+        "@types/node": "^10.12.15",
         "bootstrap": "^3.3.7",
         "brfs": "^2.0.1",
         "less": "^3.9.0",

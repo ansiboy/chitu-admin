@@ -3,12 +3,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const chitu_react = require("maishu-chitu-react");
 const fs = require("fs");
+const ReactDOM = require("react-dom");
 class MasterPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = { menus: [] };
     }
     showPageByNode(node) {
+        if (!node.path && (node.children || []).length > 0) {
+            this.showPageByNode(node.children[0]);
+            return;
+        }
         let pageName = node.path;
         if (pageName == null && node.children.length > 0) {
             node = node.children[0];
@@ -22,16 +27,33 @@ class MasterPage extends React.Component {
             this.app.redirect(pageName);
         }
     }
-    findMenuItem(menuItems, pageName) {
+    findMenuItemByResourceId(menuItems, resourceId) {
         let stack = new Array();
         stack.push(...menuItems);
         while (stack.length > 0) {
             let item = stack.pop();
-            if (!item.path)
-                continue;
-            let obj = this.app.parseUrl(item.path);
-            if (obj.pageName == pageName)
+            // if (item.path) {
+            //     let obj = this.app.parseUrl(item.path)
+            // if (obj.pageName == pageName)
+            //     return item
+            // }
+            if (item.id == resourceId)
                 return item;
+            let children = item.children || [];
+            stack.push(...children);
+        }
+        return null;
+    }
+    findMenuItemByPageName(menuItems, pageName) {
+        let stack = new Array();
+        stack.push(...menuItems);
+        while (stack.length > 0) {
+            let item = stack.pop();
+            if (item.path) {
+                let obj = this.app.parseUrl(item.path);
+                if (obj.pageName == pageName)
+                    return item;
+            }
             let children = item.children || [];
             stack.push(...children);
         }
@@ -45,7 +67,8 @@ class MasterPage extends React.Component {
     setMenus(menus) {
         menus = menus || [];
         let currentPageName = this.app.currentPage ? this.app.currentPage.name : null;
-        this.setState({ menus, currentPageName });
+        let resourceId = this.app.currentPage ? this.app.currentPage.data.resourceId || this.app.currentPage.data.resource_id : null;
+        this.setState({ menus, currentPageName, resourceId });
     }
     setHideMenuPages(pageNames) {
         this.setState({ hideMenuPages: pageNames || [] });
@@ -58,6 +81,7 @@ class MasterPage extends React.Component {
         this.app.pageCreated.add((sender, page) => {
             page.shown.add(() => {
                 this.setState({ currentPageName: page.name });
+                this.setState({ resourceId: page.data.resourceId || page.data.resource_id });
             });
         });
     }
@@ -65,7 +89,13 @@ class MasterPage extends React.Component {
         let menuData = this.state.menus;
         let currentPageName = this.state.currentPageName;
         let firstLevelNodes = menuData.filter(o => o.visible == null || o.visible == true);
-        let currentNode = currentPageName ? this.findMenuItem(firstLevelNodes, currentPageName) : null; //menuData.filter(o => o.path == currentPageName)[0] : null;
+        let currentNode;
+        if (this.state.resourceId) {
+            currentNode = this.findMenuItemByResourceId(firstLevelNodes, this.state.resourceId);
+        }
+        else if (currentPageName) {
+            currentNode = this.findMenuItemByPageName(firstLevelNodes, currentPageName);
+        }
         let firstLevelNode;
         let secondLevelNode;
         if (currentNode != null) {
@@ -161,3 +191,7 @@ function loadjs(path) {
         });
     });
 }
+let element = document.createElement('div');
+document.body.insertBefore(element, document.body.children[0]);
+let masterPage = ReactDOM.render(React.createElement(MasterPage, null), element);
+exports.app = masterPage.application;

@@ -2019,35 +2019,32 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 },{}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const ReactDOM = require("react-dom");
 const masterPage_1 = require("./masterPage");
-let element = document.createElement('div');
-document.body.insertBefore(element, document.body.children[0]);
-let masterPage = ReactDOM.render(React.createElement(masterPage_1.MasterPage, null), element);
-exports.app = masterPage.application;
+var masterPage_2 = require("./masterPage");
+exports.app = masterPage_2.app;
+var masterPage_3 = require("./masterPage");
+exports.MasterPage = masterPage_3.MasterPage;
+exports.Application = masterPage_3.Application;
+exports.config = masterPage_1.app.config;
 
-},{"./masterPage":6,"react":"react","react-dom":"react-dom"}],5:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const application_1 = require("./application");
-var application_2 = require("./application");
-exports.app = application_2.app;
-exports.config = application_1.app.config;
-
-},{"./application":4}],6:[function(require,module,exports){
+},{"./masterPage":5}],5:[function(require,module,exports){
 (function (Buffer){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const chitu_react = require("maishu-chitu-react");
 
+const ReactDOM = require("react-dom");
 class MasterPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = { menus: [] };
     }
     showPageByNode(node) {
+        if (!node.path && (node.children || []).length > 0) {
+            this.showPageByNode(node.children[0]);
+            return;
+        }
         let pageName = node.path;
         if (pageName == null && node.children.length > 0) {
             node = node.children[0];
@@ -2061,16 +2058,33 @@ class MasterPage extends React.Component {
             this.app.redirect(pageName);
         }
     }
-    findMenuItem(menuItems, pageName) {
+    findMenuItemByResourceId(menuItems, resourceId) {
         let stack = new Array();
         stack.push(...menuItems);
         while (stack.length > 0) {
             let item = stack.pop();
-            if (!item.path)
-                continue;
-            let obj = this.app.parseUrl(item.path);
-            if (obj.pageName == pageName)
+            // if (item.path) {
+            //     let obj = this.app.parseUrl(item.path)
+            // if (obj.pageName == pageName)
+            //     return item
+            // }
+            if (item.id == resourceId)
                 return item;
+            let children = item.children || [];
+            stack.push(...children);
+        }
+        return null;
+    }
+    findMenuItemByPageName(menuItems, pageName) {
+        let stack = new Array();
+        stack.push(...menuItems);
+        while (stack.length > 0) {
+            let item = stack.pop();
+            if (item.path) {
+                let obj = this.app.parseUrl(item.path);
+                if (obj.pageName == pageName)
+                    return item;
+            }
             let children = item.children || [];
             stack.push(...children);
         }
@@ -2084,7 +2098,8 @@ class MasterPage extends React.Component {
     setMenus(menus) {
         menus = menus || [];
         let currentPageName = this.app.currentPage ? this.app.currentPage.name : null;
-        this.setState({ menus, currentPageName });
+        let resourceId = this.app.currentPage ? this.app.currentPage.data.resourceId || this.app.currentPage.data.resource_id : null;
+        this.setState({ menus, currentPageName, resourceId });
     }
     setHideMenuPages(pageNames) {
         this.setState({ hideMenuPages: pageNames || [] });
@@ -2097,6 +2112,7 @@ class MasterPage extends React.Component {
         this.app.pageCreated.add((sender, page) => {
             page.shown.add(() => {
                 this.setState({ currentPageName: page.name });
+                this.setState({ resourceId: page.data.resourceId || page.data.resource_id });
             });
         });
     }
@@ -2104,7 +2120,13 @@ class MasterPage extends React.Component {
         let menuData = this.state.menus;
         let currentPageName = this.state.currentPageName;
         let firstLevelNodes = menuData.filter(o => o.visible == null || o.visible == true);
-        let currentNode = currentPageName ? this.findMenuItem(firstLevelNodes, currentPageName) : null; //menuData.filter(o => o.path == currentPageName)[0] : null;
+        let currentNode;
+        if (this.state.resourceId) {
+            currentNode = this.findMenuItemByResourceId(firstLevelNodes, this.state.resourceId);
+        }
+        else if (currentPageName) {
+            currentNode = this.findMenuItemByPageName(firstLevelNodes, currentPageName);
+        }
         let firstLevelNode;
         let secondLevelNode;
         if (currentNode != null) {
@@ -2200,7 +2222,11 @@ function loadjs(path) {
         });
     });
 }
+let element = document.createElement('div');
+document.body.insertBefore(element, document.body.children[0]);
+let masterPage = ReactDOM.render(React.createElement(MasterPage, null), element);
+exports.app = masterPage.application;
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":2,"maishu-chitu-react":"maishu-chitu-react","react":"react"}]},{},[5])(5)
+},{"buffer":2,"maishu-chitu-react":"maishu-chitu-react","react":"react","react-dom":"react-dom"}]},{},[4])(4)
 });

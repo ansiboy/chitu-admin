@@ -102,9 +102,13 @@ class MasterPage extends React.Component {
             if (currentNode.parent == null) {
                 firstLevelNode = currentNode;
             }
-            else if (currentNode.parent.parent == null) {
+            else if (currentNode.parent.parent == null) { //二级菜单
                 firstLevelNode = currentNode.parent;
                 secondLevelNode = currentNode;
+            }
+            else if (currentNode.parent.parent.parent == null) { //三级菜单
+                firstLevelNode = currentNode.parent.parent;
+                secondLevelNode = currentNode.parent;
             }
         }
         let nodeClassName = '';
@@ -162,6 +166,9 @@ class Application extends chitu_react.Application {
         let str = fs.readFileSync("content/admin_style_default.less").toString();
         if (this.config.firstPanelWidth) {
             str = str + `\r\n@firstPanelWidth: ${this.config.firstPanelWidth};`;
+        }
+        if (this.config.secondPanelWidth) {
+            str = str + `\r\n@secondPanelWidth: ${this.config.secondPanelWidth};`;
         }
         let less = window['less'];
         less.render(str, function (e, result) {

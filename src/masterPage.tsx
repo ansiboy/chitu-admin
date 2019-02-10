@@ -5,14 +5,21 @@ import * as chitu_react from 'maishu-chitu-react';
 import * as fs from 'fs';
 import * as ReactDOM from 'react-dom';
 
+export interface Config {
+    firstPanelWidth: string,
+    secondPanelWidth: string,
+    authServiceHost: string,
+    menuType: string,
+}
+
 export type MenuItem = {
     id?: string,
     name: string,
     path?: string,
     icon?: string,
     parent?: MenuItem,
-    children: MenuItem[],
-    visible: boolean,
+    children?: MenuItem[],
+    visible?: boolean,
 };
 
 interface State {
@@ -31,26 +38,28 @@ export class MasterPage extends React.Component<Props, State>  {
     pageContainer: HTMLElement;
     private app: Application;
 
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = { menus: [] }
-
+        this.app = new Application(this)
+        this.pageContainer = document.createElement('div')
     }
 
     private showPageByNode(node: MenuItem) {
+        let children = node.children || []
         if (!node.path && (node.children || []).length > 0) {
-            this.showPageByNode(node.children[0])
+            this.showPageByNode(children[0])
             return
         }
         let pageName = node.path;
-        if (pageName == null && node.children.length > 0) {
-            node = node.children[0];
+        if (pageName == null && children.length > 0) {
+            node = children[0];
             pageName = node.name;
         }
 
-        if (pageName == null && node.children.length > 0) {
-            node = node.children[0];
+        if (pageName == null && children.length > 0) {
+            node = children[0];
             pageName = node.name;
         }
 
@@ -65,6 +74,8 @@ export class MasterPage extends React.Component<Props, State>  {
         stack.push(...menuItems)
         while (stack.length > 0) {
             let item = stack.pop()
+            if (item == null)
+                return
 
             // if (item.path) {
             //     let obj = this.app.parseUrl(item.path)
@@ -86,9 +97,11 @@ export class MasterPage extends React.Component<Props, State>  {
         stack.push(...menuItems)
         while (stack.length > 0) {
             let item = stack.pop()
+            if (item == null)
+                throw new Error("item is null")
 
             if (item.path) {
-                let obj = this.app.parseUrl(item.path)
+                let obj = this.app.parseUrl(item.path) || { pageName: '' }
                 if (obj.pageName == pageName)
                     return item
             }
@@ -109,9 +122,9 @@ export class MasterPage extends React.Component<Props, State>  {
     setMenus(menus: MenuItem[]) {
         menus = menus || []
 
-        let currentPageName = this.app.currentPage ? this.app.currentPage.name : null;
-        let resourceId = this.app.currentPage ? this.app.currentPage.data.resourceId || this.app.currentPage.data.resource_id : null
-        this.setState({ menus, currentPageName, resourceId })
+        let currentPageName = this.app.currentPage ? this.app.currentPage.name : undefined;
+        let resourceId = this.app.currentPage ? this.app.currentPage.data.resourceId || this.app.currentPage.data.resource_id : undefined
+        this.setState({ menus, currentPageName: currentPageName, resourceId: resourceId })
     }
 
     setHideMenuPages(pageNames: string[]) {
@@ -123,28 +136,29 @@ export class MasterPage extends React.Component<Props, State>  {
     }
 
     componentDidMount() {
-        this.app = new Application(this)
+        // this.app = new Application(this)
         this.app.pageCreated.add((sender, page) => {
             page.shown.add(() => {
                 this.setState({ currentPageName: page.name })
                 this.setState({ resourceId: page.data.resourceId || page.data.resource_id })
             })
         })
+
     }
 
     render() {
         let menuData = this.state.menus;
-        let currentPageName: string = this.state.currentPageName;
+        let currentPageName: string = this.state.currentPageName || '';
 
         let firstLevelNodes = menuData.filter(o => o.visible == null || o.visible == true);
-        let currentNode: MenuItem
+        let currentNode: MenuItem | null | undefined
         if (this.state.resourceId) {
             currentNode = this.findMenuItemByResourceId(firstLevelNodes, this.state.resourceId)
         }
         else if (currentPageName) {
             currentNode = this.findMenuItemByPageName(firstLevelNodes, currentPageName)
         }
-        let firstLevelNode: MenuItem;
+        let firstLevelNode: MenuItem | null = null;
         let secondLevelNode: MenuItem;
 
 
@@ -152,9 +166,13 @@ export class MasterPage extends React.Component<Props, State>  {
             if (currentNode.parent == null) {
                 firstLevelNode = currentNode
             }
-            else if (currentNode.parent.parent == null) {
+            else if (currentNode.parent.parent == null) {   //二级菜单
                 firstLevelNode = currentNode.parent
                 secondLevelNode = currentNode
+            }
+            else if (currentNode.parent.parent.parent == null) {   //三级菜单
+                firstLevelNode = currentNode.parent.parent
+                secondLevelNode = currentNode.parent
             }
         }
 
@@ -173,7 +191,7 @@ export class MasterPage extends React.Component<Props, State>  {
                     <ul className="list-group" style={{ margin: 0 }}>
                         {firstLevelNodes.map((o, i) =>
                             <li key={i} className={o == firstLevelNode ? "list-group-item active" : "list-group-item"}
-                                style={{ cursor: 'pointer', display: o.visible == false ? "none" : null }}
+                                style={{ cursor: 'pointer', display: o.visible == false ? "none" : '' }}
                                 onClick={() => this.showPageByNode(o)}>
                                 <i className={o.icon} style={{ fontSize: 16 }}></i>
                                 <span style={{ paddingLeft: 8, fontSize: 14 }}>{o.name}</span>
@@ -185,20 +203,23 @@ export class MasterPage extends React.Component<Props, State>  {
                     <ul className="list-group" style={{ margin: 0 }}>
                         {(firstLevelNode ? (firstLevelNode.children || []) : []).filter(o => o.visible != false).map((o, i) =>
                             <li key={i} className={o == secondLevelNode ? "list-group-item active" : "list-group-item"}
-                                style={{ cursor: 'pointer', display: o.visible == false ? "none" : null }}
+                                style={{ cursor: 'pointer', display: o.visible == false ? "none" : '' }}
                                 onClick={() => this.showPageByNode(o)}>
                                 <span style={{ paddingLeft: 8, fontSize: 14 }}>{o.name}</span>
                             </li>
                         )}
                     </ul>
                 </div>
-                <div className="main" >
+                <div className="main" ref={e => {
+                    if (e == null) return
+                    e.appendChild(this.pageContainer)
+                }}>
                     <nav className="navbar navbar-default" style={{ padding: "10px 10px 10px 10px" }}>
                         {this.state.toolbar}
                     </nav>
-                    <div style={{ padding: 20 }}
+                    {/* <div style={{ padding: 20 }}
                         ref={(e: HTMLElement) => this.pageContainer = e || this.pageContainer}>
-                    </div>
+                    </div> */}
                 </div>
             </div >
         );
@@ -218,9 +239,9 @@ export class Application extends chitu_react.Application {
         return this._masterPage;
     }
 
-    get config() {
-        window['maishu-chitu-admin-config'] = window['maishu-chitu-admin-config'] || {}
-        return window['maishu-chitu-admin-config']
+    get config(): Config {
+        (window as any)['maishu-chitu-admin-config'] = (window as any)['maishu-chitu-admin-config'] || {}
+        return (window as any)['maishu-chitu-admin-config']
     }
 
     protected defaultPageNodeParser() {
@@ -246,8 +267,13 @@ export class Application extends chitu_react.Application {
         if (this.config.firstPanelWidth) {
             str = str + `\r\n@firstPanelWidth: ${this.config.firstPanelWidth};`
         }
-        let less = window['less']
-        less.render(str, function (e, result) {
+
+        if (this.config.secondPanelWidth) {
+            str = str + `\r\n@secondPanelWidth: ${this.config.secondPanelWidth};`
+        }
+
+        let less = (window as any)['less']
+        less.render(str, function (e: Error, result: { css: string }) {
             if (e) {
                 console.error(e)
                 return

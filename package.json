@@ -4,7 +4,7 @@
     "scripts": {
         "build": "grunt"
     },
-    "version": "1.0.34",
+    "version": "1.0.38",
     "devDependencies": {
         "@types/react": "^16.7.17",
         "@types/react-dom": "^16.0.11",
@@ -29,8 +29,8 @@
         "bootstrap": "^3.3.7",
         "brfs": "^2.0.1",
         "less": "^3.9.0",
-        "maishu-chitu": "^2.0.10",
-        "maishu-chitu-react": "^1.0.6",
+        "maishu-chitu": "^2.0.15",
+        "maishu-chitu-react": "^1.0.12",
         "react": "^16.6.3",
         "react-dom": "^16.6.3",
         "requirejs": "^2.3.6",

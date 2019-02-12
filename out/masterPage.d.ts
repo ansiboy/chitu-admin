@@ -1,13 +1,19 @@
 import React = require('react');
 import * as chitu_react from 'maishu-chitu-react';
+export interface Config {
+    firstPanelWidth: string;
+    secondPanelWidth: string;
+    authServiceHost: string;
+    menuType: string;
+}
 export declare type MenuItem = {
     id?: string;
     name: string;
     path?: string;
     icon?: string;
     parent?: MenuItem;
-    children: MenuItem[];
-    visible: boolean;
+    children?: MenuItem[];
+    visible?: boolean;
 };
 interface State {
     currentPageName?: string;
@@ -22,7 +28,7 @@ interface Props {
 export declare class MasterPage extends React.Component<Props, State> {
     pageContainer: HTMLElement;
     private app;
-    constructor(props: any);
+    constructor(props: Props);
     private showPageByNode;
     private findMenuItemByResourceId;
     private findMenuItemByPageName;
@@ -39,7 +45,7 @@ export declare class Application extends chitu_react.Application {
     private _masterPage;
     constructor(masterPage: MasterPage);
     readonly masterPage: MasterPage;
-    readonly config: any;
+    readonly config: Config;
     protected defaultPageNodeParser(): chitu.PageNodeParser;
     /** 加载样式文件 */
     loadStyle(): void;

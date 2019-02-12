@@ -1,6 +1,6 @@
 
 /*!
- * CHITU-ADMIN v1.0.38
+ * CHITU-ADMIN v1.0.40
  * https://github.com/ansiboy/chitu-admin
  *
  * Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -2047,19 +2047,23 @@ class MasterPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = { menus: [] };
+        this.pageContainer = document.createElement('div');
+        this.pageContainer.className = 'page-container';
+        this.app = new Application(this);
     }
     showPageByNode(node) {
+        let children = node.children || [];
         if (!node.path && (node.children || []).length > 0) {
-            this.showPageByNode(node.children[0]);
+            this.showPageByNode(children[0]);
             return;
         }
         let pageName = node.path;
-        if (pageName == null && node.children.length > 0) {
-            node = node.children[0];
+        if (pageName == null && children.length > 0) {
+            node = children[0];
             pageName = node.name;
         }
-        if (pageName == null && node.children.length > 0) {
-            node = node.children[0];
+        if (pageName == null && children.length > 0) {
+            node = children[0];
             pageName = node.name;
         }
         if (pageName) {
@@ -2071,6 +2075,8 @@ class MasterPage extends React.Component {
         stack.push(...menuItems);
         while (stack.length > 0) {
             let item = stack.pop();
+            if (item == null)
+                return;
             // if (item.path) {
             //     let obj = this.app.parseUrl(item.path)
             // if (obj.pageName == pageName)
@@ -2088,8 +2094,10 @@ class MasterPage extends React.Component {
         stack.push(...menuItems);
         while (stack.length > 0) {
             let item = stack.pop();
+            if (item == null)
+                throw new Error("item is null");
             if (item.path) {
-                let obj = this.app.parseUrl(item.path);
+                let obj = this.app.parseUrl(item.path) || { pageName: '' };
                 if (obj.pageName == pageName)
                     return item;
             }
@@ -2105,9 +2113,9 @@ class MasterPage extends React.Component {
     /** 设置菜单 */
     setMenus(menus) {
         menus = menus || [];
-        let currentPageName = this.app.currentPage ? this.app.currentPage.name : null;
-        let resourceId = this.app.currentPage ? this.app.currentPage.data.resourceId || this.app.currentPage.data.resource_id : null;
-        this.setState({ menus, currentPageName, resourceId });
+        let currentPageName = this.app.currentPage ? this.app.currentPage.name : undefined;
+        let resourceId = this.app.currentPage ? this.app.currentPage.data.resourceId || this.app.currentPage.data.resource_id : undefined;
+        this.setState({ menus, currentPageName: currentPageName, resourceId: resourceId });
     }
     setHideMenuPages(pageNames) {
         this.setState({ hideMenuPages: pageNames || [] });
@@ -2116,7 +2124,7 @@ class MasterPage extends React.Component {
         return this.app;
     }
     componentDidMount() {
-        this.app = new Application(this);
+        // this.app = new Application(this)
         this.app.pageCreated.add((sender, page) => {
             page.shown.add(() => {
                 this.setState({ currentPageName: page.name });
@@ -2126,7 +2134,7 @@ class MasterPage extends React.Component {
     }
     render() {
         let menuData = this.state.menus;
-        let currentPageName = this.state.currentPageName;
+        let currentPageName = this.state.currentPageName || '';
         let firstLevelNodes = menuData.filter(o => o.visible == null || o.visible == true);
         let currentNode;
         if (this.state.resourceId) {
@@ -2135,7 +2143,7 @@ class MasterPage extends React.Component {
         else if (currentPageName) {
             currentNode = this.findMenuItemByPageName(firstLevelNodes, currentPageName);
         }
-        let firstLevelNode;
+        let firstLevelNode = null;
         let secondLevelNode;
         if (currentNode != null) {
             if (currentNode.parent == null) {
@@ -2160,15 +2168,18 @@ class MasterPage extends React.Component {
         }
         return (React.createElement("div", { className: nodeClassName },
             React.createElement("div", { className: "first" },
-                React.createElement("ul", { className: "list-group", style: { margin: 0 } }, firstLevelNodes.map((o, i) => React.createElement("li", { key: i, className: o == firstLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: () => this.showPageByNode(o) },
+                React.createElement("ul", { className: "list-group", style: { margin: 0 } }, firstLevelNodes.map((o, i) => React.createElement("li", { key: i, className: o == firstLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : '' }, onClick: () => this.showPageByNode(o) },
                     React.createElement("i", { className: o.icon, style: { fontSize: 16 } }),
                     React.createElement("span", { style: { paddingLeft: 8, fontSize: 14 } }, o.name))))),
             React.createElement("div", { className: "second" },
-                React.createElement("ul", { className: "list-group", style: { margin: 0 } }, (firstLevelNode ? (firstLevelNode.children || []) : []).filter(o => o.visible != false).map((o, i) => React.createElement("li", { key: i, className: o == secondLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: () => this.showPageByNode(o) },
+                React.createElement("ul", { className: "list-group", style: { margin: 0 } }, (firstLevelNode ? (firstLevelNode.children || []) : []).filter(o => o.visible != false).map((o, i) => React.createElement("li", { key: i, className: o == secondLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : '' }, onClick: () => this.showPageByNode(o) },
                     React.createElement("span", { style: { paddingLeft: 8, fontSize: 14 } }, o.name))))),
-            React.createElement("div", { className: "main" },
-                React.createElement("nav", { className: "navbar navbar-default", style: { padding: "10px 10px 10px 10px" } }, this.state.toolbar),
-                React.createElement("div", { style: { padding: 20 }, ref: (e) => this.pageContainer = e || this.pageContainer }))));
+            React.createElement("div", { className: "main", ref: e => {
+                    if (e == null)
+                        return;
+                    e.appendChild(this.pageContainer);
+                } },
+                React.createElement("nav", { className: "navbar navbar-default", style: { padding: "10px 10px 10px 10px" } }, this.state.toolbar))));
     }
 }
 exports.MasterPage = MasterPage;

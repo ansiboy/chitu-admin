@@ -1,4 +1,13 @@
+"use strict";
 // declare module chitu_admin {
+// namespace chitu_admin {
+//     export interface Config {
+//         firstPanelWidth: string,
+//         secondPanelWidth: string,
+//         authServiceHost: string,
+//         menuType: string,
+//     }
+// }
 // type MenuItem = {
 //     id?: string,
 //     name: string,

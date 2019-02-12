@@ -42,8 +42,9 @@ export class MasterPage extends React.Component<Props, State>  {
         super(props);
 
         this.state = { menus: [] }
-        this.app = new Application(this)
         this.pageContainer = document.createElement('div')
+        this.pageContainer.className = 'page-container'
+        this.app = new Application(this)
     }
 
     private showPageByNode(node: MenuItem) {
@@ -77,11 +78,6 @@ export class MasterPage extends React.Component<Props, State>  {
             if (item == null)
                 return
 
-            // if (item.path) {
-            //     let obj = this.app.parseUrl(item.path)
-            // if (obj.pageName == pageName)
-            //     return item
-            // }
             if (item.id == resourceId)
                 return item
 

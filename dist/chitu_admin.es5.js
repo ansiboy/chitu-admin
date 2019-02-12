@@ -15,7 +15,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /*!
- * CHITU-ADMIN v1.0.38
+ * CHITU-ADMIN v1.0.40
  * https://github.com/ansiboy/chitu-admin
  *
  * Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -1994,23 +1994,27 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             var _this = _possibleConstructorReturn(this, (MasterPage.__proto__ || Object.getPrototypeOf(MasterPage)).call(this, props));
 
             _this.state = { menus: [] };
+            _this.pageContainer = document.createElement('div');
+            _this.pageContainer.className = 'page-container';
+            _this.app = new Application(_this);
             return _this;
           }
 
           _createClass(MasterPage, [{
             key: "showPageByNode",
             value: function showPageByNode(node) {
+              var children = node.children || [];
               if (!node.path && (node.children || []).length > 0) {
-                this.showPageByNode(node.children[0]);
+                this.showPageByNode(children[0]);
                 return;
               }
               var pageName = node.path;
-              if (pageName == null && node.children.length > 0) {
-                node = node.children[0];
+              if (pageName == null && children.length > 0) {
+                node = children[0];
                 pageName = node.name;
               }
-              if (pageName == null && node.children.length > 0) {
-                node = node.children[0];
+              if (pageName == null && children.length > 0) {
+                node = children[0];
                 pageName = node.name;
               }
               if (pageName) {
@@ -2024,6 +2028,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
               stack.push.apply(stack, _toConsumableArray(menuItems));
               while (stack.length > 0) {
                 var item = stack.pop();
+                if (item == null) return;
                 // if (item.path) {
                 //     let obj = this.app.parseUrl(item.path)
                 // if (obj.pageName == pageName)
@@ -2042,8 +2047,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
               stack.push.apply(stack, _toConsumableArray(menuItems));
               while (stack.length > 0) {
                 var item = stack.pop();
+                if (item == null) throw new Error("item is null");
                 if (item.path) {
-                  var obj = this.app.parseUrl(item.path);
+                  var obj = this.app.parseUrl(item.path) || { pageName: '' };
                   if (obj.pageName == pageName) return item;
                 }
                 var children = item.children || [];
@@ -2064,8 +2070,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             key: "setMenus",
             value: function setMenus(menus) {
               menus = menus || [];
-              var currentPageName = this.app.currentPage ? this.app.currentPage.name : null;
-              var resourceId = this.app.currentPage ? this.app.currentPage.data.resourceId || this.app.currentPage.data.resource_id : null;
+              var currentPageName = this.app.currentPage ? this.app.currentPage.name : undefined;
+              var resourceId = this.app.currentPage ? this.app.currentPage.data.resourceId || this.app.currentPage.data.resource_id : undefined;
               this.setState({ menus: menus, currentPageName: currentPageName, resourceId: resourceId });
             }
           }, {
@@ -2078,7 +2084,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             value: function componentDidMount() {
               var _this2 = this;
 
-              this.app = new Application(this);
+              // this.app = new Application(this)
               this.app.pageCreated.add(function (sender, page) {
                 page.shown.add(function () {
                   _this2.setState({ currentPageName: page.name });
@@ -2092,7 +2098,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
               var _this3 = this;
 
               var menuData = this.state.menus;
-              var currentPageName = this.state.currentPageName;
+              var currentPageName = this.state.currentPageName || '';
               var firstLevelNodes = menuData.filter(function (o) {
                 return o.visible == null || o.visible == true;
               });
@@ -2102,7 +2108,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
               } else if (currentPageName) {
                 currentNode = this.findMenuItemByPageName(firstLevelNodes, currentPageName);
               }
-              var firstLevelNode = void 0;
+              var firstLevelNode = null;
               var secondLevelNode = void 0;
               if (currentNode != null) {
                 if (currentNode.parent == null) {
@@ -2127,18 +2133,19 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                 nodeClassName = 'hideSecond';
               }
               return React.createElement("div", { className: nodeClassName }, React.createElement("div", { className: "first" }, React.createElement("ul", { className: "list-group", style: { margin: 0 } }, firstLevelNodes.map(function (o, i) {
-                return React.createElement("li", { key: i, className: o == firstLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: function onClick() {
+                return React.createElement("li", { key: i, className: o == firstLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : '' }, onClick: function onClick() {
                     return _this3.showPageByNode(o);
                   } }, React.createElement("i", { className: o.icon, style: { fontSize: 16 } }), React.createElement("span", { style: { paddingLeft: 8, fontSize: 14 } }, o.name));
               }))), React.createElement("div", { className: "second" }, React.createElement("ul", { className: "list-group", style: { margin: 0 } }, (firstLevelNode ? firstLevelNode.children || [] : []).filter(function (o) {
                 return o.visible != false;
               }).map(function (o, i) {
-                return React.createElement("li", { key: i, className: o == secondLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : null }, onClick: function onClick() {
+                return React.createElement("li", { key: i, className: o == secondLevelNode ? "list-group-item active" : "list-group-item", style: { cursor: 'pointer', display: o.visible == false ? "none" : '' }, onClick: function onClick() {
                     return _this3.showPageByNode(o);
                   } }, React.createElement("span", { style: { paddingLeft: 8, fontSize: 14 } }, o.name));
-              }))), React.createElement("div", { className: "main" }, React.createElement("nav", { className: "navbar navbar-default", style: { padding: "10px 10px 10px 10px" } }, this.state.toolbar), React.createElement("div", { style: { padding: 20 }, ref: function ref(e) {
-                  return _this3.pageContainer = e || _this3.pageContainer;
-                } })));
+              }))), React.createElement("div", { className: "main", ref: function ref(e) {
+                  if (e == null) return;
+                  e.appendChild(_this3.pageContainer);
+                } }, React.createElement("nav", { className: "navbar navbar-default", style: { padding: "10px 10px 10px 10px" } }, this.state.toolbar)));
             }
           }, {
             key: "application",

@@ -43,12 +43,14 @@ th {
         background-image: linear-gradient(to bottom, #f8f8f8 0, #ececec 100%);
         background-repeat: repeat-x;
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff8f8f8', endColorstr='#ffececec', GradientType=0);
+
         th {
             border-color: #ddd;
             font-weight: bold;
             text-align: center;
         }
     }
+
     tbody tr {
         &.empty td {
             height: 300px;
@@ -56,6 +58,7 @@ th {
             padding-top: 120px;
         }
     }
+
     tfoot tr {
         // td.pagingBar .total {
         //     float: right;
@@ -86,6 +89,7 @@ th {
 @screen-lg: 1600px;
 @screen-md: 1400px;
 @screen-sm: 1000px;
+
 .main {
     .navbar {
         margin: 0;
@@ -99,19 +103,24 @@ th {
         min-height: 45px;
         position: relative;
         background: #438eb9;
+
         img {
             @img-width: 30px;
             width: @img-width;
             height: @img-width;
             border-radius: @img-width / 2;
         }
+
         >li {
             float: left;
+
             >a {
                 padding-top: 15px;
                 padding-bottom: 15px;
             }
-        } // ul {
+        }
+
+        // ul {
         //     list-style: none;
         //     li {
         //         position: relative;
@@ -126,6 +135,7 @@ th {
         //     }
         // }
     }
+
     .nav-tabs {
         border-color: #c5d0dc;
         margin-bottom: 0;
@@ -133,9 +143,11 @@ th {
         position: relative;
         top: 1px;
     }
+
     .nav-tabs>li>a {
         padding: 8px 12px;
     }
+
     .nav-tabs>li>a,
     .nav-tabs>li>a:focus {
         border-radius: 0 !important;
@@ -147,18 +159,22 @@ th {
         z-index: 11;
         border-color: #c5d0dc;
     }
+
     .nav-tabs>li>a:hover {
         background-color: #FFF;
         color: #4c8fbd;
         border-color: #c5d0dc;
     }
+
     .nav-tabs>li>a:active,
     .nav-tabs>li>a:focus {
         outline: none !important;
     }
+
     .nav-tabs>li:first-child>a {
         margin-left: 0;
     }
+
     .nav-tabs>li.active>a,
     .nav-tabs>li.active>a:hover,
     .nav-tabs>li.active>a:focus {
@@ -172,24 +188,31 @@ th {
         margin-top: -1px;
         box-shadow: 0 -2px 3px 0 rgba(0, 0, 0, 0.15);
     }
+
     .pagingBar {
         background-color: #eff3f8;
         text-align: right;
+
         .total {
             float: left;
         }
+
         .buttons {
             float: right;
         }
+
         a {
             /*background-color: #fafafa;
             color: #2283c5;*/
             margin-right: 4px;
+
             &.active {
                 color: red;
             }
         }
-    } // .pagingBar .total {
+    }
+
+    // .pagingBar .total {
     //     float: left;
     // }
     // .pagingBar a {
@@ -215,6 +238,7 @@ th {
     // }
     ul {
         padding: 0;
+
         li {
             list-style: none;
         }
@@ -223,6 +247,7 @@ th {
 
 @firstPanelWidth: 110px;
 @secondPanelWidth: 120px;
+
 .first {
     background-color: #777676;
     position: absolute;
@@ -277,9 +302,11 @@ th {
     .first {
         display: none;
     }
+
     .second {
         display: none;
     }
+
     .main {
         margin-left: 0;
     }
@@ -289,6 +316,7 @@ th {
     .second {
         display: none;
     }
+
     .main {
         margin-left: @firstPanelWidth;
     }
@@ -314,6 +342,7 @@ th {
 label.switch {
     margin-bottom: 0;
     margin-top: -6px;
+
     input[type=checkbox].ace {
         z-index: -100 !important;
         width: 1px !important;
@@ -321,6 +350,7 @@ label.switch {
         clip: rect(1px, 1px, 1px, 1px);
         position: absolute;
     }
+
     input[type=checkbox].ace+.lbl {
         position: relative;
         display: inline-block;
@@ -332,6 +362,7 @@ label.switch {
         cursor: pointer;
         top: 8px;
     }
+
     input[type=checkbox].ace.ace-switch+.lbl::after {
         font-family: 'Open Sans';
         content: 'III';
@@ -355,6 +386,7 @@ label.switch {
         -o-transition: left .3s ease;
         transition: left .3s ease;
     }
+
     input[type=checkbox].ace.ace-switch:checked+.lbl::before {
         text-indent: 8px;
         color: #FFF;
@@ -362,6 +394,7 @@ label.switch {
         background-color: #8ab2c9;
         border-color: #6a8ca8;
     }
+
     input[type=checkbox].ace.ace-switch.ace-switch-5+.lbl::before {
         content: "\a0是\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0否";
         font-size: 12px;
@@ -382,6 +415,7 @@ label.switch {
         -o-transition: all .3s ease;
         transition: all .3s ease;
     }
+
     input[type=checkbox].ace.ace-switch.ace-switch-5+.lbl::after {
         content: 'III';
         font-size: 11px;
@@ -399,21 +433,59 @@ label.switch {
         -o-transition: all .3s ease;
         transition: all .3s ease;
     }
+
     input[type=checkbox].ace.ace-switch.ace-switch-5:checked+.lbl::before {
         text-indent: 9px;
         background-color: #468fcc;
         border-color: #468FCC;
     }
+
     input[type=checkbox].ace.ace-switch.ace-switch-5:checked+.lbl::after {
         left: 34px;
         background-color: #FFF;
         color: #848484;
     }
-} //===============================================================
+}
+
+//===============================================================
 button.btn-sm span {
     padding-left: 4px;
 }
 
 button.btn-minier span {
     padding-left: 2px;
+}
+
+.navbar.navbar-default {
+    padding: 10px;
+}
+
+.first {
+    ul.list-group {
+        margin: 0px;
+
+        li {
+            i {
+                font-size: 16px;
+            }
+
+            span {
+                padding-left: 8px;
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+.second {
+    ul.list-group {
+        margin: 0px;
+
+        li {
+            span {
+                padding-left: 8px;
+                font-size: 14px;
+            }
+        }
+    }
 }

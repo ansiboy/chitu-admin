@@ -28,7 +28,7 @@ export default class LoginPage extends React.Component<Props, State> {
 
     componentDidMount() {
         let redirectURL = this.props.data.redirect || config.loginRedirectURL || '#index'
-        setLoginForm(this.element, { redirectURL })
+        setLoginForm(this.element, { redirectURL }, this.props.app)
     }
 
     render() {

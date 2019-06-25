@@ -2,7 +2,8 @@ import { FormValidator, rules as r } from "maishu-dilu";
 import { buttonOnClick, alert } from "maishu-ui-toolkit";
 import { errors } from "../errors";
 import { UserService } from "maishu-services-sdk";
-import { app } from "../index";
+import { Application } from "maishu-chitu-react";
+// import { app } from "../index";
 
 export const CONFIRM_PASSWORD = 'confirmPassword'
 export const MOBILE = 'mobile'
@@ -11,7 +12,7 @@ export const RESET_PASSWORD = 'resetPassword'
 export const SEND_VERIFY_CODE = 'sendVerifyCode'
 export const VERIFY_CODE = 'verifyCode'
 
-export function setForm(formElement: HTMLElement) {
+export function setForm(formElement: HTMLElement, app: Application) {
     if (!formElement) throw errors.argumentNull('formElement')
 
     let validator = new FormValidator(formElement,
@@ -45,7 +46,7 @@ export function setForm(formElement: HTMLElement) {
             return Promise.reject('validate mobile element fail')
 
         resetPasswordButton.setAttribute('disabled', '')
-        smsId = await sendVerifyCode(mobileInput.value, sendVerifyCodeButton)
+        smsId = await sendVerifyCode(mobileInput.value, sendVerifyCodeButton, app)
         resetPasswordButton.removeAttribute('disabled')
     })
 
@@ -70,7 +71,7 @@ function getElement<T extends HTMLElement>(formElement: HTMLElement, name: strin
     return element as T
 }
 
-async function sendVerifyCode(mobile: string, button: HTMLButtonElement) {
+async function sendVerifyCode(mobile: string, button: HTMLButtonElement, app: Application) {
     if (!mobile) throw errors.argumentNull('mobile')
     if (!button) throw errors.argumentNull('button')
 

@@ -1,11 +1,11 @@
 import React = require("react");
 import * as chitu from 'maishu-chitu'
 import { RESET_PASSWORD, SEND_VERIFY_CODE, PASSWORD, CONFIRM_PASSWORD, MOBILE, VERIFY_CODE, setForm } from "../forms/forget-password";
+import { PageProps } from "maishu-chitu-react";
 
-type Props = { app: chitu.Application }
 type State = {}
 
-export default class ForgetPassword extends React.Component<Props, State> {
+export default class ForgetPassword extends React.Component<PageProps, State> {
     formElement: HTMLDivElement;
 
     constructor(props) {
@@ -14,7 +14,7 @@ export default class ForgetPassword extends React.Component<Props, State> {
         this.state = {}
     }
     componentDidMount() {
-        setForm(this.formElement)
+        setForm(this.formElement, this.props.app)
     }
     render() {
         return (

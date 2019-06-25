@@ -2,7 +2,7 @@ import React = require("react");
 import { Application } from "./application";
 
 export interface MasterPageProps {
-    // app: Application
+    app: Application
 }
 
 export interface MasterPageConstructor {
@@ -14,8 +14,9 @@ export abstract class MasterPage<S> extends React.Component<MasterPageProps, S> 
         super(props)
     }
 
-    abstract get name();
+    abstract get name(): string;
 
-    abstract get pageContainer();
+    abstract get pageContainer(): HTMLElement;
+    abstract get element(): HTMLElement;
 }
 

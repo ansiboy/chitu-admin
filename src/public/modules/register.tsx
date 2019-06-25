@@ -2,12 +2,11 @@ import React = require("react");
 import { setForm, MOBILE, VERIFY_CODE, CONFIRM_PASSWORD, REGISTER, SEND_VERIFY_CODE, PASSWORD } from "../forms/register";
 import { FormValidator } from "maishu-dilu";
 import { config } from "../config";
-import { Application } from "maishu-chitu-react";
+import { Application, PageProps } from "maishu-chitu-react";
 
-type Props = { app: Application }
 type State = { buttonText: string, buttonEnable: boolean }
 
-export default class RegisterPage extends React.Component<Props, State> {
+export default class RegisterPage extends React.Component<PageProps, State> {
     private formElement: HTMLDivElement;
 
     constructor(props) {
@@ -16,7 +15,7 @@ export default class RegisterPage extends React.Component<Props, State> {
         this.state = { buttonText: '发送验证码', buttonEnable: true }
     }
     componentDidMount() {
-        setForm(this.formElement, { redirectURL: config.registerRedirectURL })
+        setForm(this.formElement, { redirectURL: config.registerRedirectURL || 'index' }, this.props.app)
     }
     render() {
         return <div className="container">

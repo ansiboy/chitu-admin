@@ -29,43 +29,45 @@ export class MainMasterPage extends MasterPage<State> {
     name = masterPageNames.main
 
     pageContainer: HTMLElement;
-    // private app: Application;
+    element: HTMLElement;
+    private app: Application;
+
     constructor(props: MasterPageProps) {
         super(props);
 
         this.state = { menus: [] }
         // this.pageContainer = document.createElement('div')
         // this.pageContainer.className = 'page-container'
-        // this.app = props.app
+        this.app = props.app
         // this.app = new Application(this.pageContainer)
     }
 
 
 
-    // private showPageByNode(node: MenuItem) {
-    //     let children = node.children || []
-    //     if (!node.path && (node.children || []).length > 0) {
-    //         this.showPageByNode(children[0])
-    //         return
-    //     }
-    //     let pageName = node.path;
-    //     if (pageName == null && children.length > 0) {
-    //         node = children[0];
-    //         pageName = node.name;
-    //     }
+    private showPageByNode(node: MenuItem) {
+        let children = node.children || []
+        if (!node.path && (node.children || []).length > 0) {
+            this.showPageByNode(children[0])
+            return
+        }
+        let pageName = node.path;
+        if (pageName == null && children.length > 0) {
+            node = children[0];
+            pageName = node.name;
+        }
 
-    //     if (pageName == null && children.length > 0) {
-    //         node = children[0];
-    //         pageName = node.name;
-    //     }
+        if (pageName == null && children.length > 0) {
+            node = children[0];
+            pageName = node.name;
+        }
 
-    //     if (pageName) {
-    //         this.app.redirect(pageName)
-    //         return
-    //     }
+        if (pageName) {
+            this.app.redirect(pageName)
+            return
+        }
 
-    //     console.log(`MenuItem ${node.name} page name is empty.`)
-    // }
+        console.log(`MenuItem ${node.name} page name is empty.`)
+    }
 
     private findMenuItemByResourceId(menuItems: MenuItem[], resourceId: string) {
         let stack = new Array<MenuItem>()
@@ -85,40 +87,40 @@ export class MainMasterPage extends MasterPage<State> {
         return null
     }
 
-    // private findMenuItemByPageName(menuItems: MenuItem[], pageName: string) {
-    //     let stack = new Array<MenuItem>()
-    //     stack.push(...menuItems)
-    //     while (stack.length > 0) {
-    //         let item = stack.pop()
-    //         if (item == null)
-    //             throw new Error("item is null")
+    private findMenuItemByPageName(menuItems: MenuItem[], pageName: string) {
+        let stack = new Array<MenuItem>()
+        stack.push(...menuItems)
+        while (stack.length > 0) {
+            let item = stack.pop()
+            if (item == null)
+                throw new Error("item is null")
 
-    //         if (item.path) {
-    //             let obj = this.app.parseUrl(item.path) || { pageName: '' }
-    //             if (obj.pageName == pageName)
-    //                 return item
-    //         }
+            if (item.path) {
+                let obj = this.app.parseUrl(item.path) || { pageName: '' }
+                if (obj.pageName == pageName)
+                    return item
+            }
 
-    //         let children = item.children || []
-    //         stack.push(...children)
-    //     }
+            let children = item.children || []
+            stack.push(...children)
+        }
 
-    //     return null
-    // }
+        return null
+    }
 
     /** 设置工具栏 */
     setToolbar(toolbar: JSX.Element) {
         this.setState({ toolbar })
     }
 
-    // /** 设置菜单 */
-    // setMenus(menus: MenuItem[]) {
-    //     menus = menus || []
+    /** 设置菜单 */
+    setMenus(menus: MenuItem[]) {
+        menus = menus || []
 
-    //     let currentPageName = this.app.currentPage ? this.app.currentPage.name : undefined;
-    //     let resourceId = this.app.currentPage ? (this.app.currentPage.data.resourceId || this.app.currentPage.data.resource_id) as string : undefined
-    //     this.setState({ menus, currentPageName: currentPageName, resourceId: resourceId })
-    // }
+        let currentPageName = this.app.currentPage ? this.app.currentPage.name : undefined;
+        let resourceId = this.app.currentPage ? (this.app.currentPage.data.resourceId || this.app.currentPage.data.resource_id) as string : undefined
+        this.setState({ menus, currentPageName: currentPageName, resourceId: resourceId })
+    }
 
     /** 获取菜单 */
     getMenus() {
@@ -129,18 +131,18 @@ export class MainMasterPage extends MasterPage<State> {
         this.setState({ hideMenuPages: pageNames || [] })
     }
 
-    // get application(): Application {
-    //     return this.app;
-    // }
+    get application(): Application {
+        return this.app;
+    }
 
     componentDidMount() {
         // this.app = new Application(this)
-        // this.app.pageCreated.add((sender, page) => {
-        //     page.shown.add(() => {
-        //         this.setState({ currentPageName: page.name })
-        //         this.setState({ resourceId: (page.data.resourceId || page.data.resource_id) as string })
-        //     })
-        // })
+        this.app.pageCreated.add((sender, page) => {
+            page.shown.add(() => {
+                this.setState({ currentPageName: page.name })
+                this.setState({ resourceId: (page.data.resourceId || page.data.resource_id) as string })
+            })
+        })
 
     }
 
@@ -154,7 +156,7 @@ export class MainMasterPage extends MasterPage<State> {
             currentNode = this.findMenuItemByResourceId(firstLevelNodes, this.state.resourceId)
         }
         else if (currentPageName) {
-            // currentNode = this.findMenuItemByPageName(firstLevelNodes, currentPageName)
+            currentNode = this.findMenuItemByPageName(firstLevelNodes, currentPageName)
         }
         let firstLevelNode: MenuItem | null = null;
         let secondLevelNode: MenuItem;
@@ -184,12 +186,13 @@ export class MainMasterPage extends MasterPage<State> {
         }
 
         return (
-            <div className={nodeClassName}>
+            <div className={`${nodeClassName}`} ref={e => this.element = e || this.element}>
                 <div className="first">
                     <ul className="list-group">
                         {firstLevelNodes.map((o, i) =>
                             <li key={i} className={o == firstLevelNode ? "list-group-item active" : "list-group-item"}
-                                style={{ cursor: 'pointer', display: o.visible == false ? "none" : '' }}>
+                                style={{ cursor: 'pointer', display: o.visible == false ? "none" : '' }}
+                                onClick={() => this.showPageByNode(o)}>
                                 <i className={o.icon}></i>
                                 <span>{o.name}</span>
                             </li>

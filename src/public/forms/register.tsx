@@ -2,7 +2,7 @@ import { errors } from "../errors";
 import { FormValidator, rules as r } from "maishu-dilu";
 import { buttonOnClick } from "maishu-ui-toolkit";
 import { UserService } from "maishu-services-sdk";
-import { app } from "../index";
+import { Application } from "maishu-chitu-react";
 
 export const MOBILE = 'mobile'
 export const VERIFY_CODE = 'verifyCode'
@@ -16,7 +16,7 @@ type RegisterOptions = {
     redirectURL: string
 }
 
-export function setForm(formElement: HTMLElement, options: RegisterOptions) {
+export function setForm(formElement: HTMLElement, options: RegisterOptions, app: Application) {
     if (!formElement) throw errors.argumentNull('formElement')
     if (!options) throw errors.argumentNull('options')
     if (!options.redirectURL) throw errors.fieldNull<RegisterOptions>("options", "redirectURL")
@@ -54,7 +54,7 @@ export function setForm(formElement: HTMLElement, options: RegisterOptions) {
             return Promise.reject('validate mobile element fail')
 
         registerButton.setAttribute('disabled', '')
-        smsId = await sendVerifyCode(mobileInput.value, sendVerifyCodeButton)
+        smsId = await sendVerifyCode(mobileInput.value, sendVerifyCodeButton, app)
         registerButton.removeAttribute('disabled')
     })
 
@@ -74,7 +74,7 @@ export function setForm(formElement: HTMLElement, options: RegisterOptions) {
                 console.error(err)
             }
         }
-        await register(mobile, password, smsId, verifyCode, data)
+        await register(mobile, password, smsId, verifyCode, data, app)
         console.assert(options.redirectURL != null)
         location.href = options.redirectURL
     })
@@ -85,7 +85,7 @@ function getElement<T extends HTMLElement>(formElement: HTMLElement, name: strin
     return element as T
 }
 
-async function sendVerifyCode(mobile: string, button: HTMLButtonElement) {
+async function sendVerifyCode(mobile: string, button: HTMLButtonElement, app: Application) {
     if (!mobile) throw errors.argumentNull('mobile')
     if (!button) throw errors.argumentNull('button')
 
@@ -111,7 +111,7 @@ async function sendVerifyCode(mobile: string, button: HTMLButtonElement) {
     return data.smsId
 }
 
-function register(mobile: string, password: string, smsId: string, verifyCode: string, data: any) {
+function register(mobile: string, password: string, smsId: string, verifyCode: string, data: any, app: Application) {
     let userService = app.createService(UserService)
     return userService.register(mobile, password, smsId, verifyCode, data)
 }

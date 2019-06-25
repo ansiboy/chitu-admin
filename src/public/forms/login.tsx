@@ -1,8 +1,9 @@
 import { FormValidator, rules as r } from "maishu-dilu";
 import { errors } from "../errors";
 import { buttonOnClick } from "maishu-ui-toolkit";
-import { app } from "../index";
+// import { app } from "../index";
 import { UserService } from "maishu-services-sdk";
+import { Application } from "maishu-chitu-react";
 
 type LoginOptions = { redirectURL: string }
 
@@ -11,7 +12,7 @@ export const PASSWORD = 'password'
 export const LOGIN = 'login'
 
 /** 设置登录表单 */
-export function setForm(formElement: HTMLElement, options: LoginOptions): LoginOptions {
+export function setForm(formElement: HTMLElement, options: LoginOptions, app: Application): LoginOptions {
     if (!formElement) throw errors.argumentNull('formElement')
     if (!options) throw errors.argumentNull('options')
     if (!options.redirectURL) throw errors.fieldNull<LoginOptions>("options", "redirectURL")

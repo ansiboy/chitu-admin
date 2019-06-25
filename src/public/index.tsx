@@ -21,7 +21,7 @@ if (typeof define === "function") {
 let element = document.createElement('div');
 document.body.insertBefore(element, document.body.children[0]);
 
-export let app = new Application()
+// export let app = new Application()
 // let mainMasterPage = app.masterPage = app.createMasterPage(MainMasterPage) as MainMasterPage
 // app.createMasterPage(SimpleMasterPage)
 // mainMasterPage.setToolbar(<Toolbar app={app} />)

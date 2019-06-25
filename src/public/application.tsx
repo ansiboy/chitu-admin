@@ -1,20 +1,19 @@
 import { UserService, Service, PermissionService } from 'maishu-services-sdk'
 import * as chitu_react from 'maishu-chitu-react';
 import { config } from './config';
-import { MasterPage, MasterPageConstructor } from './master-page';
+import { MasterPage } from './master-page';
 import React = require('react');
 import ReactDOM = require('react-dom');
-import { errors } from './errors';
-import { masterPageNames } from './masters/names';
 import { MainMasterPage } from './masters/main-master-page';
-import * as chitu from 'maishu-chitu'
 import 'text!content/admin_style_default.less'
 import { SimpleMasterPage } from 'masters/simple-master-page';
+import { AppService } from 'app-service';
 // import fs = require("fs");
 
 export let gatewayHost = '60.190.16.30:8084'
 PermissionService.baseUrl = `http://${gatewayHost}`
 
+config.firstPanelWidth = "130px"
 
 export class Application extends chitu_react.Application {
     pageMasters: { [key: string]: string } = {}
@@ -35,9 +34,22 @@ export class Application extends chitu_react.Application {
         })
     }
 
-    renderMasterPages() {
-        let mainContainer = document.getElementById('main-container')
-        console.assert(mainContainer != null)
+    createPageElement(pageName: string, containerName: string) {
+        let element = super.createPageElement(pageName, containerName);
+        let master = masterPages[containerName];
+        console.assert(master != null);
+        master.pageContainer.appendChild(element);
+        return element;
+    }
+
+    showPage(pageUrl: string, args?: any, forceRender?: boolean) {
+        args = args || {}
+        let d = this.parseUrl(pageUrl)
+        let names = ['login', 'forget-password', 'register']
+        if (names.indexOf(d.pageName) >= 0) {
+            args.container = 'simple'
+        }
+        return super.showPage(pageUrl, args, forceRender)
     }
 
     // setPageMaster(pageName: string, masterName: string) {
@@ -171,33 +183,61 @@ export class Application extends chitu_react.Application {
     }
 }
 
-async function createMasterPages(): Promise<{ simple: HTMLElement, main: HTMLElement }> {
+let masterPages = {
+    simple: null as MasterPage<any>,
+    default: null as MainMasterPage
+}
+async function createMasterPages(app: Application): Promise<{ simple: HTMLElement, main: HTMLElement }> {
     return new Promise<{ simple: HTMLElement, main: HTMLElement }>((resolve, reject) => {
         let container = document.createElement('div')
-        let simpleMasterElement = document.createElement('div')
-        let mainMaserElement = document.createElement('div')
-        container.appendChild(simpleMasterElement)
-        container.appendChild(mainMaserElement)
+        // let simpleMasterElement = document.createElement('div')
+        // simpleMasterElement.style.display = 'none';
+        // simpleMasterElement.className = 'simple'
 
-        let simpleMasterPage: SimpleMasterPage
-        let mainMasterPage: MainMasterPage
-        ReactDOM.render(<>
-            <SimpleMasterPage ref={e => simpleMasterPage = e || simpleMasterPage} />
-            <MainMasterPage ref={e => mainMasterPage = e || mainMasterPage} />
+        // let mainMaserElement = document.createElement('div')
+        // mainMaserElement.style.display = 'none';
+        // mainMaserElement.className = 'main'
 
-        </>, container, () => {
-            resolve({ simple: simpleMasterPage.pageContainer, main: mainMasterPage.pageContainer })
-        })
+        // container.appendChild(simpleMasterElement)
+        // container.appendChild(mainMaserElement)
 
+        // let simpleMasterPage: SimpleMasterPage
+        // let mainMasterPage: MainMasterPage
+        // ReactDOM.render(<>
+        //     <SimpleMasterPage ref={e => masterPages.simple = e || masterPages.simple} />
+        //     <MainMasterPage ref={e => masterPages.default = e || masterPages.default} />
+
+        // </>, container, () => {
+        //     resolve({ simple: masterPages.simple.element, main: masterPages.default.element })
+        // })
+
+        ReactDOM.render(<SimpleMasterPage app={app} ref={e => masterPages.simple = e || masterPages.simple} />, document.getElementById('simple-master'))
+        ReactDOM.render(<MainMasterPage app={app} ref={e => masterPages.default = e || masterPages.default} />, document.getElementById('main-master'))
         document.body.appendChild(container)
 
+        let appService = app.createService(AppService)
+        appService.menuList().then(menuItems => {
+            masterPages.default.setMenus(menuItems)
+        })
     })
 }
 
-createMasterPages().then(r => {
-    let app = new Application(r.simple, r.main)
-    app.run()
-})
+
+let app = new Application(document.getElementById('simple-master'), document.getElementById('main-master'))
+
+createMasterPages(app)//.then(r => {
+
+app.run()
+
+// let ps = app.createService(PermissionService)
+// ps.getMenuResources().then(d => {
+//     debugger
+//     let menuItems = d.dataItems.filter(o => o.parent_id == null).map(o => ({ name: o.name } as MenuItem))
+//     masterPages.default.setMenus(menuItems)
+//     app.run()
+// })
+
+// })
 
 
 

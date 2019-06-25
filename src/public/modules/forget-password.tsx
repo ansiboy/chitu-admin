@@ -1,6 +1,6 @@
 import React = require("react");
 import * as chitu from 'maishu-chitu'
-import { RESET_PASSWORD, SEND_VERIFY_CODE, PASSWORD, CONFIRM_PASSWORD, MOBILE, VERIFY_CODE, setForm } from "../forms/forget-password";
+import { RESET_PASSWORD, SEND_VERIFY_CODE, PASSWORD, CONFIRM_PASSWORD, MOBILE, VERIFY_CODE, setForm } from "./forms/forget-password";
 import { PageProps } from "maishu-chitu-react";
 
 type State = {}
@@ -72,7 +72,7 @@ export default class ForgetPassword extends React.Component<PageProps, State> {
                             </div>
                             <div className="pull-right">
                                 <button className="btn-link"
-                                    onClick={() => this.props.app.redirect("login")}>
+                                    onClick={() => this.props.app.redirect("auth/login")}>
                                     登录
                                 </button>
                             </div>

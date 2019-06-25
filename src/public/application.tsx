@@ -1,6 +1,6 @@
 import { UserService, Service, PermissionService } from 'maishu-services-sdk'
 import * as chitu_react from 'maishu-chitu-react';
-import { config } from './config';
+import { config } from './modules/config';
 import { MasterPage } from './master-page';
 import React = require('react');
 import ReactDOM = require('react-dom');
@@ -14,6 +14,7 @@ export let gatewayHost = '60.190.16.30:8084'
 PermissionService.baseUrl = `http://${gatewayHost}`
 
 config.firstPanelWidth = "130px"
+config.login.title = "好易微商城"
 
 export class Application extends chitu_react.Application {
     pageMasters: { [key: string]: string } = {}
@@ -45,7 +46,7 @@ export class Application extends chitu_react.Application {
     showPage(pageUrl: string, args?: any, forceRender?: boolean) {
         args = args || {}
         let d = this.parseUrl(pageUrl)
-        let names = ['login', 'forget-password', 'register']
+        let names = ['auth/login', 'auth/forget-password', 'auth/register']
         if (names.indexOf(d.pageName) >= 0) {
             args.container = 'simple'
         }

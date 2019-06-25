@@ -1,7 +1,7 @@
 import React = require("react");
-import { setForm, MOBILE, VERIFY_CODE, CONFIRM_PASSWORD, REGISTER, SEND_VERIFY_CODE, PASSWORD } from "../forms/register";
+import { setForm, MOBILE, VERIFY_CODE, CONFIRM_PASSWORD, REGISTER, SEND_VERIFY_CODE, PASSWORD } from "./forms/register";
 import { FormValidator } from "maishu-dilu";
-import { config } from "../config";
+import { config } from "./config";
 import { Application, PageProps } from "maishu-chitu-react";
 
 type State = { buttonText: string, buttonEnable: boolean }
@@ -74,7 +74,7 @@ export default class RegisterPage extends React.Component<PageProps, State> {
                         </div>
                         <div className="pull-right">
                             <button className="btn-link"
-                                onClick={() => this.props.app.redirect("login")}>
+                                onClick={() => this.props.app.redirect("auth/login")}>
                                 登录
                             </button>
                         </div>

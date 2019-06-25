@@ -11,6 +11,7 @@ export type MenuItem = {
     path?: string,
     icon?: string,
     parent?: MenuItem,
+    parentId?: string,
     children?: MenuItem[],
     visible?: boolean,
 };
@@ -116,6 +117,19 @@ export class MainMasterPage extends MasterPage<State> {
     /** 设置菜单 */
     setMenus(menus: MenuItem[]) {
         menus = menus || []
+        let stack = new Array<MenuItem>(...menus)
+        while (stack.length > 0) {
+            let item = stack.pop()
+            if (item.path) {
+                if (item.path.indexOf('?') >= 0) {
+                    item.path = `${item.path}&resourceId=${item.id}`
+                }
+                else {
+                    item.path = `${item.path}?resourceId=${item.id}`
+                }
+            }
+            stack.push(...(item.children || []))
+        }
 
         let currentPageName = this.app.currentPage ? this.app.currentPage.name : undefined;
         let resourceId = this.app.currentPage ? (this.app.currentPage.data.resourceId || this.app.currentPage.data.resource_id) as string : undefined
@@ -203,7 +217,8 @@ export class MainMasterPage extends MasterPage<State> {
                     <ul className="list-group">
                         {(firstLevelNode ? (firstLevelNode.children || []) : []).filter(o => o.visible != false).map((o, i) =>
                             <li key={i} className={o == secondLevelNode ? "list-group-item active" : "list-group-item"}
-                                style={{ cursor: 'pointer', display: o.visible == false ? "none" : '' }}>
+                                style={{ cursor: 'pointer', display: o.visible == false ? "none" : '' }}
+                                onClick={() => this.showPageByNode(o)}>
                                 <span>{o.name}</span>
                             </li>
                         )}

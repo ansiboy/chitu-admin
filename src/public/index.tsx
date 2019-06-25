@@ -7,9 +7,9 @@ import { SimpleMasterPage } from './masters/simple-master-page';
 import { Toolbar } from './components/toolbar';
 import React = require('react');
 import _forgetPassword = require('./modules/forget-password')
-import _loginForm = require('./forms/login')
-import _registerForm = require('./forms/register')
-import _forgetPasswordForm = require('./forms/forget-password')
+import _loginForm = require('./modules/forms/login')
+import _registerForm = require('./modules/forms/register')
+import _forgetPasswordForm = require('./modules/forms/forget-password')
 
 let define = window['define']
 if (typeof define === "function") {
@@ -31,7 +31,7 @@ document.body.insertBefore(element, document.body.children[0]);
 // app.setPageMaster('register', masterPageNames.simple)
 
 // export { Service } from './services/service';
-export { config } from './config'
+export { config } from './modules/config'
 export let forgetPassword = _forgetPassword
 export let loginForm = _loginForm
 export let registerForm = _registerForm

@@ -1,7 +1,7 @@
 import React = require("react");
-import { config } from "../config";
+import { config } from "./config";
 import { PageProps } from "maishu-chitu-react";
-import { setForm as setLoginForm, USERNAME, PASSWORD, LOGIN } from "../forms/login";
+import { setForm as setLoginForm, USERNAME, PASSWORD, LOGIN } from "./forms/login";
 
 interface Props extends PageProps {
     data: {
@@ -70,7 +70,7 @@ export default class LoginPage extends React.Component<Props, State> {
                         {config.login.showForgetPassword ?
                             <div className="pull-left" >
                                 <button name="forget-password" className="btn-link"
-                                    onClick={() => this.props.app.redirect("forget-password")}>
+                                    onClick={() => this.props.app.redirect("auth/forget-password")}>
                                     忘记密码
                             </button>
                             </div> : null}

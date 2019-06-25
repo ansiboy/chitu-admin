@@ -51,7 +51,6 @@ export function setForm(formElement: HTMLElement, options: LoginOptions, app: Ap
 }
 
 
-
 function getElement<T extends HTMLElement>(formElement: HTMLElement, name: string) {
     let element = formElement.querySelector(`[name="${name}"]`)
     if (element == null)

@@ -11,6 +11,7 @@ export type MenuItem = {
     name: string,
     path?: string,
     children?: MenuItem[],
+    parentId?: string,
 }
 
 
@@ -29,9 +30,9 @@ export class MenuController extends Controller {
         let resources = r.dataItems;
         resources = resources.filter(o => avalidIds.indexOf(o.id) >= 0 && o.type == 'menu');
 
-        let top = resources.filter(o => !o.parent_id).map(o => ({ id: o.id, name: o.name, path: o.path } as MenuItem))
+        let top = resources.filter(o => !o.parent_id).map(o => ({ id: o.id, name: o.name, path: o.path, parentId: o.parent_id } as MenuItem))
         for (let i = 0; i < top.length; i++) {
-            top[i].children = resources.filter(o => o.parent_id == top[i].id).map(o => ({ id: o.id, name: o.name, path: o.path } as MenuItem))
+            top[i].children = resources.filter(o => o.parent_id == top[i].id).map(o => ({ id: o.id, name: o.name, path: o.path, parentId: o.parent_id } as MenuItem))
         }
         return top
     }

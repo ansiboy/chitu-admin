@@ -1,6 +1,6 @@
 import { controller, action } from "maishu-node-mvc";
 
-@controller()
+@controller("auth")
 export class HomeController {
     @action()
     index() {

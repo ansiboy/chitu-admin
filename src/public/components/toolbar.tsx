@@ -2,7 +2,7 @@ import { Application } from "../application";
 import React = require("react");
 import { Page } from "maishu-chitu";
 import { UserService } from "maishu-services-sdk";
-import { config } from "../modules/config";
+import { config } from "../config";
 
 export class Toolbar extends React.Component<{ app: Application }, { currentPageName: string }> {
 

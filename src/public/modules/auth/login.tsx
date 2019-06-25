@@ -1,7 +1,7 @@
 import React = require("react");
-import { config } from "./config";
+import { config } from "../../config";
 import { PageProps } from "maishu-chitu-react";
-import { setForm as setLoginForm, USERNAME, PASSWORD, LOGIN } from "./forms/login";
+import { setForm as setLoginForm, USERNAME, PASSWORD, LOGIN } from "../../forms/login";
 
 interface Props extends PageProps {
     data: {

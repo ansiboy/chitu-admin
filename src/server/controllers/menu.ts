@@ -15,7 +15,7 @@ export type MenuItem = {
 }
 
 
-@controller("menu")
+@controller("auth/menu")
 export class MenuController extends Controller {
     @action()
     async list(): Promise<MenuItem[]> {

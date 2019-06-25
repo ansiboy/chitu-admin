@@ -3,7 +3,7 @@ import { MenuItem } from 'masters/main-master-page';
 
 export class AppService extends BaseService {
     async menuList() {
-        let items = await this.get<MenuItem[]>('menu/list');
+        let items = await this.get<MenuItem[]>('auth/menu/list');
         let arr = new Array<MenuItem>()
         let stack = [...items]
         while (stack.length > 0) {

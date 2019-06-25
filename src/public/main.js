@@ -3,7 +3,7 @@ let lib = '../../lib'
 
 
 requirejs.config({
-    baseUrl: 'out/public',
+    // baseUrl: 'out/public',
     paths: {
         css: `${lib}/css`,
         less: `${lib}/require-less-0.1.5/less`,

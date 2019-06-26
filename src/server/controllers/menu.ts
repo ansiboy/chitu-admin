@@ -3,8 +3,8 @@ import { PermissionService } from 'maishu-services-sdk'
 import { settings } from "../settings";
 import { errors } from "../errors";
 
-export let gatewayHost = '60.190.16.30:8084'
-PermissionService.baseUrl = `http://${gatewayHost}`
+// export let gatewayHost = '60.190.16.30:8084'
+PermissionService.baseUrl = `http://${settings.gateway}`
 
 export type MenuItem = {
     id: string,

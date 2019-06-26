@@ -1,2 +1,2 @@
 
-export let settings: { roleId: string } = global['settings'] = global['settings'] || {}
+export let settings: { roleId: string, gateway: string } = global['settings'] = global['settings'] || {}

@@ -1,7 +1,7 @@
 
 const webpackES6Config = require('./webpack.config.js');
 let webpackES5Config = Object.assign({}, webpackES6Config)
-webpackES5Config.entry = __dirname + "/out-es5/index.js"//已多次提及的唯一入口文件
+webpackES5Config.entry = __dirname + "/out-es5/public/index.js"//已多次提及的唯一入口文件
 webpackES5Config.output = Object.assign({}, webpackES5Config.output)
 webpackES5Config.output.filename = "index.es5.js"
 
@@ -22,7 +22,10 @@ module.exports = function (grunt) {
         },
         shell: {
             src: {
-                command: `tsc -p src`
+                command: `tsc -p src/server`
+            },
+            client: {
+                command: `tsc -p src/public`
             },
         },
         webpack: {
@@ -44,9 +47,9 @@ module.exports = function (grunt) {
             dist: {
                 files: [{
                     expand: true,
-                    cwd: 'out',
+                    cwd: 'out/public',
                     src: ['**/*.js'],
-                    dest: 'out-es5/'
+                    dest: 'out-es5/public'
                 }]
             }
         },

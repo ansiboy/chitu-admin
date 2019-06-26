@@ -27,6 +27,9 @@ export function start(config: Config) {
         virtualPaths['modules'] = config.modulesPath
     }
 
+    settings.roleId = config.roleId;
+    settings.gateway = config.gateway;
+    
     startServer({
         port: config.port,
         rootPath: __dirname,
@@ -35,6 +38,5 @@ export function start(config: Config) {
         virtualPaths
     });
 
-    settings.roleId = config.roleId;
-    settings.gateway = config.gateway;
+
 }

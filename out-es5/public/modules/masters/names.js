@@ -6,5 +6,8 @@ define(["require", "exports"], function (require, exports) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.config = window['maishu-chitu-admin-config'] = window['maishu-chitu-admin-config'] || {};
+  exports.masterPageNames = {
+    main: "default",
+    simple: "simple"
+  };
 });

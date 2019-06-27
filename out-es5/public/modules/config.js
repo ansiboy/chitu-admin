@@ -7,8 +7,4 @@ define(["require", "exports"], function (require, exports) {
     value: true
   });
   exports.config = window['maishu-chitu-admin-config'] = window['maishu-chitu-admin-config'] || {};
-  exports.config.login = Object.assign({
-    showForgetPassword: true,
-    showRegister: true
-  }, exports.config.login || {});
 });

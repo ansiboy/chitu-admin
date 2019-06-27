@@ -55,10 +55,10 @@ define(["require", "exports", "maishu-services-sdk", "maishu-chitu-react", "./co
 
   Object.defineProperty(exports, "__esModule", {
     value: true
-  }); // import fs = require("fs");
-
-  exports.gatewayHost = '60.190.16.30:8084';
-  maishu_services_sdk_1.PermissionService.baseUrl = "http://".concat(exports.gatewayHost);
+  });
+  config_1.config.login = config_1.config.login || {};
+  config_1.config.login.showForgetPassword = true;
+  config_1.config.login.showRegister = true;
   config_1.config.firstPanelWidth = "130px";
   config_1.config.login.title = "好易微商城";
 

@@ -18,49 +18,82 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-define(["require", "exports", "./master-page", "react", "./names"], function (require, exports, master_page_1, React, names_1) {
+define(["require", "exports", "modules/components/react", "../config"], function (require, exports, React, config_1) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
 
-  var SimpleMasterPage =
+  var Toolbar =
   /*#__PURE__*/
-  function (_master_page_1$Master) {
-    _inherits(SimpleMasterPage, _master_page_1$Master);
+  function (_React$Component) {
+    _inherits(Toolbar, _React$Component);
 
-    function SimpleMasterPage() {
+    function Toolbar(props) {
       var _this;
 
-      _classCallCheck(this, SimpleMasterPage);
+      _classCallCheck(this, Toolbar);
 
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(SimpleMasterPage).apply(this, arguments));
-      _this.name = names_1.masterPageNames.simple;
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(Toolbar).call(this, props));
+
+      _this.pageShowin = function (sender, page) {
+        _this.setState({
+          currentPageName: page.name
+        });
+      };
+
+      _this.state = {
+        currentPageName: null
+      };
       return _this;
-    } // element: HTMLElement;
+    }
 
-
-    _createClass(SimpleMasterPage, [{
+    _createClass(Toolbar, [{
+      key: "componentDidMount",
+      value: function componentDidMount() {
+        this.props.app.pageShowing.add(this.pageShowin);
+      }
+    }, {
+      key: "componentWillUnmount",
+      value: function componentWillUnmount() {
+        this.props.app.pageShowing.remove(this.pageShowin);
+      }
+    }, {
       key: "render",
       value: function render() {
         var _this2 = this;
 
-        return React.createElement("div", {
-          ref: function ref(e) {
-            return _this2.pageContainer = e || _this2.pageContainer;
+        var showLoginButton = ['forget-password', 'login', 'register'].indexOf(this.state.currentPageName) < 0;
+        return React.createElement("ul", null, showLoginButton ? React.createElement("li", {
+          className: "light-blue pull-right",
+          style: {
+            color: 'white',
+            paddingTop: 4,
+            cursor: 'pointer'
+          },
+          onClick: function onClick() {
+            _this2.props.app.logout();
+
+            if (config_1.config.logoutRedirectURL) {
+              location.href = config_1.config.logoutRedirectURL;
+              return;
+            }
+
+            _this2.props.app.redirect('login');
           }
-        });
-      }
-    }, {
-      key: "element",
-      get: function get() {
-        return this.pageContainer;
+        }, React.createElement("i", {
+          className: "icon-off"
+        }), React.createElement("span", {
+          style: {
+            paddingLeft: 4
+          }
+        }, "\u9000\u51FA")) : null);
       }
     }]);
 
-    return SimpleMasterPage;
-  }(master_page_1.MasterPage);
+    return Toolbar;
+  }(React.Component);
 
-  exports.SimpleMasterPage = SimpleMasterPage;
+  exports.Toolbar = Toolbar;
 });

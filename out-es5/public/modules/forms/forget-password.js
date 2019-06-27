@@ -28,7 +28,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
   });
 };
 
-define(["require", "exports", "maishu-dilu", "maishu-ui-toolkit", "../errors", "maishu-services-sdk"], function (require, exports, maishu_dilu_1, maishu_ui_toolkit_1, errors_1, maishu_services_sdk_1) {
+define(["require", "exports", "maishu-dilu", "maishu-ui-toolkit", "../../errors", "maishu-services-sdk"], function (require, exports, maishu_dilu_1, maishu_ui_toolkit_1, errors_1, maishu_services_sdk_1) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {

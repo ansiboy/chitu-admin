@@ -18,7 +18,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-define(["require", "exports", "./master-page", "react", "./names"], function (require, exports, master_page_1, React, names_1) {
+define(["require", "exports", "./master-page", "modules/masters/react", "./names"], function (require, exports, master_page_1, React, names_1) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {

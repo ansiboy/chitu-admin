@@ -1,5 +1,5 @@
 import React = require("react");
-import { Application } from "../application";
+import { Application } from "../_application";
 
 export interface MasterPageProps {
     app: Application

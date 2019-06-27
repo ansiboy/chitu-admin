@@ -1,7 +1,7 @@
 
 
 import React = require('react');
-import { Application } from '../application';
+import { Application } from '../_application';
 import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
 

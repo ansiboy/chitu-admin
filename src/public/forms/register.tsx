@@ -1,4 +1,4 @@
-import { errors } from "../errors";
+import { errors } from "../_errors";
 import { FormValidator, rules as r } from "maishu-dilu";
 import { buttonOnClick } from "maishu-ui-toolkit";
 import { UserService } from "maishu-services-sdk";

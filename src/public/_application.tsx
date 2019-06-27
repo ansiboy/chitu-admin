@@ -1,6 +1,6 @@
 import { UserService, Service, PermissionService } from 'maishu-services-sdk'
 import * as chitu_react from 'maishu-chitu-react';
-import { config } from './config';
+import { config } from './_config';
 import { MasterPage } from './masters/master-page';
 import React = require('react');
 import ReactDOM = require('react-dom');

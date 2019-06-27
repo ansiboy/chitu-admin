@@ -1,7 +1,7 @@
 
 
 import React = require('react');
-import { Application } from '../../application';
+import { Application } from 'maishu-chitu-react';
 import { MasterPage, MasterPageProps } from '../../masters/master-page';
 import { masterPageNames } from '../../masters/names';
 

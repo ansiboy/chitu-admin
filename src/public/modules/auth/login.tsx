@@ -1,5 +1,5 @@
 import React = require("react");
-import { config } from "../../config";
+import { config } from "../../_config";
 import { PageProps } from "maishu-chitu-react";
 import { setForm as setLoginForm, USERNAME, PASSWORD, LOGIN } from "../../forms/login";
 

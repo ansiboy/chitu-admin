@@ -36,7 +36,7 @@ requirejs.config({
     }
 })
 
-requirejs(['./application', "clientjs/init"], function (appModule, initModule) {
+requirejs(['./_application', "clientjs/init"], function (appModule, initModule) {
 
     if (initModule && typeof initModule.default == 'function') {
         initModule.default(appModule.app)

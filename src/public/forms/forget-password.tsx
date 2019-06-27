@@ -1,6 +1,6 @@
 import { FormValidator, rules as r } from "maishu-dilu";
 import { buttonOnClick, alert } from "maishu-ui-toolkit";
-import { errors } from "../errors";
+import { errors } from "../_errors";
 import { UserService } from "maishu-services-sdk";
 import { Application } from "maishu-chitu-react";
 // import { app } from "../index";

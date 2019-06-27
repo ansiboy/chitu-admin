@@ -28,7 +28,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
   });
 };
 
-define(["require", "exports", "../errors", "maishu-dilu", "maishu-ui-toolkit", "maishu-services-sdk"], function (require, exports, errors_1, maishu_dilu_1, maishu_ui_toolkit_1, maishu_services_sdk_1) {
+define(["require", "exports", "../_errors", "maishu-dilu", "maishu-ui-toolkit", "maishu-services-sdk"], function (require, exports, _errors_1, maishu_dilu_1, maishu_ui_toolkit_1, maishu_services_sdk_1) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -45,9 +45,9 @@ define(["require", "exports", "../errors", "maishu-dilu", "maishu-ui-toolkit", "
   function setForm(formElement, options, app) {
     var _this = this;
 
-    if (!formElement) throw errors_1.errors.argumentNull('formElement');
-    if (!options) throw errors_1.errors.argumentNull('options');
-    if (!options.redirectURL) throw errors_1.errors.fieldNull("options", "redirectURL");
+    if (!formElement) throw _errors_1.errors.argumentNull('formElement');
+    if (!options) throw _errors_1.errors.argumentNull('options');
+    if (!options.redirectURL) throw _errors_1.errors.fieldNull("options", "redirectURL");
     var validator = new maishu_dilu_1.FormValidator(formElement, {
       name: exports.MOBILE,
       rules: [maishu_dilu_1.rules.required('请输入手机号')]
@@ -62,17 +62,17 @@ define(["require", "exports", "../errors", "maishu-dilu", "maishu-ui-toolkit", "
       rules: [maishu_dilu_1.rules.required('请再次输入密码')]
     });
     var registerButton = getElement(formElement, exports.REGISTER);
-    if (!registerButton) throw errors_1.errors.registerButtonNotExists();
+    if (!registerButton) throw _errors_1.errors.registerButtonNotExists();
     var sendVerifyCodeButton = getElement(formElement, exports.SEND_VERIFY_CODE);
-    if (!sendVerifyCodeButton) throw errors_1.errors.sendVerifyCodeButtonNotExists();
+    if (!sendVerifyCodeButton) throw _errors_1.errors.sendVerifyCodeButtonNotExists();
     var mobileInput = getElement(formElement, exports.MOBILE);
-    if (!mobileInput) throw errors_1.errors.elementNotExistsWithName(exports.MOBILE);
+    if (!mobileInput) throw _errors_1.errors.elementNotExistsWithName(exports.MOBILE);
     var passwordInput = getElement(formElement, exports.PASSWORD);
-    if (!passwordInput) throw errors_1.errors.elementNotExistsWithName(exports.PASSWORD);
+    if (!passwordInput) throw _errors_1.errors.elementNotExistsWithName(exports.PASSWORD);
     var confirmInput = getElement(formElement, exports.CONFIRM_PASSWORD);
-    if (!confirmInput) throw errors_1.errors.elementNotExistsWithName(exports.CONFIRM_PASSWORD);
+    if (!confirmInput) throw _errors_1.errors.elementNotExistsWithName(exports.CONFIRM_PASSWORD);
     var verifyCodeInput = getElement(formElement, exports.VERIFY_CODE);
-    if (!verifyCodeInput) throw errors_1.errors.elementNotExistsWithName(exports.VERIFY_CODE);
+    if (!verifyCodeInput) throw _errors_1.errors.elementNotExistsWithName(exports.VERIFY_CODE);
     var dataHidden = getElement(formElement, exports.DATA);
     var smsId;
     maishu_ui_toolkit_1.buttonOnClick(sendVerifyCodeButton, function () {
@@ -174,7 +174,7 @@ define(["require", "exports", "../errors", "maishu-dilu", "maishu-ui-toolkit", "
                 break;
               }
 
-              throw errors_1.errors.argumentNull('mobile');
+              throw _errors_1.errors.argumentNull('mobile');
 
             case 2:
               if (button) {
@@ -182,7 +182,7 @@ define(["require", "exports", "../errors", "maishu-dilu", "maishu-ui-toolkit", "
                 break;
               }
 
-              throw errors_1.errors.argumentNull('button');
+              throw _errors_1.errors.argumentNull('button');
 
             case 4:
               userService = app.createService(maishu_services_sdk_1.UserService);

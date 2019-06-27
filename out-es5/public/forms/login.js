@@ -28,7 +28,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
   });
 };
 
-define(["require", "exports", "maishu-dilu", "../errors", "maishu-ui-toolkit", "maishu-services-sdk"], function (require, exports, maishu_dilu_1, errors_1, maishu_ui_toolkit_1, maishu_services_sdk_1) {
+define(["require", "exports", "maishu-dilu", "../_errors", "maishu-ui-toolkit", "maishu-services-sdk"], function (require, exports, maishu_dilu_1, _errors_1, maishu_ui_toolkit_1, maishu_services_sdk_1) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -42,9 +42,9 @@ define(["require", "exports", "maishu-dilu", "../errors", "maishu-ui-toolkit", "
   function setForm(formElement, options, app) {
     var _this = this;
 
-    if (!formElement) throw errors_1.errors.argumentNull('formElement');
-    if (!options) throw errors_1.errors.argumentNull('options');
-    if (!options.redirectURL) throw errors_1.errors.fieldNull("options", "redirectURL");
+    if (!formElement) throw _errors_1.errors.argumentNull('formElement');
+    if (!options) throw _errors_1.errors.argumentNull('options');
+    if (!options.redirectURL) throw _errors_1.errors.fieldNull("options", "redirectURL");
     var validator = new maishu_dilu_1.FormValidator(formElement, {
       name: exports.USERNAME,
       rules: [maishu_dilu_1.rules.required('请输入用户名')]
@@ -100,7 +100,7 @@ define(["require", "exports", "maishu-dilu", "../errors", "maishu-ui-toolkit", "
 
   function getElement(formElement, name) {
     var element = formElement.querySelector("[name=\"".concat(name, "\"]"));
-    if (element == null) throw errors_1.errors.elementNotExistsWithName(name);
+    if (element == null) throw _errors_1.errors.elementNotExistsWithName(name);
     return element;
   }
 });

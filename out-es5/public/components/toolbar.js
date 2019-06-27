@@ -18,7 +18,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-define(["require", "exports", "react", "../config"], function (require, exports, React, config_1) {
+define(["require", "exports", "react", "../_config"], function (require, exports, React, _config_1) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -75,8 +75,8 @@ define(["require", "exports", "react", "../config"], function (require, exports,
           onClick: function onClick() {
             _this2.props.app.logout();
 
-            if (config_1.config.logoutRedirectURL) {
-              location.href = config_1.config.logoutRedirectURL;
+            if (_config_1.config.logoutRedirectURL) {
+              location.href = _config_1.config.logoutRedirectURL;
               return;
             }
 

@@ -28,11 +28,10 @@ requirejs.config({
     "maishu-wuzhui-helper": "".concat(node_modules, "/maishu-wuzhui-helper/dist/index"),
     "swiper": "".concat(node_modules, "/swiper/dist/js/swiper"),
     "xml2js": "".concat(node_modules, "/xml2js/lib/xml2js"),
-    "polyfill": "".concat(node_modules, "/@babel/polyfill/dist/polyfill"),
-    "content": "../../content"
+    "polyfill": "".concat(node_modules, "/@babel/polyfill/dist/polyfill")
   }
 });
-requirejs(['./_application', "clientjs/init"], function (appModule, initModule) {
+requirejs(['./_application', "clientjs_init"], function (appModule, initModule) {
   if (initModule && typeof initModule.default == 'function') {
     initModule.default(appModule.app);
   }

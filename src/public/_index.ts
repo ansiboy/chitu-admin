@@ -32,11 +32,10 @@ requirejs.config({
         "swiper": `${node_modules}/swiper/dist/js/swiper`,
         "xml2js": `${node_modules}/xml2js/lib/xml2js`,
         "polyfill": `${node_modules}/@babel/polyfill/dist/polyfill`,
-        "content": `../../content`
     }
 })
 
-requirejs(['./_application', "clientjs/init"], function (appModule, initModule) {
+requirejs(['./_application', "clientjs_init"], function (appModule, initModule) {
 
     if (initModule && typeof initModule.default == 'function') {
         initModule.default(appModule.app)

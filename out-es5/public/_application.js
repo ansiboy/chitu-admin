@@ -50,7 +50,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
   });
 };
 
-define(["require", "exports", "maishu-services-sdk", "maishu-chitu-react", "./_config", "react", "react-dom", "./masters/main-master-page", "masters/simple-master-page", "app-service", "text!content/admin_style_default.less"], function (require, exports, maishu_services_sdk_1, chitu_react, _config_1, React, ReactDOM, main_master_page_1, simple_master_page_1, app_service_1) {
+define(["require", "exports", "maishu-services-sdk", "maishu-chitu-react", "./_config", "react", "react-dom", "./masters/main-master-page", "./masters/simple-master-page", "./app-service", "text!content/admin_style_default.less"], function (require, exports, maishu_services_sdk_1, chitu_react, _config_1, React, ReactDOM, main_master_page_1, simple_master_page_1, app_service_1) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -111,54 +111,7 @@ define(["require", "exports", "maishu-services-sdk", "maishu-chitu-react", "./_c
         }
 
         return _get(_getPrototypeOf(Application.prototype), "showPage", this).call(this, pageUrl, args, forceRender);
-      } // setPageMaster(pageName: string, masterName: string) {
-      //     this.pageMasters[pageName] = masterName
-      // }
-      // private getPageMaster(pageName: string) {
-      //     let masterName = this.pageMasters[pageName]
-      //     if (!masterName)
-      //         masterName = masterPageNames.main
-      //     return masterName
-      // }
-      // createMasterPage(type: MasterPageConstructor) {
-      //     let reactElement = React.createElement(type, { app: this })
-      //     let htmlElement = document.createElement('div')
-      //     document.body.appendChild(htmlElement)
-      //     let masterPage = ReactDOM.render(reactElement, htmlElement)
-      //     if (!masterPage.name)
-      //         throw errors.masterPageNameCanntEmpty()
-      //     if (this.masterPages[masterPage.name])
-      //         throw errors.masterPageExists(masterPage.name)
-      //     this.masterPages[masterPage.name] = masterPage
-      //     this.masterElements[masterPage.name] = htmlElement
-      //     return masterPage
-      // }
-      // showPage(pageName: string, args?: object, forceRender?: boolean) {
-      //     let pageMasterName = this.getPageMaster(pageName)
-      //     let names = Object.getOwnPropertyNames(this.masterElements)
-      //     for (let i = 0; i < names.length; i++) {
-      //         if (names[i] == pageMasterName) {
-      //             this.masterElements[names[i]].style.removeProperty('display')
-      //         }
-      //         else {
-      //             this.masterElements[names[i]].style.display = 'none'
-      //         }
-      //     }
-      //     let page = super.showPage(pageName, args, forceRender)
-      //     return page
-      // }
-      // createPageElement(pageName: string): HTMLElement {
-      //     let masterName = this.getPageMaster(pageName)
-      //     let master = this.masterPages[masterName]
-      //     if (!master)
-      //         throw errors.masterNotExists(masterName)
-      //     let element: HTMLElement = document.createElement("div");
-      //     if (!master)
-      //         throw errors.masterContainerIsNull(masterName)
-      //     master.pageContainer.appendChild(element);
-      //     return element;
-      // }
-
+      }
     }, {
       key: "logout",
       value: function logout() {
@@ -301,15 +254,6 @@ define(["require", "exports", "maishu-services-sdk", "maishu-chitu-react", "./_c
     }));
   }
 
-  var app = new Application(document.getElementById('simple-master'), document.getElementById('main-master'));
-  createMasterPages(app); //.then(r => {
-
-  app.run();
-}); // let ps = app.createService(PermissionService)
-// ps.getMenuResources().then(d => {
-//     debugger
-//     let menuItems = d.dataItems.filter(o => o.parent_id == null).map(o => ({ name: o.name } as MenuItem))
-//     masterPages.default.setMenus(menuItems)
-//     app.run()
-// })
-// })
+  exports.app = new Application(document.getElementById('simple-master'), document.getElementById('main-master'));
+  createMasterPages(exports.app);
+});

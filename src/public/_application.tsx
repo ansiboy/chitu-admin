@@ -6,8 +6,9 @@ import React = require('react');
 import ReactDOM = require('react-dom');
 import { MainMasterPage } from './masters/main-master-page';
 import 'text!content/admin_style_default.less'
-import { SimpleMasterPage } from 'masters/simple-master-page';
-import { AppService } from 'app-service';
+import { SimpleMasterPage } from './masters/simple-master-page';
+import { AppService } from './app-service';
+import { PageData } from "maishu-chitu"
 
 config.login = config.login || {} as any;
 config.login.showForgetPassword = true;
@@ -42,7 +43,7 @@ export class Application extends chitu_react.Application {
         return element;
     }
 
-    showPage(pageUrl: string, args?: any, forceRender?: boolean) {
+    showPage(pageUrl: string, args?: PageData, forceRender?: boolean) {
         args = args || {}
         let d = this.parseUrl(pageUrl)
         let names = ['auth/login', 'auth/forget-password', 'auth/register']
@@ -51,64 +52,6 @@ export class Application extends chitu_react.Application {
         }
         return super.showPage(pageUrl, args, forceRender)
     }
-
-    // setPageMaster(pageName: string, masterName: string) {
-    //     this.pageMasters[pageName] = masterName
-    // }
-
-    // private getPageMaster(pageName: string) {
-    //     let masterName = this.pageMasters[pageName]
-    //     if (!masterName)
-    //         masterName = masterPageNames.main
-
-    //     return masterName
-    // }
-
-    // createMasterPage(type: MasterPageConstructor) {
-    //     let reactElement = React.createElement(type, { app: this })
-    //     let htmlElement = document.createElement('div')
-    //     document.body.appendChild(htmlElement)
-    //     let masterPage = ReactDOM.render(reactElement, htmlElement)
-    //     if (!masterPage.name)
-    //         throw errors.masterPageNameCanntEmpty()
-
-    //     if (this.masterPages[masterPage.name])
-    //         throw errors.masterPageExists(masterPage.name)
-
-    //     this.masterPages[masterPage.name] = masterPage
-    //     this.masterElements[masterPage.name] = htmlElement
-    //     return masterPage
-    // }
-
-    // showPage(pageName: string, args?: object, forceRender?: boolean) {
-    //     let pageMasterName = this.getPageMaster(pageName)
-    //     let names = Object.getOwnPropertyNames(this.masterElements)
-    //     for (let i = 0; i < names.length; i++) {
-    //         if (names[i] == pageMasterName) {
-    //             this.masterElements[names[i]].style.removeProperty('display')
-    //         }
-    //         else {
-    //             this.masterElements[names[i]].style.display = 'none'
-    //         }
-    //     }
-
-    //     let page = super.showPage(pageName, args, forceRender)
-    //     return page
-    // }
-
-    // createPageElement(pageName: string): HTMLElement {
-    //     let masterName = this.getPageMaster(pageName)
-    //     let master = this.masterPages[masterName]
-    //     if (!master)
-    //         throw errors.masterNotExists(masterName)
-
-    //     let element: HTMLElement = document.createElement("div");
-    //     if (!master)
-    //         throw errors.masterContainerIsNull(masterName)
-
-    //     master.pageContainer.appendChild(element);
-    //     return element;
-    // }
 
     get userId() {
         if (Service.loginInfo.value == null)
@@ -223,21 +166,10 @@ async function createMasterPages(app: Application): Promise<{ simple: HTMLElemen
 }
 
 
-let app = new Application(document.getElementById('simple-master'), document.getElementById('main-master'))
+export let app = new Application(document.getElementById('simple-master'), document.getElementById('main-master'))
 
-createMasterPages(app)//.then(r => {
+createMasterPages(app)
 
-app.run()
-
-// let ps = app.createService(PermissionService)
-// ps.getMenuResources().then(d => {
-//     debugger
-//     let menuItems = d.dataItems.filter(o => o.parent_id == null).map(o => ({ name: o.name } as MenuItem))
-//     masterPages.default.setMenus(menuItems)
-//     app.run()
-// })
-
-// })
 
 
 

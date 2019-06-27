@@ -22,8 +22,8 @@ export function start(config: Config) {
         // out: path.join(__dirname, '../'),
         lib: path.join(__dirname, '../../lib'),
         node_modules: node_modules_path,
-        content: path.join(__dirname, '../../src/public/content'),
-        'main.js': path.join(__dirname, '../../src/public/main.js'),
+        // content: path.join(__dirname, '../../src/public/content'),
+        // 'main.js': path.join(__dirname, '../../src/public/main.js'),
     }
 
     if (config.clientRootDirectory) {

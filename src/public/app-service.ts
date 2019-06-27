@@ -1,5 +1,5 @@
 import { Service as BaseService } from 'maishu-chitu-service';
-import { MenuItem } from 'masters/main-master-page';
+import { MenuItem } from './masters/main-master-page';
 
 export class AppService extends BaseService {
     async menuList() {

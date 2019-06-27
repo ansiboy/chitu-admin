@@ -1,4 +1,4 @@
-import { MasterPage } from "../master-page";
+import { MasterPage } from "./master-page";
 import React = require("react");
 import { masterPageNames } from "./names";
 

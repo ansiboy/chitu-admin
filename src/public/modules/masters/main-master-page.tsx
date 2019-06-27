@@ -1,9 +1,9 @@
 
 
 import React = require('react');
-import { Application } from '../application';
-import { MasterPage, MasterPageProps } from './master-page';
-import { masterPageNames } from './names';
+import { Application } from '../../application';
+import { MasterPage, MasterPageProps } from '../../masters/master-page';
+import { masterPageNames } from '../../masters/names';
 
 export type MenuItem = {
     id?: string,

@@ -5,3 +5,5 @@ declare module 'fs' {
 // declare function require(path: string): any
 
 // declare module "./content/admin_style_default.less"
+
+declare let requirejs: any;

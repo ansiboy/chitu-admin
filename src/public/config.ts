@@ -13,8 +13,6 @@ export interface Config {
 }
 
 export let config: Config = (window as any)['maishu-chitu-admin-config'] = (window as any)['maishu-chitu-admin-config'] || {}
-config.login = Object.assign({
-    showForgetPassword: true, showRegister: true
-}, config.login || {})
+
 
 

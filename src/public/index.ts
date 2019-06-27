@@ -36,21 +36,13 @@ requirejs.config({
     }
 })
 
-requirejs(['./application'], function (mod) {
+requirejs(['./application', "clientjs/init"], function (appModule, initModule) {
 
-    // debugger
+    if (initModule && typeof initModule.default == 'function') {
+        initModule.default(appModule.app)
+    }
 
-    // var app = new mod.Application()
-    // app.run()
-
-    // if (location.pathname == '/brands.html') {
-    //     mod.app.showPage('brands-panel')
-    // }
-    // else {
-    //     if (!location.hash)
-    //         mod.app.redirect('index');
-
-    //     mod.app.run();
-    // }
-
+    console.assert(appModule != null && appModule.app != null);
+    appModule.app.run();
+  
 })

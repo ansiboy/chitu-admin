@@ -14,5 +14,8 @@ export let errors = {
     pathIsNotDirectory(path: string) {
         let msg = `Path ${path} is not a directory.`;
         return new Error(msg);
-    }
+    },
+    argumentFieldNull(argumentName: string, fieldName: string) {
+        return new Error(`Argument ${argumentName} field ${fieldName} cannt ben null or emtpy.`)
+    },
 }

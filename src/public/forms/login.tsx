@@ -4,6 +4,7 @@ import { buttonOnClick } from "maishu-ui-toolkit";
 // import { app } from "../index";
 import { UserService } from "maishu-services-sdk";
 import { Application } from "maishu-chitu-react";
+import { AppService } from "app-service";
 
 type LoginOptions = { redirectURL: string }
 
@@ -36,12 +37,11 @@ export function setForm(formElement: HTMLElement, options: LoginOptions, app: Ap
         if (validator.check() == false)
             return Promise.reject('validate fail')
 
-        let userService = app.createService(UserService);
+        let service = app.createService(AppService);
         let username = usernameInput.value
         let password = passwordInput.value
 
-        await userService.login(username, password)
-
+        await service.login(username, password)
 
         console.assert(options.redirectURL != null)
         location.href = options.redirectURL

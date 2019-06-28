@@ -8,13 +8,16 @@ import { MainMasterPage } from './masters/main-master-page';
 import 'text!content/admin_style_default.less'
 import { SimpleMasterPage } from './masters/simple-master-page';
 import { AppService } from './app-service';
-import { PageData } from "maishu-chitu"
+import { PageData, Page } from "maishu-chitu"
 
 config.login = config.login || {} as any;
 config.login.showForgetPassword = true;
 config.login.showRegister = true;
 config.firstPanelWidth = "130px";
 config.login.title = "好易微商城";
+
+PermissionService.baseUrl = "http://127.0.0.1:2857";
+
 
 export class Application extends chitu_react.Application {
     pageMasters: { [key: string]: string } = {}
@@ -43,7 +46,7 @@ export class Application extends chitu_react.Application {
         return element;
     }
 
-    showPage(pageUrl: string, args?: PageData, forceRender?: boolean) {
+    showPage(pageUrl: string, args?: PageData, forceRender?: boolean): Page {
         args = args || {}
         let d = this.parseUrl(pageUrl)
         let names = ['auth/login', 'auth/forget-password', 'auth/register']
@@ -133,35 +136,18 @@ let masterPages = {
 async function createMasterPages(app: Application): Promise<{ simple: HTMLElement, main: HTMLElement }> {
     return new Promise<{ simple: HTMLElement, main: HTMLElement }>((resolve, reject) => {
         let container = document.createElement('div')
-        // let simpleMasterElement = document.createElement('div')
-        // simpleMasterElement.style.display = 'none';
-        // simpleMasterElement.className = 'simple'
-
-        // let mainMaserElement = document.createElement('div')
-        // mainMaserElement.style.display = 'none';
-        // mainMaserElement.className = 'main'
-
-        // container.appendChild(simpleMasterElement)
-        // container.appendChild(mainMaserElement)
-
-        // let simpleMasterPage: SimpleMasterPage
-        // let mainMasterPage: MainMasterPage
-        // ReactDOM.render(<>
-        //     <SimpleMasterPage ref={e => masterPages.simple = e || masterPages.simple} />
-        //     <MainMasterPage ref={e => masterPages.default = e || masterPages.default} />
-
-        // </>, container, () => {
-        //     resolve({ simple: masterPages.simple.element, main: masterPages.default.element })
-        // })
 
         ReactDOM.render(<SimpleMasterPage app={app} ref={e => masterPages.simple = e || masterPages.simple} />, document.getElementById('simple-master'))
         ReactDOM.render(<MainMasterPage app={app} ref={e => masterPages.default = e || masterPages.default} />, document.getElementById('main-master'))
         document.body.appendChild(container)
 
+
         let appService = app.createService(AppService)
-        appService.menuList().then(menuItems => {
-            masterPages.default.setMenus(menuItems)
-        })
+        if(app.userId){
+            appService.menuList(app.userId).then(menuItems => {
+                masterPages.default.setMenus(menuItems)
+            })
+        }
     })
 }
 

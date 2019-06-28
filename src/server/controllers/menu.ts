@@ -1,4 +1,4 @@
-import { controller, action, Controller } from "maishu-node-mvc";
+import { controller, action, Controller, formData } from "maishu-node-mvc";
 import { PermissionService } from 'maishu-services-sdk'
 import { settings } from "../settings";
 import { errors } from "../errors";
@@ -18,17 +18,23 @@ export type MenuItem = {
 @controller("auth/menu")
 export class MenuController extends Controller {
     @action()
-    async list(): Promise<MenuItem[]> {
-        if (!settings.roleId)
-            throw errors.settingItemNull('roleId');
+    async list(@formData { userId }): Promise<MenuItem[]> {
+        if (!userId) throw errors.argumentFieldNull("formData", "userId");
+
+        // if (!settings.roleId)
+        //     throw errors.settingItemNull('roleId');
 
         let ps = new PermissionService();
-        let [r, avalidIds] = await Promise.all([
-            ps.getResourceList({}), ps.getRoleResourceIds(settings.roleId)
-        ])
+        let roles = await ps.getUserRoles(userId);
+        let resourceIds: string[] = [];
+        let arrResourceIds = await Promise.all(roles.map(o => ps.getRoleResourceIds(o.id)))
+        for (let i = 0; i < arrResourceIds.length; i++) {
+            resourceIds.push(...arrResourceIds[i])
+        }
 
+        let r = await ps.getResourceList({});
         let resources = r.dataItems;
-        resources = resources.filter(o => avalidIds.indexOf(o.id) >= 0 && o.type == 'menu');
+        resources = resources.filter(o => resourceIds.indexOf(o.id) >= 0 && o.type == 'menu');
 
         let top = resources.filter(o => !o.parent_id).map(o => ({ id: o.id, name: o.name, path: o.path, parentId: o.parent_id } as MenuItem))
         for (let i = 0; i < top.length; i++) {

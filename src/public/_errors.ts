@@ -58,5 +58,9 @@ export let errors = {
         let error = new Error(msg)
         error.name = errors.sendVerifyCodeButtonNotExists.name
         return error
-    }
+    },
+    unexpectedNullResult() {
+        let msg = `Null result is unexpected.`
+        return new Error(msg)
+    },
 }

@@ -28,7 +28,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
   });
 };
 
-define(["require", "exports", "maishu-dilu", "../_errors", "maishu-ui-toolkit", "maishu-services-sdk"], function (require, exports, maishu_dilu_1, _errors_1, maishu_ui_toolkit_1, maishu_services_sdk_1) {
+define(["require", "exports", "maishu-dilu", "../_errors", "maishu-ui-toolkit", "app-service"], function (require, exports, maishu_dilu_1, _errors_1, maishu_ui_toolkit_1, app_service_1) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -62,7 +62,7 @@ define(["require", "exports", "maishu-dilu", "../_errors", "maishu-ui-toolkit", 
       return __awaiter(_this, void 0, void 0,
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee() {
-        var userService, username, password;
+        var service, username, password;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -75,11 +75,11 @@ define(["require", "exports", "maishu-dilu", "../_errors", "maishu-ui-toolkit", 
                 return _context.abrupt("return", Promise.reject('validate fail'));
 
               case 2:
-                userService = app.createService(maishu_services_sdk_1.UserService);
+                service = app.createService(app_service_1.AppService);
                 username = usernameInput.value;
                 password = passwordInput.value;
                 _context.next = 7;
-                return userService.login(username, password);
+                return service.login(username, password);
 
               case 7:
                 console.assert(options.redirectURL != null);

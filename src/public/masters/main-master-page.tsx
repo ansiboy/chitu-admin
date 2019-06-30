@@ -121,6 +121,7 @@ export class MainMasterPage extends MasterPage<State> {
         while (stack.length > 0) {
             let item = stack.pop()
             if (item.path) {
+                let arr = item.path.split('/')
                 if (item.path.indexOf('?') >= 0) {
                     item.path = `${item.path}&resourceId=${item.id}`
                 }

@@ -4,7 +4,7 @@ import { buttonOnClick } from "maishu-ui-toolkit";
 // import { app } from "../index";
 import { UserService } from "maishu-services-sdk";
 import { Application } from "maishu-chitu-react";
-import { AppService } from "app-service";
+import { AppService } from "_service";
 
 type LoginOptions = { redirectURL: string }
 

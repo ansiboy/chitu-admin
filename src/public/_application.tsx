@@ -7,7 +7,7 @@ import ReactDOM = require('react-dom');
 import { MainMasterPage } from './masters/main-master-page';
 import 'text!content/admin_style_default.less'
 import { SimpleMasterPage } from './masters/simple-master-page';
-import { AppService } from './app-service';
+import { AppService } from './_service';
 import { PageData, Page } from "maishu-chitu"
 
 config.login = config.login || {} as any;
@@ -49,7 +49,7 @@ export class Application extends chitu_react.Application {
     showPage(pageUrl: string, args?: PageData, forceRender?: boolean): Page {
         args = args || {}
         let d = this.parseUrl(pageUrl)
-        let names = ['auth/login', 'auth/forget-password', 'auth/register']
+        let names = ['login', 'forget-password', 'register']
         if (names.indexOf(d.pageName) >= 0) {
             args.container = 'simple'
         }

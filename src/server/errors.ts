@@ -11,6 +11,10 @@ export let errors = {
         let msg = `Directory "${path}" is not exists.`;
         return new Error(msg);
     },
+    fileNotExists(path: string) {
+        let msg = `File "${path}" is not exists.`;
+        return new Error(msg);
+    },
     pathIsNotDirectory(path: string) {
         let msg = `Path ${path} is not a directory.`;
         return new Error(msg);

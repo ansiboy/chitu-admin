@@ -72,7 +72,7 @@ export default class ForgetPassword extends React.Component<PageProps, State> {
                             </div>
                             <div className="pull-right">
                                 <button className="btn-link"
-                                    onClick={() => this.props.app.redirect("auth/login")}>
+                                    onClick={() => this.props.app.redirect("login")}>
                                     登录
                                 </button>
                             </div>

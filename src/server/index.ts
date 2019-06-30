@@ -3,61 +3,71 @@ import { settings } from './settings';
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
+import { string } from 'prop-types';
 
 interface Config {
     port: number,
     roleId: string,
-    // modulesPath: string,
-    controllerPath: string,
     gateway: string,
-    clientRootDirectory: string,
+    controllerPath: string,
+    staticRootDirectory: string,
 }
 
 var appDir = path.dirname(require.main.filename);
 var node_modules_path = path.join(appDir, 'node_modules')
 
 export function start(config: Config) {
-    let virtualPaths = {
-        'modules/auth': path.join(__dirname, '../public/modules/auth'),
-        // out: path.join(__dirname, '../'),
-        lib: path.join(__dirname, '../../lib'),
-        node_modules: node_modules_path,
-        // content: path.join(__dirname, '../../src/public/content'),
-        // 'main.js': path.join(__dirname, '../../src/public/main.js'),
-    }
 
-    if (config.clientRootDirectory) {
-        if (!path.isAbsolute(config.clientRootDirectory))
-            throw errors.notAbsolutePath(config.clientRootDirectory);
+    if (!config.staticRootDirectory)
+        throw errors.settingItemNull("clientRootDirectory");
 
-        if (!fs.existsSync(config.clientRootDirectory))
-            throw errors.directoryNotExists(config.clientRootDirectory);
+    if (!path.isAbsolute(config.staticRootDirectory))
+        throw errors.notAbsolutePath(config.staticRootDirectory);
 
-        let stat = fs.statSync(config.clientRootDirectory);
-        if (!stat.isDirectory())
-            throw errors.pathIsNotDirectory(config.clientRootDirectory);
+    if (!fs.existsSync(config.staticRootDirectory))
+        throw errors.directoryNotExists(config.staticRootDirectory);
 
-        // virtualPaths["client"] = config.clientRootDirectory;
-        let r = fs.readdirSync(config.clientRootDirectory);
-        for (let i = 0; i < r.length; i++) {
-            let p = path.join(config.clientRootDirectory, r[i]);
-            stat = fs.statSync(p);
-            if (stat.isDirectory() || stat.isFile())
-                virtualPaths[r[i]] = p;
-        }
-    }
+    let stat = fs.statSync(config.staticRootDirectory);
+    if (!stat.isDirectory())
+        throw errors.pathIsNotDirectory(config.staticRootDirectory);
+
+    let innerStaticRootDirectory = path.join(__dirname, "../public");
+    let virtualPaths = createVirtulaPaths(innerStaticRootDirectory, config.staticRootDirectory);
+    virtualPaths["lib"] = path.join(__dirname, '../../lib');
+    virtualPaths["node_modules"] = node_modules_path;
 
     settings.roleId = config.roleId;
     settings.gateway = config.gateway;
-    settings.clientPath = config.clientRootDirectory;
+    settings.clientStaticRoot = config.staticRootDirectory;
+    settings.innerStaticRoot = innerStaticRootDirectory;
 
     startServer({
         port: config.port,
         rootPath: __dirname,
-        staticRootDirectory: path.join(__dirname, '../../out/public'),
+        staticRootDirectory: config.staticRootDirectory,
         controllerDirectory: config.controllerPath ? [path.join(__dirname, './controllers'), config.controllerPath] : [path.join(__dirname, './controllers')],
         virtualPaths
     });
+}
 
+function createVirtulaPaths(rootAbsolutePath: string, clientRootAbsolutePath: string) {
+    let virtualPaths: { [path: string]: string } = {}
+    let virtualPahtStack: string[] = [""];
+    while (virtualPahtStack.length > 0) {
+        let virtualPath = virtualPahtStack.pop();
+        let absolutePath = path.join(rootAbsolutePath, virtualPath);
+        let stat = fs.statSync(absolutePath);
+        if (stat.isDirectory()) {
+            let r = fs.readdirSync(absolutePath);
+            let paths = r.map(o => `${virtualPath}/${o}`);
+            virtualPahtStack.push(...paths);
+        }
+        else if (stat.isFile()) {
+            let clientFilePath = path.join(clientRootAbsolutePath, virtualPath);
+            if (!fs.existsSync(clientFilePath))
+                virtualPaths[virtualPath] = absolutePath;
+        }
+    }
 
+    return virtualPaths;
 }

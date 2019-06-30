@@ -61,6 +61,7 @@ define(["require", "exports", "maishu-services-sdk", "maishu-chitu-react", "./_c
   _config_1.config.login.showRegister = true;
   _config_1.config.firstPanelWidth = "130px";
   _config_1.config.login.title = "好易微商城";
+  maishu_services_sdk_1.PermissionService.baseUrl = "http://127.0.0.1:2857";
 
   var Application =
   /*#__PURE__*/
@@ -209,23 +210,7 @@ define(["require", "exports", "maishu-services-sdk", "maishu-chitu-react", "./_c
           switch (_context.prev = _context.next) {
             case 0:
               return _context.abrupt("return", new Promise(function (resolve, reject) {
-                var container = document.createElement('div'); // let simpleMasterElement = document.createElement('div')
-                // simpleMasterElement.style.display = 'none';
-                // simpleMasterElement.className = 'simple'
-                // let mainMaserElement = document.createElement('div')
-                // mainMaserElement.style.display = 'none';
-                // mainMaserElement.className = 'main'
-                // container.appendChild(simpleMasterElement)
-                // container.appendChild(mainMaserElement)
-                // let simpleMasterPage: SimpleMasterPage
-                // let mainMasterPage: MainMasterPage
-                // ReactDOM.render(<>
-                //     <SimpleMasterPage ref={e => masterPages.simple = e || masterPages.simple} />
-                //     <MainMasterPage ref={e => masterPages.default = e || masterPages.default} />
-                // </>, container, () => {
-                //     resolve({ simple: masterPages.simple.element, main: masterPages.default.element })
-                // })
-
+                var container = document.createElement('div');
                 ReactDOM.render(React.createElement(simple_master_page_1.SimpleMasterPage, {
                   app: app,
                   ref: function ref(e) {
@@ -240,9 +225,12 @@ define(["require", "exports", "maishu-services-sdk", "maishu-chitu-react", "./_c
                 }), document.getElementById('main-master'));
                 document.body.appendChild(container);
                 var appService = app.createService(app_service_1.AppService);
-                appService.menuList().then(function (menuItems) {
-                  masterPages.default.setMenus(menuItems);
-                });
+
+                if (app.userId) {
+                  appService.menuList(app.userId).then(function (menuItems) {
+                    masterPages.default.setMenus(menuItems);
+                  });
+                }
               }));
 
             case 1:

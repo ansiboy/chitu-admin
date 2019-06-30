@@ -149,6 +149,8 @@ define(["require", "exports", "react", "./master-page", "./names"], function (re
           var item = stack.pop();
 
           if (item.path) {
+            var arr = item.path.split('/');
+
             if (item.path.indexOf('?') >= 0) {
               item.path = "".concat(item.path, "&resourceId=").concat(item.id);
             } else {

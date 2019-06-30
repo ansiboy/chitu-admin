@@ -66,6 +66,10 @@ define(["require", "exports"], function (require, exports) {
       var error = new Error(msg);
       error.name = exports.errors.sendVerifyCodeButtonNotExists.name;
       return error;
+    },
+    unexpectedNullResult: function unexpectedNullResult() {
+      var msg = "Null result is unexpected.";
+      return new Error(msg);
     }
   };
 });

@@ -2,9 +2,10 @@ import React = require("react");
 import { rules } from "maishu-dilu";
 import { dataSources, createMenuDataSource } from "assert/dataSources";
 import { DataSourceSelectArguments, DataSourceSelectResult } from "maishu-wuzhui";
-import { MenuItem, PermissionService } from "maishu-services-sdk";
+import { PermissionService } from "maishu-services-sdk";
 
 import { ItemPage, ItemPageContext, ItemPageProps, InputField, DropdownField, RadioField } from "../../data-component/index";
+import { MenuItem } from "assert/masters/main-master-page";
 // import { categroyNames, platformCategory } from "../../common";
 // export let platformCategory: Category = 'platform'
 // export let distributorCategory: Category = 'distributor'
@@ -34,13 +35,13 @@ export default class ResourceAdd extends React.Component<Props, State> {
                     return <>
                         <div style={{ display: 'table-cell', borderRight: 'solid 1px #cccccc', paddingRight: 40 }}>
                             <InputField label="序号" dataField="sort_number" placeholder="用于对菜单排序，可空" />
-                            <DropdownField key={dataItem.category || ''} label="所属菜单" dataField="parent_id"
+                            <DropdownField label="所属菜单" dataField="parent_id"
                                 placeholder="请选择所属菜单，可空"
                                 items={async () => {
                                     let args: DataSourceSelectArguments = {}
-                                    if (dataItem.category) {
-                                        args.filter = `category = '${dataItem.category}'`;
-                                    }
+                                    // if (dataItem.category) {
+                                    //     args.filter = `category = '${dataItem.category}'`;
+                                    // }
 
                                     let menuDataSource = dataSources.menu;
                                     let result = await menuDataSource.executeSelect(args);
@@ -146,26 +147,23 @@ class OperationField extends React.Component<OperationFieldProps, { dataItem: Me
         super(props)
 
         let dataItem = props.dataItem
-        dataItem.originalChildren = dataItem.originalChildren || []
+        // dataItem.originalChildren = dataItem.originalChildren || []
         dataItem.children = dataItem.children || []
 
         this.state = { dataItem: props.dataItem }
-        // this.props.service.getResourceChildCommands(dataItem.id).then(commands => {
-
-        // })
     }
     checkItem(checked: boolean, name: string, path: string) {
         let { dataItem } = this.state
         if (checked) {
-            let child = dataItem.originalChildren.filter(o => o.name == name)[0]
-            if (child == null) {
-                child = {
-                    name: name, parent_id: dataItem.id,
-                    type: 'button', data: {},
-                    category: dataItem.category, path
-                } as MenuItem;
-            }
-            dataItem.children.push(child)
+            // let child = dataItem.originalChildren.filter(o => o.name == name)[0]
+            // if (child == null) {
+            //     child = {
+            //         name: name, parent_id: dataItem.id,
+            //         type: 'button', data: {},
+            //         category: dataItem.category, path
+            //     } as MenuItem;
+            // }
+            // dataItem.children.push(child)
         }
         else {
             dataItem.children = dataItem.children.filter(o => o.name != name)
@@ -177,7 +175,7 @@ class OperationField extends React.Component<OperationFieldProps, { dataItem: Me
     componentWillReceiveProps(props: OperationField['props']) {
 
         let dataItem = props.dataItem
-        dataItem.originalChildren = dataItem.originalChildren || []
+        // dataItem.originalChildren = dataItem.originalChildren || []
         dataItem.children = dataItem.children || []
 
         this.setState({ dataItem: props.dataItem })
@@ -186,7 +184,8 @@ class OperationField extends React.Component<OperationFieldProps, { dataItem: Me
         let selectedNames = []
         let dataItem = this.state.dataItem
         console.assert(dataItem != null)
-        selectedNames = dataItem.children.map(o => o.name)
+        selectedNames = dataItem.children.map(o => o.name);
+        debugger;
         return <>
             <div className="item">
                 <label>操作项</label>
@@ -195,15 +194,15 @@ class OperationField extends React.Component<OperationFieldProps, { dataItem: Me
                         <input type="checkbox" checked={selectedNames.indexOf('添加') >= 0}
                             onChange={e => this.checkItem(e.target.checked, '添加', 'javascript:add')} /> 添加
                     </label>
-                    <label>
+                    <label style={{ marginLeft: 10 }}>
                         <input type="checkbox" checked={selectedNames.indexOf('修改') >= 0}
                             onChange={e => this.checkItem(e.target.checked, '修改', 'javascript:modify')} /> 修改
                     </label>
-                    <label>
+                    <label style={{ marginLeft: 10 }}>
                         <input type="checkbox" checked={selectedNames.indexOf('删除') >= 0}
                             onChange={e => this.checkItem(e.target.checked, '删除', 'javascript:delete')} /> 删除
                     </label>
-                    <label>
+                    <label style={{ marginLeft: 10 }}>
                         <input type="checkbox" checked={selectedNames.indexOf('查看') >= 0}
                             onChange={e => this.checkItem(e.target.checked, '查看', 'javascript:view')} /> 查看
                     </label>

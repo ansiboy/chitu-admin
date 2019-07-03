@@ -1,10 +1,12 @@
-.well label {
-    width: 90px;
-    display: table-cell;
-}
 
 .well .item {
     margin-bottom: 15px;
+}
+
+.well > .item > label,
+.well > div > .item > label {
+    width: 90px;
+    display: table-cell;
 }
 
 .well .item>span {
@@ -66,4 +68,8 @@ td button {
 
 td button:last-child {
     margin-right: 0;
+}
+
+.radio-inline {
+    margin-right: 10px;
 }

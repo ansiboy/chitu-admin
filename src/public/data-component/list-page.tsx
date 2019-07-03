@@ -50,7 +50,7 @@ export class ListPage extends React.Component<Props, State> {
 
         if (props.data.resourceId) {
             let ps = this.props.createService<PermissionService>(PermissionService)
-            ps.getResourceList({ filter: `id = '${props.data.resourceId}'` })
+            ps.resource.list({ filter: `id = '${props.data.resourceId}'` })
                 .then(r => {
                     if (r.dataItems.length > 0)
                         this.setState({ title: r.dataItems[0].name })
@@ -64,8 +64,8 @@ export class ListPage extends React.Component<Props, State> {
         if (!resource_id) return null
 
         let ps = this.props.createService<PermissionService>(PermissionService)
-        let resources = await ps.getResourceList({})
-        let menuItem = resources.dataItems.filter(o => o.id == resource_id)[0]; //await dataSources.menu.getItem(resource_id) //s.menuItem(resource_id)
+        let resources = await ps.resource.list();
+        let menuItem = resources.dataItems.filter(o => o.id == resource_id)[0];
         console.assert(menuItem != null)
         let menuItemChildren = resources.dataItems.filter(o => o.parent_id == menuItem.id);
         let addItem = (menuItemChildren || []).filter(o => o.name == '添加')[0]

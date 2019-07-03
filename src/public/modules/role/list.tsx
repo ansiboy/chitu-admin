@@ -1,7 +1,7 @@
 import React = require("react");
 import { ListPage, ListPageProps, dateTimeField, operationField } from "data-component/index";
 import { boundField } from "maishu-wuzhui-helper";
-import { dataSources } from "assert/dataSource";
+import { dataSources } from "assert/dataSources";
 
 export default class RoleListPage extends React.Component<ListPageProps> {
 

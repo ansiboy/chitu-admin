@@ -7,3 +7,4 @@ export { ItemPage, ItemPageProps, ItemPageContext } from "./item-page";
 export { InputField } from "./fields/input-field";
 export { DropdownField } from "./fields/dropdown-field";
 export { RadioField } from "./fields/radio-field";
+export { sortNumberField } from "./fields/sortNumberField";

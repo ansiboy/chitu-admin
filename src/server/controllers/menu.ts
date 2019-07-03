@@ -32,7 +32,7 @@ export class MenuController extends Controller {
             resourceIds.push(...arrResourceIds[i])
         }
 
-        let r = await ps.getResourceList({});
+        let r = await ps.resource.list();
         let resources = r.dataItems;
         resources = resources.filter(o => resourceIds.indexOf(o.id) >= 0 && o.type == 'menu');
 

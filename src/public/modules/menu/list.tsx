@@ -3,7 +3,7 @@ import { boundField, customField, createGridView } from 'maishu-wuzhui-helper'
 import { operationField, valueTextField, dateTimeField, ListPageProps } from "../../data-component/index";
 import { GridViewDataCell, DataSource, GridView } from "maishu-wuzhui";
 import ReactDOM = require("react-dom");
-import { CategoryCode, MenuItem, Resource, PermissionService } from "maishu-services-sdk";
+import { CategoryCode, Resource, PermissionService } from "maishu-services-sdk";
 import { dataSources } from "assert/dataSources";
 
 interface State {
@@ -20,7 +20,7 @@ let typeFieldWidth = 140
 
 export default class ResourceListPage extends React.Component<ListPageProps, State> {
     dataTable: HTMLTableElement;
-    gridView: GridView<MenuItem>;
+    gridView: GridView<Resource>;
     permissionService: PermissionService;
 
     constructor(props) {
@@ -65,10 +65,10 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
                     }
                 }),
                 boundField({ dataField: 'path', headerText: '路径' }),
-                valueTextField<Resource>({
-                    dataField: 'category', headerText: '类型', items: categroyNames,
-                    itemStyle: { width: `${typeFieldWidth}px` }
-                }),
+                // valueTextField<Resource>({
+                //     dataField: 'category', headerText: '类型', items: categroyNames,
+                //     itemStyle: { width: `${typeFieldWidth}px` }
+                // }),
                 // customField({
                 //     headerText: '是否隐藏',
                 //     itemStyle: { textAlign: 'center', width: `${hideFieldWidth}px` } as CSSStyleDeclaration,
@@ -136,14 +136,9 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
         return <>
             <div className="tabbable">
                 <ul className="nav nav-tabs" style={{ minHeight: 34 }}>
-                    <li className={activeIndex == 0 ? 'pull-left active' : 'pull-left'}>
-                        <a href="javascript:" onClick={() => this.showAllMenu()}>全部</a>
+                    <li className="pull-left">
+                        <div style={{ fontWeight: 'bold', fontSize: 16 }}>菜单管理</div>
                     </li>
-                    {categories.map((o, i) =>
-                        <li key={i} className={activeIndex == i + 1 ? 'pull-left active' : 'pull-left'}>
-                            <a href="javascript:" onClick={() => this.showCategoryMenu(i, o)}>{o.name}</a>
-                        </li>
-                    )}
                     <li className="pull-right">
                         <button className="btn btn-primary pull-right"
                             onClick={() => {

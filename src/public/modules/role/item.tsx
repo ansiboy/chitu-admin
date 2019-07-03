@@ -2,7 +2,6 @@ import { ItemPage, InputField, RadioField, ItemPageProps } from "../../data-comp
 import React = require("react");
 import { rules } from "maishu-dilu";
 import { Role } from "maishu-services-sdk";
-import { RadioField1 } from "data-component/fields/radio-field";
 import { PermissionService } from "maishu-services-sdk";
 import { toDataSource } from "data-component/common";
 

@@ -23,7 +23,7 @@ export function operationField<T extends Entity>(props: ListPageProps, objectTyp
         let allResources: Resource[];
         return async function () {
             if (!allResources) {
-                let r = await permissionService.getResourceList({})
+                let r = await permissionService.resource.list()
                 allResources = r.dataItems;
             }
             return allResources

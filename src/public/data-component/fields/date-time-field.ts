@@ -1,8 +1,8 @@
 import { customDataField } from "./custom-data-field";
 
-export function dateTimeField(args: { dataField: string, headerText: string, }) {
+export function dateTimeField<T>(args: { dataField: string, headerText: string, }) {
 
-    return customDataField<any>({
+    return customDataField<T>({
         // dataField: args.dataField,
         headerText: args.headerText,
         headerStyle: { textAlign: 'center', width: '160px' } as CSSStyleDeclaration,

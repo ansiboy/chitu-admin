@@ -83,20 +83,20 @@ export class AppService extends Service {
 
 
     async menuList() {
-        let items = (await this.ps.currentUser.resource.list())
-            .map(o => ({ id: o.id, name: o.name, path: o.path, parentId: o.parent_id } as MenuItem)); //this.get<MenuItem[]>('auth/menu/list', { userId });
+        let resources = await this.ps.currentUser.resource.list();
+        let items = resources as MenuItem[];
+            // .map(o => ({ id: o.id, name: o.name, path: o.path, parentId: o.parent_id, sortNumber: o.sort_number } as MenuItem)); //this.get<MenuItem[]>('auth/menu/list', { userId });
 
-        let top = items.filter(o => o.parentId == null);
-        let arr = new Array<MenuItem>()
+        let top = items.filter(o => o.parent_id == null);
         let stack = [...top]
         while (stack.length > 0) {
             let item = stack.pop();
-            if (item.parentId) {
-                item.parent = items.filter(o => o.id == item.parentId)[0];
+            if (item.parent_id) {
+                item.parent = items.filter(o => o.id == item.parent_id)[0];
                 console.assert(item.parent != null);
             }
 
-            item.children = items.filter(o => o.parentId == item.id);
+            item.children = items.filter(o => o.parent_id == item.id).sort((a, b) => a.sort_number > b.sort_number ? 1 : -1);
             item.children.forEach(o => stack.push(o));
         }
 

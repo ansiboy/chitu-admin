@@ -50,7 +50,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
   });
 };
 
-define(["require", "exports", "maishu-services-sdk", "maishu-chitu-react", "./_config", "react", "react-dom", "./masters/main-master-page", "./masters/simple-master-page", "./_service", "text!content/admin_style_default.less"], function (require, exports, maishu_services_sdk_1, chitu_react, _config_1, React, ReactDOM, main_master_page_1, simple_master_page_1, _service_1) {
+define(["require", "exports", "maishu-services-sdk", "maishu-chitu-react", "./_config", "react", "react-dom", "./masters/main-master-page", "./masters/simple-master-page", "./_service", "text!../content/admin_style_default.less"], function (require, exports, maishu_services_sdk_1, chitu_react, _config_1, React, ReactDOM, main_master_page_1, simple_master_page_1, _service_1) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -144,7 +144,7 @@ define(["require", "exports", "maishu-services-sdk", "maishu-chitu-react", "./_c
     }, {
       key: "loadStyle",
       value: function loadStyle() {
-        var str = require('text!content/admin_style_default.less');
+        var str = require('text!../content/admin_style_default.less');
 
         if (this.config.firstPanelWidth) {
           str = str + "\r\n@firstPanelWidth: ".concat(this.config.firstPanelWidth, ";");

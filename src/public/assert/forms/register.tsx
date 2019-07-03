@@ -1,19 +1,25 @@
+import { errors } from "../errors";
 import { FormValidator, rules as r } from "maishu-dilu";
-import { buttonOnClick, alert } from "maishu-ui-toolkit";
-import { errors } from "../_errors";
+import { buttonOnClick } from "maishu-ui-toolkit";
 import { UserService } from "maishu-services-sdk";
 import { Application } from "maishu-chitu-react";
-// import { app } from "../index";
 
-export const CONFIRM_PASSWORD = 'confirmPassword'
 export const MOBILE = 'mobile'
-export const PASSWORD = 'password'
-export const RESET_PASSWORD = 'resetPassword'
-export const SEND_VERIFY_CODE = 'sendVerifyCode'
 export const VERIFY_CODE = 'verifyCode'
+export const PASSWORD = 'password'
+export const CONFIRM_PASSWORD = 'confirmPassword'
+export const REGISTER = 'register'
+export const SEND_VERIFY_CODE = 'sendVerifyCode'
+export const DATA = 'data'
 
-export function setForm(formElement: HTMLElement, app: Application) {
+type RegisterOptions = {
+    redirectURL: string
+}
+
+export function setForm(formElement: HTMLElement, options: RegisterOptions, app: Application) {
     if (!formElement) throw errors.argumentNull('formElement')
+    if (!options) throw errors.argumentNull('options')
+    if (!options.redirectURL) throw errors.fieldNull<RegisterOptions>("options", "redirectURL")
 
     let validator = new FormValidator(formElement,
         { name: MOBILE, rules: [r.required('请输入手机号')] },
@@ -22,8 +28,8 @@ export function setForm(formElement: HTMLElement, app: Application) {
         { name: CONFIRM_PASSWORD, rules: [r.required('请再次输入密码')] }
     )
 
-    let resetPasswordButton = getElement<HTMLButtonElement>(formElement, RESET_PASSWORD)
-    if (!resetPasswordButton) throw errors.registerButtonNotExists()
+    let registerButton = getElement<HTMLButtonElement>(formElement, REGISTER)
+    if (!registerButton) throw errors.registerButtonNotExists()
 
     let sendVerifyCodeButton = getElement<HTMLButtonElement>(formElement, SEND_VERIFY_CODE)
     if (!sendVerifyCodeButton) throw errors.sendVerifyCodeButtonNotExists()
@@ -40,31 +46,39 @@ export function setForm(formElement: HTMLElement, app: Application) {
     let verifyCodeInput = getElement<HTMLInputElement>(formElement, VERIFY_CODE)
     if (!verifyCodeInput) throw errors.elementNotExistsWithName(VERIFY_CODE)
 
+    let dataHidden = getElement<HTMLInputElement>(formElement, DATA)
+
     let smsId: string
     buttonOnClick(sendVerifyCodeButton, async () => {
         if (!validator.checkElement(MOBILE))
             return Promise.reject('validate mobile element fail')
 
-        resetPasswordButton.setAttribute('disabled', '')
+        registerButton.setAttribute('disabled', '')
         smsId = await sendVerifyCode(mobileInput.value, sendVerifyCodeButton, app)
-        resetPasswordButton.removeAttribute('disabled')
+        registerButton.removeAttribute('disabled')
     })
 
-    buttonOnClick(resetPasswordButton, async () => {
+    buttonOnClick(registerButton, async () => {
         if (validator.check() == false)
             throw Promise.reject('validate register form fail')
 
         let mobile = mobileInput.value
         let password = passwordInput.value
         let verifyCode = verifyCodeInput.value
-        // await register(mobile, password, smsId, verifyCode, data)
-        let userService = app.createService(UserService)
-        await userService.resetPassword(mobile, password, smsId, verifyCode)
-        alert({ title: '提示', message: '重置密码成功' })
+        let data: any
+        if (dataHidden && dataHidden.value) {
+            try {
+                data = JSON.parse(dataHidden.value)
+            }
+            catch (err) {
+                console.error(err)
+            }
+        }
+        await register(mobile, password, smsId, verifyCode, data, app)
+        console.assert(options.redirectURL != null)
+        location.href = options.redirectURL
     })
-
 }
-
 
 function getElement<T extends HTMLElement>(formElement: HTMLElement, name: string) {
     let element = formElement.querySelector(`[name="${name}"]`)
@@ -76,7 +90,7 @@ async function sendVerifyCode(mobile: string, button: HTMLButtonElement, app: Ap
     if (!button) throw errors.argumentNull('button')
 
     let userService = app.createService(UserService)
-    let data = await userService.sendResetVerifyCode(mobile)
+    let data = await userService.sendRegisterVerifyCode(mobile)
     button.setAttribute("disabled", "")
 
     let buttonText = button.innerText
@@ -97,3 +111,7 @@ async function sendVerifyCode(mobile: string, button: HTMLButtonElement, app: Ap
     return data.smsId
 }
 
+function register(mobile: string, password: string, smsId: string, verifyCode: string, data: any, app: Application) {
+    let userService = app.createService(UserService)
+    return userService.register(mobile, password, smsId, verifyCode, data)
+}

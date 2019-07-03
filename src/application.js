@@ -32,7 +32,7 @@ define(["require", "exports", "react", "react-dom", "./masterPage", "maishu-chit
         }
         /** 加载样式文件 */
         loadStyle() {
-            requirejs(['text!/content/admin_style_default.less', 'less'], (str, less) => __awaiter(this, void 0, void 0, function* () {
+            requirejs(['text!../content/admin_style_default.less', 'less'], (str, less) => __awaiter(this, void 0, void 0, function* () {
                 let config = yield this.loadConfig();
                 if (config.firstPanelWidth)
                     str = str + `\r\n@firstPanelWidth: ${config.firstPanelWidth};`;

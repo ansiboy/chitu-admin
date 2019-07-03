@@ -1,7 +1,7 @@
 
 
 import React = require('react');
-import { Application } from '../_application';
+import { Application } from '../application';
 import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
 
@@ -133,7 +133,7 @@ export class MainMasterPage extends MasterPage<State> {
         }
 
         let currentPageName = this.app.currentPage ? this.app.currentPage.name : undefined;
-        let resourceId = this.app.currentPage ? (this.app.currentPage.data.resourceId || this.app.currentPage.data.resource_id) as string : undefined
+        let resourceId = this.app.currentPage ? (this.app.currentPage.data.resourceId || this.app.currentPage.data.resourceId) as string : undefined
         this.setState({ menus, currentPageName: currentPageName, resourceId: resourceId })
     }
 

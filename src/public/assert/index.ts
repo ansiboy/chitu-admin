@@ -3,7 +3,7 @@ let lib = '../../lib'
 
 
 requirejs.config({
-    // baseUrl: 'out/public',
+    baseUrl: '/',
     paths: {
         css: `${lib}/css`,
         less: `${lib}/require-less-0.1.5/less`,
@@ -35,7 +35,7 @@ requirejs.config({
     }
 })
 
-requirejs(['./_application', "clientjs_init"], function (appModule, initModule) {
+requirejs(['assert/application', "/clientjs_init.js"], function (appModule, initModule) {
 
     if (initModule && typeof initModule.default == 'function') {
         initModule.default(appModule.app)
@@ -43,5 +43,5 @@ requirejs(['./_application', "clientjs_init"], function (appModule, initModule) 
 
     console.assert(appModule != null && appModule.app != null);
     appModule.app.run();
-  
+
 })

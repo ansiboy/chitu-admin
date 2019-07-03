@@ -1,6 +1,6 @@
 import { DataSource, DataSourceSelectArguments, DataSourceSelectResult, DataSourceArguments } from "maishu-wuzhui";
 import { Role, MenuItem, PermissionService } from "maishu-services-sdk";
-import { app } from "_application";
+import { app } from "./application";
 
 let permissionService: PermissionService = app.createService<PermissionService>(PermissionService);
 

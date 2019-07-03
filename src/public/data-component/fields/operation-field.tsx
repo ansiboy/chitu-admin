@@ -7,7 +7,7 @@ import * as ui from 'maishu-ui-toolkit'
 import { GridViewCell, DataSource } from "maishu-wuzhui";
 import { ListPageProps } from "data-component/list-page";
 import { Resource } from "maishu-services-sdk";
-import { DataSources, dataSources } from "dataSources";
+import { DataSources, dataSources } from "assert/dataSources";
 
 
 export function operationField<T extends Entity>(props: ListPageProps, objectType: keyof DataSources, width?: string, callback?: (dataItem: T, resource: Resource) => void) {
@@ -56,7 +56,7 @@ export function operationField<T extends Entity>(props: ListPageProps, objectTyp
                     button.title = '点击查看'
                     iconClassName = 'icon-eye-open'
                     button.onclick = function () {
-                        app.forward(`${objectType}/item?objectType=${objectType}&mode=view&id=${dataItem.id}&resource_id=${resources[i].id}`)
+                        app.forward(`${objectType}/item?objectType=${objectType}&mode=view&id=${dataItem.id}&resourceId=${resources[i].id}`)
                     }
                     ReactDOM.render(<i className={iconClassName} > </i>, button)
                     break;
@@ -65,7 +65,7 @@ export function operationField<T extends Entity>(props: ListPageProps, objectTyp
                     button.title = '点击编辑'
                     iconClassName = 'icon-pencil'
                     button.onclick = function () {
-                        app.forward(`${objectType}/item?objectType=${objectType}&mode=edit&id=${dataItem.id}&resource_id=${resources[i].id}`)
+                        app.forward(`${objectType}/item?objectType=${objectType}&mode=edit&id=${dataItem.id}&resourceId=${resources[i].id}`)
                     }
                     ReactDOM.render(<i className={iconClassName} > </i>, button)
                     break;
@@ -95,7 +95,7 @@ export function operationField<T extends Entity>(props: ListPageProps, objectTyp
                             callback(dataItem, resources[i])
                             return
                         }
-                        app.forward(`${resources[i].path}?objectType=${objectType}&mode=edit&id=${dataItem.id}&resource_id=${resources[i].id}`)
+                        app.forward(`${resources[i].path}?objectType=${objectType}&mode=edit&id=${dataItem.id}&resourceId=${resources[i].id}`)
                     }
                     break
             }

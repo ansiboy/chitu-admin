@@ -31,7 +31,7 @@ requirejs.config({
     "polyfill": "".concat(node_modules, "/@babel/polyfill/dist/polyfill")
   }
 });
-requirejs(['./_application', "clientjs_init"], function (appModule, initModule) {
+requirejs(['./_application', "clientjs_init.js"], function (appModule, initModule) {
   if (initModule && typeof initModule.default == 'function') {
     initModule.default(appModule.app);
   }

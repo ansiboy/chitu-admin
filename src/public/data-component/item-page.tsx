@@ -1,10 +1,9 @@
 import React = require("react");
 import * as ui from 'maishu-ui-toolkit'
-import { dataSources, MyDataSource } from "dataSources";
+import { dataSources, MyDataSource } from "assert/dataSources";
 import { FormValidator, ValidateField } from 'maishu-dilu'
-import { Page } from "maishu-chitu-react";
+import { Page, Application } from "maishu-chitu-react";
 import { ValidateDataField, getObjectType } from "./common";
-import { Application } from "_application";
 
 interface State {
     dataItem: any,

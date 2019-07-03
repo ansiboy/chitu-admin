@@ -1,1 +1,0 @@
-export { Application } from '../public/_application';

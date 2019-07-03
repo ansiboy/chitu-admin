@@ -3,7 +3,6 @@ import { settings } from './settings';
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
-import { string } from 'prop-types';
 
 interface Config {
     port: number,
@@ -33,6 +32,7 @@ export function start(config: Config) {
 
     let innerStaticRootDirectory = path.join(__dirname, "../public");
     let virtualPaths = createVirtulaPaths(innerStaticRootDirectory, config.staticRootDirectory);
+    virtualPaths["assert"] = path.join(__dirname, "assert");
     virtualPaths["lib"] = path.join(__dirname, '../../lib');
     virtualPaths["node_modules"] = node_modules_path;
 

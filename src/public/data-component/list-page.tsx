@@ -4,7 +4,6 @@ import { createGridView } from "maishu-wuzhui-helper";
 import { constants, getObjectType } from "./common";
 import { PermissionService } from 'maishu-services-sdk'
 import { Application, Page } from "maishu-chitu-react";
-import { parseUrl } from "maishu-chitu";
 
 interface State {
     addButton?: JSX.Element,

@@ -134,7 +134,7 @@ define(["require", "exports", "react", "../../forms/forget-password"], function 
         }, React.createElement("button", {
           className: "btn-link",
           onClick: function onClick() {
-            return _this2.props.app.redirect("auth/login");
+            return _this2.props.app.redirect("login");
           }
         }, "\u767B\u5F55"))))));
       }

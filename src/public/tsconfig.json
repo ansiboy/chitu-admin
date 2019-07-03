@@ -26,6 +26,12 @@
             "maishu-services-sdk": [
                 "../../node_modules/maishu-services-sdk/out/index.d.ts"
             ],
+            "maishu-wuzhui": [
+                "../../node_modules/maishu-wuzhui/out/index.d.ts"
+            ],
+            "maishu-wuzhui-helper": [
+                "../../node_modules/maishu-wuzhui-helper/out/index.d.ts"
+            ],
             "csstype": [
                 "../../node_modules/csstype/index.d.ts"
             ]

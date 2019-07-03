@@ -28,7 +28,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
   });
 };
 
-define(["require", "exports", "maishu-dilu", "../_errors", "maishu-ui-toolkit", "app-service"], function (require, exports, maishu_dilu_1, _errors_1, maishu_ui_toolkit_1, app_service_1) {
+define(["require", "exports", "maishu-dilu", "../_errors", "maishu-ui-toolkit", "_service"], function (require, exports, maishu_dilu_1, _errors_1, maishu_ui_toolkit_1, _service_1) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -75,7 +75,7 @@ define(["require", "exports", "maishu-dilu", "../_errors", "maishu-ui-toolkit", 
                 return _context.abrupt("return", Promise.reject('validate fail'));
 
               case 2:
-                service = app.createService(app_service_1.AppService);
+                service = app.createService(_service_1.AppService);
                 username = usernameInput.value;
                 password = passwordInput.value;
                 _context.next = 7;

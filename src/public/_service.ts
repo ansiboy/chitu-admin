@@ -7,6 +7,13 @@ export class AppService extends Service {
 
     static loginInfo = new ValueStore<LoginInfo | null>(AppService.getStorageLoginInfo())
     private static readonly LoginInfoStorageName = 'app-login-info'
+    private ps: PermissionService;
+
+    constructor() {
+        super();
+
+        this.ps = this.createService(PermissionService);
+    }
 
     ajax<T>(url: string, options?: AjaxOptions): Promise<T | null> {
         options = options || {};
@@ -73,25 +80,27 @@ export class AppService extends Service {
         return null;
     }
 
-    async menuList(userId: string) {
-        let items = await this.get<MenuItem[]>('auth/menu/list', { userId });
+
+
+    async menuList() {
+        let items = (await this.ps.currentUser.resource.list())
+            .map(o => ({ id: o.id, name: o.name, path: o.path, parentId: o.parent_id } as MenuItem)); //this.get<MenuItem[]>('auth/menu/list', { userId });
+
+        let top = items.filter(o => o.parentId == null);
         let arr = new Array<MenuItem>()
-        let stack = [...items]
+        let stack = [...top]
         while (stack.length > 0) {
             let item = stack.pop();
-            arr.push(item);
-            (item.children || []).forEach(o => {
-                arr.push(o)
-            })
-        }
-
-        for (let i = 0; i < arr.length; i++) {
-            if (arr[i].parentId) {
-                arr[i].parent = arr.filter(o => o.id == arr[i].parentId)[0]
+            if (item.parentId) {
+                item.parent = items.filter(o => o.id == item.parentId)[0];
+                console.assert(item.parent != null);
             }
+
+            item.children = items.filter(o => o.parentId == item.id);
+            item.children.forEach(o => stack.push(o));
         }
 
-        return items;
+        return top;
     }
     async login(username: string, password: string) {
         let r = await this.post<LoginInfo>("auth/user/login", { username, password });

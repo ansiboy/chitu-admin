@@ -126,7 +126,7 @@ define(["require", "exports", "react", "../../_config", "../../forms/login"], fu
           name: "forget-password",
           className: "btn-link",
           onClick: function onClick() {
-            return _this2.props.app.redirect("auth/forget-password");
+            return _this2.props.app.redirect("forget-password");
           }
         }, "\u5FD8\u8BB0\u5BC6\u7801")) : null, _config_1.config.login.showRegister ? React.createElement("div", {
           className: "pull-right"

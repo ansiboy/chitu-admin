@@ -18,7 +18,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-define(["require", "exports", "react", "./forms/register", "maishu-dilu", "./config"], function (require, exports, React, register_1, maishu_dilu_1, config_1) {
+define(["require", "exports", "react", "../forms/register", "maishu-dilu", "../_config"], function (require, exports, React, register_1, maishu_dilu_1, _config_1) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -47,7 +47,7 @@ define(["require", "exports", "react", "./forms/register", "maishu-dilu", "./con
       key: "componentDidMount",
       value: function componentDidMount() {
         register_1.setForm(this.formElement, {
-          redirectURL: config_1.config.registerRedirectURL || 'index'
+          redirectURL: _config_1.config.registerRedirectURL || 'index'
         }, this.props.app);
       }
     }, {
@@ -144,7 +144,7 @@ define(["require", "exports", "react", "./forms/register", "maishu-dilu", "./con
         }, React.createElement("button", {
           className: "btn-link",
           onClick: function onClick() {
-            return _this2.props.app.redirect("auth/login");
+            return _this2.props.app.redirect("login");
           }
         }, "\u767B\u5F55"))))));
       }

@@ -50,7 +50,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
   });
 };
 
-define(["require", "exports", "maishu-services-sdk", "maishu-chitu-react", "./_config", "react", "react-dom", "./masters/main-master-page", "./masters/simple-master-page", "./app-service", "text!content/admin_style_default.less"], function (require, exports, maishu_services_sdk_1, chitu_react, _config_1, React, ReactDOM, main_master_page_1, simple_master_page_1, app_service_1) {
+define(["require", "exports", "maishu-services-sdk", "maishu-chitu-react", "./_config", "react", "react-dom", "./masters/main-master-page", "./masters/simple-master-page", "./_service", "text!content/admin_style_default.less"], function (require, exports, maishu_services_sdk_1, chitu_react, _config_1, React, ReactDOM, main_master_page_1, simple_master_page_1, _service_1) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -105,7 +105,7 @@ define(["require", "exports", "maishu-services-sdk", "maishu-chitu-react", "./_c
       value: function showPage(pageUrl, args, forceRender) {
         args = args || {};
         var d = this.parseUrl(pageUrl);
-        var names = ['auth/login', 'auth/forget-password', 'auth/register'];
+        var names = ['login', 'forget-password', 'register'];
 
         if (names.indexOf(d.pageName) >= 0) {
           args.container = 'simple';
@@ -224,7 +224,7 @@ define(["require", "exports", "maishu-services-sdk", "maishu-chitu-react", "./_c
                   }
                 }), document.getElementById('main-master'));
                 document.body.appendChild(container);
-                var appService = app.createService(app_service_1.AppService);
+                var appService = app.createService(_service_1.AppService);
 
                 if (app.userId) {
                   appService.menuList(app.userId).then(function (menuItems) {

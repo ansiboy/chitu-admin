@@ -5,7 +5,7 @@ import { MasterPage } from './masters/master-page';
 import React = require('react');
 import ReactDOM = require('react-dom');
 import { MainMasterPage } from './masters/main-master-page';
-import 'text!content/admin_style_default.less'
+import 'text!_assert/content/admin_style_default.less'
 import { SimpleMasterPage } from './masters/simple-master-page';
 import { AppService } from './_service';
 import { PageData, Page } from "maishu-chitu"
@@ -101,7 +101,7 @@ export class Application extends chitu_react.Application {
 
     /** 加载样式文件 */
     loadStyle() {
-        let str: string = require('text!content/admin_style_default.less')
+        let str: string = require('text!_assert/content/admin_style_default.less')
         if (this.config.firstPanelWidth) {
             str = str + `\r\n@firstPanelWidth: ${this.config.firstPanelWidth};`
         }
@@ -144,7 +144,7 @@ async function createMasterPages(app: Application): Promise<{ simple: HTMLElemen
 
         let appService = app.createService(AppService)
         if(app.userId){
-            appService.menuList(app.userId).then(menuItems => {
+            appService.menuList().then(menuItems => {
                 masterPages.default.setMenus(menuItems)
             })
         }

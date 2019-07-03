@@ -1,8 +1,8 @@
 import { errors } from "../errors";
 import { FormValidator, rules as r } from "maishu-dilu";
 import { buttonOnClick } from "maishu-ui-toolkit";
-import { UserService } from "maishu-services-sdk";
 import { Application } from "maishu-chitu-react";
+import { PermissionService } from "maishu-services-sdk";
 
 export const MOBILE = 'mobile'
 export const VERIFY_CODE = 'verifyCode'
@@ -89,7 +89,7 @@ async function sendVerifyCode(mobile: string, button: HTMLButtonElement, app: Ap
     if (!mobile) throw errors.argumentNull('mobile')
     if (!button) throw errors.argumentNull('button')
 
-    let userService = app.createService(UserService)
+    let userService = app.createService(PermissionService)
     let data = await userService.sendRegisterVerifyCode(mobile)
     button.setAttribute("disabled", "")
 
@@ -112,6 +112,6 @@ async function sendVerifyCode(mobile: string, button: HTMLButtonElement, app: Ap
 }
 
 function register(mobile: string, password: string, smsId: string, verifyCode: string, data: any, app: Application) {
-    let userService = app.createService(UserService)
+    let userService = app.createService(PermissionService)
     return userService.register(mobile, password, smsId, verifyCode, data)
 }

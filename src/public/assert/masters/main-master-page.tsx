@@ -4,17 +4,9 @@ import React = require('react');
 import { Application } from '../application';
 import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
+import { Resource } from 'maishu-services-sdk';
 
-export type MenuItem = {
-    id?: string,
-    name: string,
-    path?: string,
-    icon?: string,
-    parent?: MenuItem,
-    parentId?: string,
-    children?: MenuItem[],
-    visible?: boolean,
-};
+export type MenuItem = Resource & { icon?: string, parent: MenuItem, children: MenuItem[] }
 
 interface State {
     currentPageName?: string,
@@ -37,10 +29,7 @@ export class MainMasterPage extends MasterPage<State> {
         super(props);
 
         this.state = { menus: [] }
-        // this.pageContainer = document.createElement('div')
-        // this.pageContainer.className = 'page-container'
         this.app = props.app
-        // this.app = new Application(this.pageContainer)
     }
 
 
@@ -116,7 +105,6 @@ export class MainMasterPage extends MasterPage<State> {
 
     /** 设置菜单 */
     setMenus(menus: MenuItem[]) {
-        menus = menus || []
         let stack = new Array<MenuItem>(...menus)
         while (stack.length > 0) {
             let item = stack.pop()
@@ -165,7 +153,7 @@ export class MainMasterPage extends MasterPage<State> {
         let menuData = this.state.menus;
         let currentPageName: string = this.state.currentPageName || '';
 
-        let firstLevelNodes = menuData.filter(o => o.visible == null || o.visible == true);
+        let firstLevelNodes = menuData.filter(o => o.type == "menu");
         let currentNode: MenuItem | null | undefined
         if (this.state.resourceId) {
             currentNode = this.findMenuItemByResourceId(firstLevelNodes, this.state.resourceId)
@@ -196,7 +184,7 @@ export class MainMasterPage extends MasterPage<State> {
         if (hideMenuPages.indexOf(currentPageName) >= 0) {
             nodeClassName = 'hideFirst';
         }
-        else if (firstLevelNode == null || (firstLevelNode.children || []).filter(o => o.visible != false).length == 0) {
+        else if (firstLevelNode == null || (firstLevelNode.children || []).filter(o => o.type == "menu").length == 0) {
             nodeClassName = 'hideSecond';
         }
 
@@ -206,7 +194,7 @@ export class MainMasterPage extends MasterPage<State> {
                     <ul className="list-group">
                         {firstLevelNodes.map((o, i) =>
                             <li key={i} className={o == firstLevelNode ? "list-group-item active" : "list-group-item"}
-                                style={{ cursor: 'pointer', display: o.visible == false ? "none" : '' }}
+                                style={{ cursor: 'pointer', display: o.type != "menu" ? "none" : '' }}
                                 onClick={() => this.showPageByNode(o)}>
                                 <i className={o.icon}></i>
                                 <span>{o.name}</span>
@@ -216,9 +204,9 @@ export class MainMasterPage extends MasterPage<State> {
                 </div>
                 <div className="second">
                     <ul className="list-group">
-                        {(firstLevelNode ? (firstLevelNode.children || []) : []).filter(o => o.visible != false).map((o, i) =>
+                        {(firstLevelNode ? (firstLevelNode.children || []) : []).filter(o => o.type == "menu").map((o, i) =>
                             <li key={i} className={o == secondLevelNode ? "list-group-item active" : "list-group-item"}
-                                style={{ cursor: 'pointer', display: o.visible == false ? "none" : '' }}
+                                style={{ cursor: 'pointer', display: o.type != "menu" ? "none" : '' }}
                                 onClick={() => this.showPageByNode(o)}>
                                 <span>{o.name}</span>
                             </li>

@@ -34,7 +34,6 @@ export class Application extends chitu_react.Application {
         })
 
         this.error.add((sender, error) => {
-            debugger
         })
     }
 

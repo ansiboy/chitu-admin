@@ -1,10 +1,9 @@
-
 .well .item {
     margin-bottom: 15px;
 }
 
-.well > .item > label,
-.well > div > .item > label {
+.well>.item>label,
+.well>div>.item>label {
     width: 90px;
     display: table-cell;
 }
@@ -34,7 +33,8 @@ ul.pagination {
     margin-bottom: 12px;
 }
 
-.nav.nav-tabs button i {
+.nav.nav-tabs button i,
+.modal-footer button i {
     margin-right: 4px;
 }
 
@@ -57,7 +57,7 @@ ul.pagination {
     margin-right: 10px;
 }
 
-.toolbar li{
+.toolbar li {
     color: white;
     padding-top: 4px;
 }
@@ -72,4 +72,12 @@ td button:last-child {
 
 .radio-inline {
     margin-right: 10px;
+}
+
+.modal-body.well {
+    background-color: white;
+    border: none;
+    padding-top: 20px;
+    padding-left: 30px;
+    margin: 0px;
 }

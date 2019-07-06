@@ -185,7 +185,6 @@ class OperationField extends React.Component<OperationFieldProps, { dataItem: Me
         let dataItem = this.state.dataItem
         console.assert(dataItem != null)
         selectedNames = dataItem.children.map(o => o.name);
-        debugger;
         return <>
             <div className="item">
                 <label>操作项</label>

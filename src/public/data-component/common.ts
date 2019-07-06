@@ -1,7 +1,8 @@
-import { ImageService, CategoryCode } from "maishu-services-sdk";
+import { ImageService, CategoryCode, Resource } from "maishu-services-sdk";
 import { Rule } from "maishu-dilu";
 import { parseUrl } from "maishu-chitu";
 import { DataSource, ArrayDataSource } from "maishu-wuzhui";
+import { errors } from "assert/errors";
 
 export let constants = {
     pageSize: 15,
@@ -10,6 +11,12 @@ export let constants = {
         edit: '修改',
         delete: '删除',
         view: '查看'
+    },
+    buttonCodes: {
+        add: 'add',
+        edit: 'edit',
+        delete: 'delete',
+        view: 'view'
     },
     noImage: '暂无图片',
     base64SrcPrefix: 'data:image',
@@ -42,5 +49,42 @@ export function toDataSource<T>(source: Promise<T[]>): DataSource<T> {
             let items = await source;
             return { dataItems: items, totalRowCount: items.length };
         }
+    })
+}
+
+
+export interface ButtonInvokeArguments<T> {
+    resource: Resource;
+    dataItem: T;
+}
+
+export function loadItemModule<T>(path: string): Promise<(args: ButtonInvokeArguments<T>) => void> {
+    if (path.endsWith(".js"))
+        path = path.substr(0, path.length - 3)
+
+    return new Promise((resolve, reject) => {
+        requirejs([path],
+            function (mod) {
+                if (mod == null)
+                    throw errors.moduleIsNull(path);
+
+                let defaultExport = mod["default"];
+                if (!defaultExport)
+                    throw errors.moduleHasNoneDefaultExports(path);
+
+                if (typeof defaultExport != 'function')
+                    throw errors.moduleHasDefaultExportIsNotFunction(path);
+
+                // defaultExport(args);
+                resolve(defaultExport);
+            },
+            function (err) {
+                let msg = `Load module ${path} fail.`
+                let error = new Error(msg);
+                error["innerError"] = err;
+                reject(error);
+                console.log(error);
+            }
+        )
     })
 }

@@ -53,7 +53,7 @@ export let errors = {
         error.name = errors.registerButtonNotExists.name
         return error
     },
-    sendVerifyCodeButtonNotExists(){
+    sendVerifyCodeButtonNotExists() {
         let msg = `Send verify code button is not exists.`
         let error = new Error(msg)
         error.name = errors.sendVerifyCodeButtonNotExists.name
@@ -63,4 +63,16 @@ export let errors = {
         let msg = `Null result is unexpected.`
         return new Error(msg)
     },
+    moduleIsNull(path) {
+        let msg = `Module ${path} is null.`
+        return new Error(msg);
+    },
+    moduleHasNoneDefaultExports(path: string) {
+        let msg = `Module ${path} has none default exports.`
+        return new Error(msg);
+    },
+    moduleHasDefaultExportIsNotFunction(path:string){
+        let msg = `Default export of module ${path} is not a function.`
+        return new Error(msg);
+    }
 }

@@ -1,20 +1,22 @@
-import { ItemPage, InputField, RadioField, ItemPageProps } from "../../data-component/index";
 import React = require("react");
-import { rules } from "maishu-dilu";
+import { ButtonInvokeArguments } from "data-component/common";
 import { Role } from "maishu-services-sdk";
-import { PermissionService } from "maishu-services-sdk";
-import { toDataSource } from "data-component/common";
+import ReactDOM = require("react-dom");
+import { showDialog, hideDialog } from "maishu-ui-toolkit";
+import { createItemDialog } from "data-component/index";
+import { dataSources } from "assert/dataSources";
+import { InputField } from "data-component/index";
+import { rules } from "maishu-dilu";
 
-export default class RoleItem extends React.Component<ItemPageProps<Role>> {
-    ps: PermissionService;
+export default function (args: ButtonInvokeArguments<Role>) {
+    let itemDialog = createItemDialog(dataSources.role, <>
+        <InputField dataField="name" label="名称*" placeholder="请输入角色名称"
+            validateRules={[
+                rules.required("请输入角色名称")
+            ]} />
+        <InputField dataField="remark" label="备注" placeholder="请输入备注" />
+    </>)
 
-    constructor(props) {
-        super(props);
-        this.ps = this.props.createService(PermissionService);
-    }
-    render() {
-        return <ItemPage {...this.props}>
-            <InputField dataField="name" label="名称" placeholder="角色名称" validateRules={[rules.required("请输入角色名称")]} />
-        </ItemPage>
-    }
+    itemDialog.show(args.dataItem);
 }
+

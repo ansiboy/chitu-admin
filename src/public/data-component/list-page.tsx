@@ -1,7 +1,7 @@
 import React = require("react");
 import { DataSource, GridView, DataControlField } from "maishu-wuzhui";
 import { createGridView } from "maishu-wuzhui-helper";
-import { constants, getObjectType } from "./common";
+import { constants, loadItemModule } from "./common";
 import { PermissionService } from 'maishu-services-sdk'
 import { Application, Page } from "maishu-chitu-react";
 
@@ -14,13 +14,13 @@ export interface ListPageProps {
     app: Application;
     data: {
         resourceId: string,
-        // objectType: string,
     };
     createService: Page["createService"];
     columns: DataControlField<any>[],
     showHeader?: boolean,
     pageSize?: number,
     source: Page,
+    onAdd?: () => void,
 }
 
 interface Props extends ListPageProps {
@@ -41,13 +41,6 @@ export class ListPage extends React.Component<Props, State> {
         this.state = {};
         this.dataSource = this.props.dataSource;
 
-        // let url = location.hash.substr(1);
-        // let obj = parseUrl(url)
-        // let arr = obj.pageName.split('/')
-
-        // if (this.dataSource == null)
-        //     throw new Error(`Data source ${this.props.data.objectType} is not exists`)
-
         if (props.data.resourceId) {
             let ps = this.props.createService<PermissionService>(PermissionService)
             ps.resource.list({ filter: `id = '${props.data.resourceId}'` })
@@ -57,7 +50,6 @@ export class ListPage extends React.Component<Props, State> {
                 })
         }
     }
-
 
     async loadResourceAddButton() {
         let resource_id = this.props.data.resourceId;
@@ -71,11 +63,20 @@ export class ListPage extends React.Component<Props, State> {
         let addItem = (menuItemChildren || []).filter(o => o.name == '添加')[0]
         if (!addItem) return null
 
-        let objectType = getObjectType(this.props.source.url);
-        let path = `${objectType}/item?resourceId=${menuItem.id}`
+        let path: string = addItem.path || "";
         let addButton = <button className="btn btn-primary pull-right"
-            onClick={() => {
-                this.props.app.forward(path, this.props.data)
+            onClick={async () => {
+                if (this.props.onAdd) {
+                    this.props.onAdd();
+                    return;
+                }
+                if (path.endsWith("js")) {
+                    let func = await loadItemModule(path);
+                    func({ resource: menuItem, dataItem: {} })
+                }
+                else {
+                    this.props.app.forward(path, this.props.data)
+                }
             }}>
             <i className="icon-plus" />
             <span>添加</span>

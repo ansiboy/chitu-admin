@@ -47,7 +47,7 @@ function createRoleDataSource() {
             let r = await permissionService.role.remove(item.id);
             return r;
         },
-        async update(item){
+        async update(item) {
             let r = await permissionService.role.update(item);
             return r;
         }
@@ -139,12 +139,14 @@ export function createMenuDataSource() {
 
 export function createUserDataSource() {
     let userDataSource = new MyDataSource<User>({
+        primaryKeys: ["id"],
         select: async (args) => {
             let r = await permissionService.user.list(args);
             r.dataItems.forEach(o => {
                 o.data = o.data || {};
                 let userRoles = o["roles"] as Role[];
-                o["roleNames"] = userRoles.map(o => o.name).join(",")
+                o["roleNames"] = userRoles.map(o => o.name).join(",");
+                o["roleIds"] = userRoles.map(o => o.id).join(",");
             });
 
             return r;
@@ -152,7 +154,19 @@ export function createUserDataSource() {
         update: async (item) => {
             let r = await permissionService.user.update(item);
             return r;
+        },
+        insert: async (item) => {
+            let roleIds: string[];
+            if (item["roleIds"]) {
+                roleIds = (item["roleIds"] as string).split(",");
+            }
+            let r = await permissionService.user.add(item, roleIds);
+            if (r.roles) {
+                r["roleNames"] = r.roles.map(o => o.name).join(",");
+            }
+            return r;
         }
+
     })
 
     return userDataSource;

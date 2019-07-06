@@ -104,6 +104,10 @@ export function operationField<T extends Entity>(props: ListPageProps, objectTyp
                     let func = await loadItemModule(path);
                     func(args);
                 }
+                else if (path.startsWith("#")) {
+                    path = path.substr(1)
+                    app.redirect(path, { id: dataItem.id, resourceId: resourceId });
+                }
                 else {
                     app.redirect(path, { id: dataItem.id, resourceId: resourceId });
                 }

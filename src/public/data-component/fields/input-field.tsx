@@ -2,12 +2,12 @@ import React = require("react");
 import { ItemPageContext } from "data-component/item-page";
 import { ValidateDataField } from "data-component/common";
 
-interface InputFieldProps {
-    dataField: string, label: string, name?: string,
+interface InputFieldProps<T> {
+    dataField: keyof T, label: string, name?: string,
     placeholder?: string, type?: 'text' | 'password'
 }
 
-export class InputField extends React.Component<InputFieldProps & ValidateDataField> {
+export class InputField<T> extends React.Component<InputFieldProps<T> & ValidateDataField> {
     input: HTMLInputElement;
     constructor(props) {
         super(props)
@@ -25,7 +25,7 @@ export class InputField extends React.Component<InputFieldProps & ValidateDataFi
                 return <div className="item">
                     <label>{label}</label>
                     <span>
-                        <input name={name || dataField} className="form-control"
+                        <input name={name || dataField as string} className="form-control"
                             placeholder={placeholder} type={this.props.type}
                             ref={e => {
                                 if (!e) return

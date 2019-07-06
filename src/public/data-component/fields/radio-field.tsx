@@ -3,6 +3,7 @@ import { errors } from "../errors";
 import { ItemPageContext } from "../item-page";
 import { radioList } from "maishu-wuzhui-helper";
 import { DataSource } from "maishu-wuzhui";
+import { ValidateDataField } from "data-component/common";
 
 // interface RadioFieldProps {
 //     dataField: string, label: string, name?: string,
@@ -61,7 +62,7 @@ interface RadioFieldProps<T> {
     valueField: keyof T,
 }
 
-export class RadioField<T> extends React.Component<RadioFieldProps<T>, { value?: string }>{
+export class RadioField<T> extends React.Component<RadioFieldProps<T> & ValidateDataField, { value?: string }>{
     constructor(props: RadioField<T>['props']) {
         super(props)
         this.state = {}
@@ -74,17 +75,20 @@ export class RadioField<T> extends React.Component<RadioFieldProps<T>, { value?:
                 dataItem[dataField] = dataItem[dataField] || this.props.defaultValue
                 return <div className="item">
                     <label>{label}</label>
-                    <span ref={e => {
-                        if (!e) return;
-                        radioList<T>({
-                            element: e,
-                            dataSource: dataSource,
-                            dataField: dataField as string,
-                            nameField: nameField,
-                            valueField: valueField,
-                            dataItem: dataItem
-                        })
-                    }}>
+                    <span>
+                        <div ref={e => {
+                            if (!e) return;
+                            radioList<T>({
+                                element: e,
+                                dataSource: dataSource,
+                                dataField: dataField as string,
+                                nameField: nameField,
+                                valueField: valueField,
+                                dataItem: dataItem
+                            })
+                        }}>
+                        </div>
+                        <div className={`validationMessage ${dataField}`} style={{ display: "none" }} >请选择用户角色</div>
 
                     </span>
                 </div>

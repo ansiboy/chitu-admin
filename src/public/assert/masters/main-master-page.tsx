@@ -5,6 +5,7 @@ import { Application } from '../application';
 import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
 import { Resource } from 'maishu-services-sdk';
+import { AppService } from 'assert/service';
 
 export type MenuItem = Resource & { icon?: string, parent: MenuItem, children: MenuItem[] }
 
@@ -15,6 +16,7 @@ interface State {
     resourceId?: string,
     /** 不显示菜单的页面 */
     hideMenuPages?: string[],
+    username?: string,
 }
 
 export class MainMasterPage extends MasterPage<State> {
@@ -29,10 +31,13 @@ export class MainMasterPage extends MasterPage<State> {
         super(props);
 
         this.state = { menus: [] }
-        this.app = props.app
+        this.app = props.app;
+        AppService.loginInfo.add((value) => {
+            if (value) {
+                this.setState({ username: value.username })
+            }
+        })
     }
-
-
 
     private showPageByNode(node: MenuItem) {
         let children = node.children || []
@@ -150,7 +155,7 @@ export class MainMasterPage extends MasterPage<State> {
     }
 
     render() {
-        let menuData = this.state.menus;
+        let { menus: menuData, username } = this.state;
         let currentPageName: string = this.state.currentPageName || '';
 
         let firstLevelNodes = menuData.filter(o => o.type == "menu");
@@ -218,7 +223,16 @@ export class MainMasterPage extends MasterPage<State> {
                     // e.appendChild(this.pageContainer)
                 }}>
                     <nav className="navbar navbar-default">
-                        {this.state.toolbar}
+                        <ul className="toolbar">
+                            {this.state.toolbar}
+                            <li className="light-blue pull-right">
+                                <i className="icon-off"></i>
+                                <span style={{ paddingLeft: 4, cursor: "pointer" }}>退出</span>
+                            </li>
+                            <li className="light-blue pull-right" style={{ marginRight: 10 }}>
+                                {username || ""}
+                            </li>
+                        </ul>
                     </nav>
                     <div className="page-container"
                         ref={(e: HTMLElement) => this.pageContainer = e || this.pageContainer}>

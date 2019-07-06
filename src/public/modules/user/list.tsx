@@ -31,12 +31,6 @@ export default class UserListPage extends React.Component<ListPageProps, State> 
         ui.showDialog(this.dialogElement)
     }
 
-    // async authPass(person: Person, isPass: boolean) {
-    //     let s = this.props.createService(AdminService)
-    //     await this.listPage.dataSource.update({ id: person.id, is_auth: isPass } as Person)
-    //     ui.hideDialog(this.dialogElement)
-    // }
-
     async search(value: string) {
         value = (value || '').trim()
         let args = this.listPage.gridView.selectArguments
@@ -45,48 +39,21 @@ export default class UserListPage extends React.Component<ListPageProps, State> 
         await this.listPage.dataSource.select(args)
     }
     render() {
-        let { activeIndex } = this.state
-        let self = this
         let columns = [
             sortNumberField(),
-            boundField({ dataField: 'mobile', headerText: '用户账号', headerStyle: { width: '120px' }, sortExpression: 'mobile' }),
-            // customField({
-            //     headerText: '用户头像',
-            //     itemStyle: { textAlign: 'center', width: '80px' },
-            //     createItemCell() {
-            //         let cell = new GridViewDataCell({
-            //             render(dataItem: User, element) {
-            //                 // if (dataItem.data != null && dataItem.data.head_image != null) {
-            //                 // let s = self.props.createService(ImageService)
-            //                 // if (!dataItem.data.head_image) {
-            //                 //     dataItem.data.head_image = dataItem.data.gender == '女' ?
-            //                 //         constants.femaleImageId : constants.maleImageId
-            //                 // }
-
-            //                 // let imageSource = s.imageUrl(dataItem.data.head_image)
-            //                 // ReactDOM.render(<img src={imageSource} style={{ maxWidth: 32, maxHeight: 32 }} className="img-responsive" />, element)
-            //                 // }
-            //             }
-            //         })
-            //         return cell
-            //     }
-            // }),
             boundField({
                 headerText: '用户手机',
-                dataField: 'mobile'
+                dataField: 'mobile',
+                headerStyle: { width: "180px" }
             }),
-            customField({
-                headerText: '用户昵称',
-                createItemCell() {
-                    let cell = new GridViewDataCell({
-                        render(dataItem: User, element) {
-                            element.innerHTML = `${dataItem.data.nick_name || ''}`
-                        }
-                    })
-                    return cell
-                }
+            boundField({
+                headerText: '用户名',
+                dataField: 'user_name'
             }),
-            customDataField<User>({ headerText: '性别', render: (dataItem) => dataItem.data.gender || '男' }),
+            boundField({
+                headerText: '邮箱',
+                dataField: 'email'
+            }),
             boundField({ dataField: 'roleNames', headerText: '用户身份' }),
             dateTimeField({ dataField: 'lastest_login', headerText: '最后登录时间' }),
             // customField({

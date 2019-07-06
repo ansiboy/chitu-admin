@@ -1,8 +1,13 @@
 import { Service, AjaxOptions, ValueStore } from 'maishu-chitu-service';
 import { MenuItem } from './masters/main-master-page';
-import { PermissionService, LoginInfo } from 'maishu-services-sdk';
+import { PermissionService } from 'maishu-services-sdk';
 import { errors } from './errors';
 
+export interface LoginInfo {
+    token: string;
+    userId: string;
+    username?: string;
+}
 export class AppService extends Service {
 
     static loginInfo = new ValueStore<LoginInfo | null>(AppService.getStorageLoginInfo())
@@ -85,7 +90,7 @@ export class AppService extends Service {
     async menuList() {
         let resources = await this.ps.currentUser.resource.list();
         let items = resources as MenuItem[];
-            // .map(o => ({ id: o.id, name: o.name, path: o.path, parentId: o.parent_id, sortNumber: o.sort_number } as MenuItem)); //this.get<MenuItem[]>('auth/menu/list', { userId });
+        // .map(o => ({ id: o.id, name: o.name, path: o.path, parentId: o.parent_id, sortNumber: o.sort_number } as MenuItem)); //this.get<MenuItem[]>('auth/menu/list', { userId });
 
         let top = items.filter(o => o.parent_id == null);
         let stack = [...top]
@@ -107,6 +112,7 @@ export class AppService extends Service {
         if (r == null)
             throw errors.unexpectedNullResult()
 
+        r.username = username;
         AppService.loginInfo.value = r;
         AppService.setStorageLoginInfo(r);
 

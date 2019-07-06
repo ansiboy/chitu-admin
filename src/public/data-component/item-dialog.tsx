@@ -8,7 +8,7 @@ import { ValidateDataField } from "./common";
 
 type BeforeSave = (dataItem: any) => Promise<any>
 
-export function createItemDialog<T extends { id: string }>(dataSource: DataSource<T>, child: React.ReactElement): { show: (dataItem: T) => void } {
+export function createItemDialog<T extends { id: string }>(dataSource: DataSource<T>, name: string, child: React.ReactElement): { show: (dataItem: T) => void } {
 
     class ItemDialog extends React.Component<{ dataItem: T }, { dataItem: T }> {
 
@@ -67,36 +67,38 @@ export function createItemDialog<T extends { id: string }>(dataSource: DataSourc
 
         render() {
             let { dataItem } = this.state;
-            return <div className="modal-content">
-                <div className="modal-header">
-                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h4 className="modal-title">{dataItem.id ? "修改角色" : "添加角色"}</h4>
-                </div>
-                <div className="modal-body well" ref={e => this.fieldsConatiner = e || this.fieldsConatiner}>
-                    <ItemPageContext.Provider value={{
-                        dataItem: dataItem,
-                        updatePageState: (dataItem) => {
-                            this.setState({ dataItem })
-                        },
-                        beforeSave: (callback: BeforeSave) => {
-                            this.beforeSaves.push(callback);
-                        }
-                    }}>
-                        {child}
-                    </ItemPageContext.Provider>
+            return <div className="modal-dialog">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 className="modal-title">{dataItem.id ? `修改${name}` : `添加${name}`}</h4>
+                    </div>
+                    <div className="modal-body well" ref={e => this.fieldsConatiner = e || this.fieldsConatiner}>
+                        <ItemPageContext.Provider value={{
+                            dataItem: dataItem,
+                            updatePageState: (dataItem) => {
+                                this.setState({ dataItem })
+                            },
+                            beforeSave: (callback: BeforeSave) => {
+                                this.beforeSaves.push(callback);
+                            }
+                        }}>
+                            {child}
+                        </ItemPageContext.Provider>
 
-                </div>
-                <div className="modal-footer">
-                    <button className="btn btn-default" onClick={e => { hideDialog(ItemDialog.dialogElement) }}>
-                        <i className="icon-reply" />
-                        <span>取消</span>
-                    </button>
-                    <button className="btn btn-primary" onClick={() => this.onSaveButtonClick(dataItem)}>
-                        <i className="icon-save" />
-                        <span>确定</span>
-                    </button>
+                    </div>
+                    <div className="modal-footer">
+                        <button className="btn btn-default" onClick={e => { hideDialog(ItemDialog.dialogElement) }}>
+                            <i className="icon-reply" />
+                            <span>取消</span>
+                        </button>
+                        <button className="btn btn-primary" onClick={() => this.onSaveButtonClick(dataItem)}>
+                            <i className="icon-save" />
+                            <span>确定</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         }
@@ -104,7 +106,7 @@ export function createItemDialog<T extends { id: string }>(dataSource: DataSourc
         static show(dataItem: T) {
             if (!ItemDialog.dialogElement) {
                 ItemDialog.dialogElement = document.createElement("div");
-                ItemDialog.dialogElement.className = "modal-dialog";
+                ItemDialog.dialogElement.className = "modal fade-in";
                 document.body.appendChild(ItemDialog.dialogElement);
                 ItemDialog.instance = ReactDOM.render(<ItemDialog dataItem={dataItem} />, ItemDialog.dialogElement) as any;
             }

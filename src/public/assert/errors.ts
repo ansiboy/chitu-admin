@@ -71,8 +71,12 @@ export let errors = {
         let msg = `Module ${path} has none default exports.`
         return new Error(msg);
     },
-    moduleHasDefaultExportIsNotFunction(path:string){
+    moduleHasDefaultExportIsNotFunction(path: string) {
         let msg = `Default export of module ${path} is not a function.`
         return new Error(msg);
-    }
+    },
+    serviceUrlCanntNull(serviceName: string) {
+        let msg = `Service '${serviceName}' base url can not null.`
+        return new Error(msg)
+    },
 }

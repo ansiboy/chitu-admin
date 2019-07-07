@@ -2,8 +2,8 @@ import React = require("react");
 import { ListPage, ListPageProps, dateTimeField } from "data-component/index";
 import { dataSources } from "assert/dataSources";
 import { boundField } from "maishu-wuzhui-helper";
-import { Token } from "maishu-services-sdk";
 import { showDialog, hideDialog } from "maishu-ui-toolkit";
+import { Token } from "entities";
 
 export default class TokenListPage extends React.Component<ListPageProps> {
 

@@ -1,4 +1,4 @@
-import { UserService, Service, PermissionService } from 'maishu-services-sdk'
+import { PermissionService } from 'assert/services/index'
 import * as chitu_react from 'maishu-chitu-react';
 import { config } from './config';
 import { MasterPage } from './masters/master-page';
@@ -56,17 +56,17 @@ export class Application extends chitu_react.Application {
     }
 
     get userId() {
-        if (Service.loginInfo.value == null)
+        if (PermissionService.loginInfo.value == null)
             return null
 
-        return Service.loginInfo.value.userId
+        return PermissionService.loginInfo.value.userId
     }
 
     get token() {
-        if (Service.loginInfo.value == null)
+        if (PermissionService.loginInfo.value == null)
             return null
 
-        return Service.loginInfo.value.token
+        return PermissionService.loginInfo.value.token
     }
 
     get config() {
@@ -74,7 +74,7 @@ export class Application extends chitu_react.Application {
     }
 
     logout() {
-        let s = this.createService<UserService>(UserService)
+        let s = this.createService<PermissionService>(PermissionService)
         s.logout()
         if (config.logoutRedirectURL) {
             location.href = config.logoutRedirectURL
@@ -142,7 +142,7 @@ async function createMasterPages(app: Application): Promise<{ simple: HTMLElemen
 
 
         let appService = app.createService(AppService)
-        if(app.userId){
+        if (app.userId) {
             appService.menuList().then(menuItems => {
                 masterPages.default.setMenus(menuItems)
             })

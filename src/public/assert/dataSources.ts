@@ -1,8 +1,9 @@
 import { DataSource, DataSourceSelectArguments, DataSourceSelectResult, DataSourceArguments } from "maishu-wuzhui";
-import { Role, PermissionService, User, Resource } from "maishu-services-sdk";
+import { PermissionService } from "./services/index";
 import { app } from "./application";
 import { AppService } from "./service";
 import { MenuItem } from "./masters/main-master-page";
+import { User, Role, Path } from "entities";
 
 let permissionService: PermissionService = app.createService<PermissionService>(PermissionService);
 let appService = app.createService(AppService);
@@ -188,11 +189,26 @@ function createTokenDataSource() {
     return tokenDataSource;
 }
 
+function createPathDataSource(resourceId: string) {
+    let dataSource = new MyDataSource<Path>({
+        primaryKeys: ["id"],
+        select: async (args) => {
+            let r = await permissionService.path.list();
+            return { dataItems: r, totalRowCount: r.length };
+        }
+    })
+
+    return dataSource;
+}
+
 export class DataSources {
     role = createRoleDataSource();
     menu = createMenuDataSource();
     user = createUserDataSource();
     token = createTokenDataSource();
+    path(resourceId: string) {
+        return createPathDataSource(resourceId);
+    }
 }
 
 export let dataSources = new DataSources();

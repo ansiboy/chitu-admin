@@ -1,8 +1,8 @@
-import { ImageService, CategoryCode, Resource } from "maishu-services-sdk";
 import { Rule } from "maishu-dilu";
 import { parseUrl } from "maishu-chitu";
-import { DataSource, ArrayDataSource } from "maishu-wuzhui";
+import { DataSource } from "maishu-wuzhui";
 import { errors } from "assert/errors";
+import { Resource } from "entities";
 
 export let constants = {
     pageSize: 15,
@@ -23,7 +23,7 @@ export let constants = {
 }
 
 export let services = {
-    imageService: new ImageService()
+    imageService: null
 }
 
 

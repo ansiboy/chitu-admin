@@ -3,10 +3,11 @@ import { createGridView, boundField, customField } from "maishu-wuzhui-helper";
 import { DataSource, GridViewDataCell, GridView } from "maishu-wuzhui";
 import ReactDOM = require("react-dom");
 import * as ui from 'maishu-ui-toolkit'
-import { Resource, PermissionService } from "maishu-services-sdk";
+import { PermissionService } from "assert/services/index";
 import { ItemPageProps, customDataField } from "data-component/index";
 import { AppService } from "assert/service";
 import { MenuItem } from "assert/masters/main-master-page";
+import { Resource } from "entities";
 
 type Item = Resource & { children?: Item[], selected?: boolean }
 interface State {
@@ -29,7 +30,7 @@ export default class PermissionPage extends React.Component<ItemPageProps<Item>,
 
         let ps = this.props.createService(PermissionService)
         let roleId = this.props.data.id
-        ps.getRole(roleId).then(async role => {
+        ps.role.item(roleId).then(async role => {
             this.setState({ title: `${role.name}权限` })
         })
     }
@@ -227,7 +228,7 @@ export default class PermissionPage extends React.Component<ItemPageProps<Item>,
                 selectedResourceIds.push(r.id)
             }
         })
-        let result = ps.setRoleResource(roleId, selectedResourceIds)
+        let result = ps.role.resource.set(roleId, selectedResourceIds)
         return result
     }
     async componentDidMount() {

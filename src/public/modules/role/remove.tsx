@@ -1,7 +1,7 @@
 import { ButtonInvokeArguments } from "data-component/common";
-import { Role } from "maishu-services-sdk";
 import { dataSources } from "assert/dataSources";
 import * as ui from "maishu-ui-toolkit";
+import { Role } from "entities";
 
 export default function (args: ButtonInvokeArguments<Role>) {
     console.assert(args.dataItem != null);

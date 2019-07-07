@@ -4,8 +4,9 @@ import React = require('react');
 import { Application } from '../application';
 import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
-import { Resource } from 'maishu-services-sdk';
+import { Resource } from 'entities';
 import { AppService } from 'assert/service';
+import { errors } from 'data-component/errors';
 
 export type MenuItem = Resource & { icon?: string, parent: MenuItem, children: MenuItem[] }
 
@@ -45,23 +46,24 @@ export class MainMasterPage extends MasterPage<State> {
             this.showPageByNode(children[0])
             return
         }
-        let pageName = node.path;
-        if (pageName == null && children.length > 0) {
+        let pagePath = node.path;
+        if (pagePath == null && children.length > 0) {
             node = children[0];
-            pageName = node.name;
+            pagePath = node.path;
         }
 
-        if (pageName == null && children.length > 0) {
-            node = children[0];
-            pageName = node.name;
+        if (!pagePath) {
+            console.log(`MenuItem ${node.name} page name is empty.`);
+            return;
         }
 
-        if (pageName) {
-            this.app.redirect(pageName)
-            return
+        if (pagePath.startsWith("#")) {
+            pagePath = pagePath.substr(1);
+            this.app.redirect(pagePath);
+            return;
         }
 
-        console.log(`MenuItem ${node.name} page name is empty.`)
+        throw errors.notImplement()
     }
 
     private findMenuItemByResourceId(menuItems: MenuItem[], resourceId: string) {

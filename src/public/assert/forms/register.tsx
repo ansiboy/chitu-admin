@@ -2,7 +2,7 @@ import { errors } from "../errors";
 import { FormValidator, rules as r } from "maishu-dilu";
 import { buttonOnClick } from "maishu-ui-toolkit";
 import { Application } from "maishu-chitu-react";
-import { PermissionService } from "maishu-services-sdk";
+import { PermissionService } from "../services/index";
 
 export const MOBILE = 'mobile'
 export const VERIFY_CODE = 'verifyCode'

@@ -1,4 +1,4 @@
-import { PermissionService } from "maishu-services-sdk";
+import { PermissionService } from 'assert/services/index'
 import { constants, loadItemModule as loadItemModule } from "../common";
 import ReactDOM = require("react-dom");
 import React = require("react");
@@ -6,16 +6,15 @@ import { customField } from "maishu-wuzhui-helper";
 import * as ui from 'maishu-ui-toolkit'
 import { GridViewCell, DataSource } from "maishu-wuzhui";
 import { ListPageProps } from "data-component/list-page";
-import { Resource } from "maishu-services-sdk";
 import { DataSources, dataSources } from "assert/dataSources";
 import { errors } from "assert/errors";
+import { Resource } from 'entities';
 
 
 export function operationField<T extends Entity>(props: ListPageProps, objectType: keyof DataSources, width?: string, callback?: (dataItem: T, resource: Resource) => void) {
 
     width = width || '120px'
 
-    let dataSource: DataSource<any> = dataSources[objectType];
     let resourceId = props.data.resourceId
     let app = props.app
     let permissionService = app.currentPage.createService(PermissionService);

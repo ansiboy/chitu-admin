@@ -1,6 +1,6 @@
 import { Service, AjaxOptions, ValueStore } from 'maishu-chitu-service';
 import { MenuItem } from './masters/main-master-page';
-import { PermissionService } from 'maishu-services-sdk';
+import { PermissionService } from './services/index';
 import { errors } from './errors';
 
 export interface LoginInfo {

@@ -1,6 +1,6 @@
 import React = require("react");
 import { ItemPageProps, ItemPage, InputField } from "data-component/index";
-import { Token } from "maishu-services-sdk";
+import { Token } from "entities";
 
 export default class TokenItemPage extends React.Component<ItemPageProps<Token>> {
     render() {

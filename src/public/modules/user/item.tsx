@@ -1,9 +1,9 @@
 import React = require("react");
 import { InputField, createItemDialog, RadioField } from "data-component/index";
-import { User, Role } from "maishu-services-sdk";
 import { rules } from "maishu-dilu";
 import { dataSources } from "assert/dataSources";
 import { ButtonInvokeArguments } from "data-component/common";
+import { User, Role } from "entities";
 
 let itemDialog: ReturnType<typeof createItemDialog>;
 export default function (args: ButtonInvokeArguments<User>) {

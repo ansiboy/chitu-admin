@@ -2,7 +2,7 @@ import React = require("react");
 import { DataSource, GridView, DataControlField } from "maishu-wuzhui";
 import { createGridView } from "maishu-wuzhui-helper";
 import { constants, loadItemModule } from "./common";
-import { PermissionService } from 'maishu-services-sdk'
+import { PermissionService } from 'assert/services/index'
 import { Application, Page } from "maishu-chitu-react";
 
 interface State {

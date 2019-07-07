@@ -4,7 +4,7 @@ import { ListPage, ListPageProps, dateTimeField, sortNumberField, customDataFiel
 import { boundField, customField } from "maishu-wuzhui-helper";
 import { GridViewDataCell, DataSourceSelectArguments } from "maishu-wuzhui";
 import * as ui from 'maishu-ui-toolkit'
-import { User, ImageService } from "maishu-services-sdk";
+// import { User, ImageService } from "maishu-services-sdk";
 import { dataSources } from "assert/dataSources";
 
 interface State {
@@ -85,7 +85,6 @@ export default class UserListPage extends React.Component<ListPageProps, State> 
         ]
 
         let { person } = this.state
-        let s = this.props.createService(ImageService)
         return <>
             <ListPage {...this.props as any} dataSource={dataSources.user} columns={columns} ref={e => this.listPage = e || this.listPage}
                 search={<>

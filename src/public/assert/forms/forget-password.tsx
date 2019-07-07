@@ -1,7 +1,7 @@
 import { FormValidator, rules as r } from "maishu-dilu";
 import { buttonOnClick, alert } from "maishu-ui-toolkit";
 import { errors } from "../errors";
-import { UserService } from "maishu-services-sdk";
+import { PermissionService as UserService } from "../services/index";
 import { Application } from "maishu-chitu-react";
 // import { app } from "../index";
 

@@ -3,8 +3,9 @@ import { boundField, customField, createGridView } from 'maishu-wuzhui-helper'
 import { operationField, valueTextField, dateTimeField, ListPageProps } from "../../data-component/index";
 import { GridViewDataCell, DataSource, GridView } from "maishu-wuzhui";
 import ReactDOM = require("react-dom");
-import { CategoryCode, Resource, PermissionService } from "maishu-services-sdk";
+import { PermissionService } from "assert/services/index";
 import { dataSources } from "assert/dataSources";
+import { Resource } from "entities";
 
 interface State {
     activeIndex: number,

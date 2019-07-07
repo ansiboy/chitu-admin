@@ -2,7 +2,7 @@ import React = require("react");
 import { rules } from "maishu-dilu";
 import { dataSources, createMenuDataSource } from "assert/dataSources";
 import { DataSourceSelectArguments, DataSourceSelectResult } from "maishu-wuzhui";
-import { PermissionService } from "maishu-services-sdk";
+import { PermissionService } from "assert/services/index";
 
 import { ItemPage, ItemPageContext, ItemPageProps, InputField, DropdownField, RadioField } from "../../data-component/index";
 import { MenuItem } from "assert/masters/main-master-page";

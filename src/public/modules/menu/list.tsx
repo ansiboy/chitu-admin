@@ -9,7 +9,6 @@ import { Resource } from "entities";
 import { MenuItem } from "assert/masters/main-master-page";
 
 interface State {
-    resources: MenuItem[],
 }
 
 let sortFieldWidth = 80
@@ -33,7 +32,6 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
 
         let [resources] = await Promise.all([this.permissionService.resource.list()]);
         let menuItems = translateToMenuItems(resources);
-        let currentMenuItem = menuItems.filter(o => o.id == this.props.data.resourceId)[0];
 
         this.gridView = createGridView({
             dataSource: dataSources.resource,
@@ -58,11 +56,13 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
                     }
                 }),
                 boundField<MenuItem>({ dataField: "page_path", headerText: "路径" }),
+                boundField<MenuItem>({ dataField: "remark", headerText: "备注", itemStyle: { width: `${remarkWidth}px` } }),
+                boundField<MenuItem>({ dataField: "type", headerText: "类型", itemStyle: { width: `${typeFieldWidth}px` } }),
                 dateTimeField<MenuItem>({ dataField: 'create_date_time', headerText: '创建时间', }),
-                operationField<MenuItem>(currentMenuItem, this.props.app, `${operationFieldWidth}px`)
+                operationField<MenuItem>(this.props.data.resourceId, this.props.app, `${operationFieldWidth}px`)
             ],
             sort: (dataItems) => {
-                dataItems = dataItems.filter(o => o.type == "menu");
+                dataItems = dataItems.filter(o => o.type == "menu" || o.type == "button");
                 dataItems = translateToMenuItems(dataItems)
                 return dataItems;
             }
@@ -82,11 +82,6 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
     }
 
     render() {
-        let { resources } = this.state
-        let currentResource = resources.filter(o => o.id == this.props.data.resourceId)[0];
-        // if (currentResource) {
-        //     currentResource.children.sort((a, b) => a.sort_number > b.sort_number ? 1 : -1);
-        // }
         return <>
             <div className="tabbable">
                 <ul className="nav nav-tabs" style={{ minHeight: 34 }}>

@@ -4,33 +4,27 @@ import ReactDOM = require("react-dom");
 import React = require("react");
 import { customField } from "maishu-wuzhui-helper";
 import { GridViewCell } from "maishu-wuzhui";
-import { ListPageProps } from "data-component/list-page";
-import { DataSources, dataSources } from "assert/dataSources";
-import { Resource, ButtonResourceData } from 'entities';
+import { ButtonResourceData } from 'entities';
 import { Application } from 'maishu-chitu-react';
 import { MenuItem } from 'assert/masters/main-master-page';
+import { ValueStore } from 'maishu-chitu';
+import { translateToMenuItems } from 'assert/dataSources';
 
 
-export function operationField<T extends Entity>(menuItem: MenuItem, app: Application, width?: string) {
+export function operationField<T extends Entity>(resourceId: string, app: Application, width?: string) {
 
     width = width || '120px'
 
-    // let resourceId = props.data.resourceId
-    // let app = props.app
-    // let permissionService = app.currentPage.createService(PermissionService);
 
-    // let getAllResources = (function () {
-    //     let allResources: Resource[];
-    //     return async function () {
-    //         if (!allResources) {
-    //             let r = await permissionService.resource.list()
-    //             allResources = r;
-    //         }
-    //         return allResources
-    //     }
-    // })();
+    let menuItemStorage = new ValueStore<MenuItem>();
+    let permissionService = app.currentPage.createService(PermissionService);
+    permissionService.resource.list().then(resources => {
+        let menuItems = translateToMenuItems(resources);
+        let currentMenuItem = menuItems.filter(o => o.id == resourceId)[0];
+        console.assert(currentMenuItem != null);
+        menuItemStorage.value = currentMenuItem;
+    })
 
-    // let allResources: Resource[];
     return customField({
         headerText: '操作',
         itemStyle: { textAlign: 'center', width } as CSSStyleDeclaration,
@@ -43,18 +37,21 @@ export function operationField<T extends Entity>(menuItem: MenuItem, app: Applic
     })
 
     async function renderCell(dataItem: T, cell: GridViewCell) {
-        // if (allResources == null) {
-        //     allResources = await getAllResources();
-        // }
-        let children = menuItem.children || []; //allResources.filter(o => o.parent_id == resourceId);
-        let resources = children.filter(o => o.type == 'button')
-        renderOperationButtons(menuItem, cell.element, dataItem, app)
+        if (menuItemStorage.value) {
+            renderOperationButtons(menuItemStorage.value, cell.element, dataItem, app)
+        }
+        else {
+            menuItemStorage.add((menuItem) => {
+                renderOperationButtons(menuItem, cell.element, dataItem, app)
+            })
+        }
+
     }
 
 }
 
 export function renderOperationButtons<T extends { id: string }>(menuItem: MenuItem, element: HTMLElement, dataItem: T, app: Application) {
-    let children = menuItem.children;
+    let children = menuItem.children || [];
     for (let i = 0; i < children.length; i++) {
 
         let data: ButtonResourceData = children[i].data || {} as any;
@@ -68,7 +65,10 @@ export function renderOperationButtons<T extends { id: string }>(menuItem: MenuI
         button.className = data.class_name;
         button.title = data.title;
         iconClassName = data.icon;
-        ReactDOM.render(<i className={iconClassName} > </i>, button)
+        ReactDOM.render(<div>
+            {iconClassName ? <i className={iconClassName} /> : null}
+            {data.text ? <span>{data.text}</span> : null}
+        </div>, button)
 
         element.appendChild(button);
         button.onclick = async function () {

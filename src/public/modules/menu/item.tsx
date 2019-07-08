@@ -128,7 +128,7 @@ export default class ResourceAdd extends React.Component<Props, State> {
                                     </td>
                                 </tr> :
                                 buttons.map(o =>
-                                    <tr>
+                                    <tr key={o.id}>
                                         <td>{o.sort_number}</td>
                                         <td>{o.name}</td>
                                         <td>{o.page_path}</td>
@@ -169,7 +169,7 @@ export default class ResourceAdd extends React.Component<Props, State> {
                                     <td colSpan={4}><div className="empty">暂无数据</div></td>
                                 </tr> :
                                 apiPaths.map((o, index) =>
-                                    <tr>
+                                    <tr key={o.id}>
                                         <td>{index}</td>
                                         <th>{o.value}</th>
                                         <th></th>

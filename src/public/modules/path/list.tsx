@@ -74,7 +74,7 @@ export default class PathListPage extends React.Component<ListPageProps, State>{
                         })
                     }
                 }),
-                operationField<MenuItem>(currentMenuItem, this.props.app, `${operationFieldWidth - 18}px`)
+                operationField<MenuItem>(this.props.data.resourceId, this.props.app, `${operationFieldWidth - 18}px`)
             ],
             sort: (dataItems) => {
                 dataItems = translateToMenuItems(dataItems)

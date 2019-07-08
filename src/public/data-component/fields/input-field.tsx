@@ -22,7 +22,7 @@ export class InputField<T> extends React.Component<InputFieldProps<T> & Validate
         return <ItemPageContext.Consumer>
             {args => {
                 let dataItem = args.dataItem || {}
-                return <div className="item">
+                return <div className="input-control">
                     <label>{label}</label>
                     <span>
                         <input name={name || dataField as string} className="form-control"

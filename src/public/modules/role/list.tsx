@@ -1,21 +1,44 @@
 import React = require("react");
 import { ListPage, ListPageProps, dateTimeField, operationField } from "data-component/index";
 import { boundField } from "maishu-wuzhui-helper";
-import { dataSources } from "assert/dataSources";
+import { dataSources, translateToMenuItems } from "assert/dataSources";
+import { PermissionService } from "assert/services/index";
+import { MenuItem } from "assert/masters/main-master-page";
 
-export default class RoleListPage extends React.Component<ListPageProps> {
+interface State {
+    currentMenuItem?: MenuItem
+}
+
+export default class RoleListPage extends React.Component<ListPageProps, State> {
+    ps: any;
 
     constructor(props) {
         super(props);
-
+        this.state = {}
+        this.ps = this.props.createService(PermissionService);
+    }
+    async componentDidMount() {
+        let [resources] = await Promise.all([this.ps.resource.list()]);
+        let menuItems = translateToMenuItems(resources);
+        let currentMenuItem = menuItems.filter(o => o.id == this.props.data.resourceId)[0];
+        this.setState({ currentMenuItem })
     }
     render() {
+
+        let { currentMenuItem } = this.state;
+
+        if (!currentMenuItem) {
+            return <div className="empty">
+                数据正在加载中...
+            </div>
+        }
+
         return <ListPage {...this.props} dataSource={dataSources.role}
             columns={[
                 boundField({ dataField: 'id', headerText: '编号', headerStyle: { width: '300px' }, itemStyle: { textAlign: 'center' } }),
                 boundField({ dataField: 'name', headerText: '名称' }),
                 dateTimeField({ dataField: 'create_date_time', headerText: '创建时间' }),
-                operationField(this.props, 'role', '160px')
+                operationField(currentMenuItem, this.props.app, '160px')
             ]}
         >
 

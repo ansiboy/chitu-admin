@@ -1,23 +1,23 @@
 import React = require("react");
 import { boundField, customField, createGridView } from 'maishu-wuzhui-helper'
-import { operationField, valueTextField, dateTimeField, ListPageProps } from "../../data-component/index";
+import { operationField, valueTextField, dateTimeField, ListPageProps, toDateTimeString, renderOperationButtons } from "../../data-component/index";
 import { GridViewDataCell, DataSource, GridView } from "maishu-wuzhui";
 import ReactDOM = require("react-dom");
 import { PermissionService } from "assert/services/index";
-import { dataSources } from "assert/dataSources";
+import { dataSources, translateToMenuItems } from "assert/dataSources";
 import { Resource } from "entities";
+import { MenuItem } from "assert/masters/main-master-page";
 
 interface State {
-    activeIndex: number,
-    categories: any[],
+    resources: MenuItem[],
 }
 
 let sortFieldWidth = 80
 let nameFieldWidth = 280
 let operationFieldWidth = 200
 let createDateTimeFieldWidth = 160
-let hideFieldWidth = 90
 let typeFieldWidth = 140
+let remarkWidth = 240
 
 export default class ResourceListPage extends React.Component<ListPageProps, State> {
     dataTable: HTMLTableElement;
@@ -26,38 +26,30 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
 
     constructor(props) {
         super(props)
-        this.state = { activeIndex: 0, categories: [] };
+        this.state = { resources: [] };
         this.permissionService = this.props.createService(PermissionService);
     }
     async componentDidMount() {
 
-        let categories = []//await this.permissionService.category.list();
-        this.setState({ categories });
-        let categroyNames = {}
-        for (let i = 0; i < categories.length; i++) {
-            categroyNames[categories[i].code] = categories[i].name;
-        }
+        let [resources] = await Promise.all([this.permissionService.resource.list()]);
+        let menuItems = translateToMenuItems(resources);
+        let currentMenuItem = menuItems.filter(o => o.id == this.props.data.resourceId)[0];
 
-        // categroyNames[platformCategory] = '平台'
-        // categroyNames[distributorCategory] = '经销商'
         this.gridView = createGridView({
-            dataSource: dataSources.menu,
+            dataSource: dataSources.resource,
             element: this.dataTable,
             showHeader: false,
             showFooter: false,
             pageSize: null,
             columns: [
-                boundField({ dataField: 'sort_number', itemStyle: { width: `${sortFieldWidth}px` } }),
-                customField({
+                boundField<MenuItem>({ dataField: 'sort_number', itemStyle: { width: `${sortFieldWidth}px` } }),
+                customField<MenuItem>({
                     headerText: '菜单名称',
                     itemStyle: { width: `${nameFieldWidth}px` },
-                    createItemCell() {
-                        let cell = new GridViewDataCell<any>({
-                            render(item, element) {
-                                if (item.parent_id) {
-                                    element.style.paddingLeft = '40px'
-                                }
-
+                    createItemCell: () => {
+                        let cell = new GridViewDataCell<MenuItem>({
+                            render: (item: MenuItem, element) => {
+                                element.style.paddingLeft = `${this.parentDeep(item) * 20 + 10}px`
                                 element.innerHTML = item.name;
                             }
                         })
@@ -65,75 +57,36 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
                         return cell
                     }
                 }),
-                boundField({ dataField: 'path', headerText: '路径' }),
-                // valueTextField<Resource>({
-                //     dataField: 'category', headerText: '类型', items: categroyNames,
-                //     itemStyle: { width: `${typeFieldWidth}px` }
-                // }),
-                // customField({
-                //     headerText: '是否隐藏',
-                //     itemStyle: { textAlign: 'center', width: `${hideFieldWidth}px` } as CSSStyleDeclaration,
-                //     createItemCell() {
-                //         let cell = new GridViewDataCell({
-                //             render(dataItem: Resource, element) {
-                //                 ReactDOM.render(<label className="switch">
-                //                     <input type="checkbox" className="ace ace-switch ace-switch-5"
-                //                         ref={e => {
-                //                             if (!e) return
-                //                             e.checked = (dataItem.data || {}).visible == false
-                //                             e.onchange = () => {
-                //                                 dataItem.data = dataItem.data || {}
-                //                                 dataItem.data.visible = !e.checked;
-                //                                 let objectType = getObjectType(location);
-                //                                 (dataSources[objectType] as DataSource<Resource>).update(dataItem)
-                //                             }
-                //                         }} />
-                //                     <span className="lbl middle"></span>
-                //                 </label>, element)
-                //             }
-                //         })
+                boundField<MenuItem>({ dataField: "page_path", headerText: "路径" }),
+                dateTimeField<MenuItem>({ dataField: 'create_date_time', headerText: '创建时间', }),
+                operationField<MenuItem>(currentMenuItem, this.props.app, `${operationFieldWidth}px`)
+            ],
+            sort: (dataItems) => {
+                dataItems = dataItems.filter(o => o.type == "menu");
+                dataItems = translateToMenuItems(dataItems)
+                return dataItems;
+            }
 
-                //         return cell
-                //     }
-                // }),
-                dateTimeField({ dataField: 'create_date_time', headerText: '创建时间', }),
-                operationField(this.props, "menu", `${operationFieldWidth - 18}px`)
-            ]
         })
     }
 
-    // showPlatformMenu() {
-    //     this.gridView.dataSource.select({
-    //         filter: `category = '${platformCategory}'`
-    //     })
+    parentDeep(menuItem: MenuItem) {
+        let deep = 0;
+        let parent = menuItem.parent;
+        while (parent) {
+            deep = deep + 1;
+            parent = parent.parent;
+        }
 
-    //     this.setState({ activeIndex: 1 })
-    // }
-
-    // showDistributorMenu() {
-    //     this.gridView.dataSource.select({
-    //         filter: `category = '${distributorCategory}'`
-    //     })
-
-    //     this.setState({ activeIndex: 2 })
-    // }
-
-    showCategoryMenu(index: number, category: any) {
-        this.gridView.dataSource.select({
-            filter: `category = '${category.code}'`
-        })
-        this.setState({ activeIndex: index + 1 })
-    }
-
-    showAllMenu() {
-        this.gridView.dataSource.select({
-        })
-
-        this.setState({ activeIndex: 0 })
+        return deep;
     }
 
     render() {
-        let { activeIndex, categories } = this.state
+        let { resources } = this.state
+        let currentResource = resources.filter(o => o.id == this.props.data.resourceId)[0];
+        // if (currentResource) {
+        //     currentResource.children.sort((a, b) => a.sort_number > b.sort_number ? 1 : -1);
+        // }
         return <>
             <div className="tabbable">
                 <ul className="nav nav-tabs" style={{ minHeight: 34 }}>
@@ -157,16 +110,36 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
                         <th style={{ width: sortFieldWidth }}>序号</th>
                         <th style={{ width: nameFieldWidth }}>菜单名称</th>
                         <th style={{}}>路径</th>
+                        <th style={{ width: remarkWidth }}>备注</th>
                         <th style={{ width: typeFieldWidth }}>类型</th>
-                        {/* <th style={{ width: hideFieldWidth }}>是否隐藏</th> */}
                         <th style={{ width: createDateTimeFieldWidth }}>创建时间</th>
-                        <th style={{ width: operationFieldWidth }}>操作</th>
+                        <th style={{ width: operationFieldWidth + 18 }}>操作</th>
                     </tr>
                 </thead>
             </table>
             <div style={{ height: 'calc(100% - 160px)', width: 'calc(100% - 290px)', position: 'absolute', overflowY: 'scroll' }}>
                 <table className="table table-striped table-bordered table-hover"
                     ref={e => this.dataTable = e || this.dataTable}>
+                    {/* <tbody>
+                        {resources.map(resource =>
+                            <tr key={resource.id}>
+                                <td style={{ width: sortFieldWidth }}>{resource.sort_number}</td>
+                                <td style={{ width: nameFieldWidth, paddingLeft: `${this.parentDeep(resource) * 20 + 10}px` }}>{resource.name}</td>
+                                <td >{resource.page_path}</td>
+                                <td style={{ width: remarkWidth }} >{resource.remark}</td>
+                                <td style={{ width: typeFieldWidth, textAlign: "center" }}>{resource.type == 'menu' ? '菜单' : resource.type == 'button' ? '按钮' : ''}</td>
+                                <td style={{ width: createDateTimeFieldWidth }}>{toDateTimeString(resource.create_date_time)}</td>
+                                <td style={{ width: operationFieldWidth, textAlign: "center" }}
+                                    ref={e => {
+                                        if (!e) return;
+
+                                        renderOperationButtons(this.props.data.resourceId, currentResource.children, e, currentResource, this.props.app);
+
+                                    }}>
+                                </td>
+                            </tr>
+                        )}
+                    </tbody> */}
                 </table>
             </div>
         </>

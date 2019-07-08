@@ -162,7 +162,7 @@ export class ItemPage<T> extends React.Component<ItemPageProps<T>, State> {
                     </li>
                 </ul>
             </div>
-            <div className="well" ref={e => this.fieldsConatiner = e || this.fieldsConatiner}>
+            <div ref={e => this.fieldsConatiner = e || this.fieldsConatiner}>
                 <ItemPageContext.Provider value={{
                     dataItem,
                     updatePageState: (dataItem) => {

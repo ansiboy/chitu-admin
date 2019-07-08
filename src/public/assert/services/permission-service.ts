@@ -13,18 +13,9 @@ export class PermissionService extends Service {
 
     protected url(path: string) {
         if (!PermissionService.baseUrl)
-            throw errors.serviceUrlCanntNull('permissionService')
+            throw errors.serviceUrlCanntNull('permissionService');
 
-        return `${PermissionService.baseUrl}/${path}`
-    }
-
-    currentUser = {
-        resource: {
-            list: () => {
-                let url = this.url("current-user/resource/list");
-                return this.get<Resource[]>(url);
-            }
-        }
+        return `${PermissionService.baseUrl}/${path}`;
     }
 
     role = {
@@ -97,9 +88,9 @@ export class PermissionService extends Service {
     };
 
     resource = {
-        list: (args?: DataSourceSelectArguments) => {
+        list: (parentId?: string) => {
             let url = this.url("resource/list");
-            return this.getByJson<DataSourceSelectResult<Resource>>(url, { args });
+            return this.get<Resource[]>(url, { parentId });
         },
         item: (id: string) => {
             let url = this.url("resource/item");
@@ -140,10 +131,32 @@ export class PermissionService extends Service {
          */
         add: async (item: Partial<User>, roleIds?: string[]) => {
             let url = this.url('user/add')
-            let result: { id: string, roles: Role[] }
+            let result: { id: string }
             let r = await this.postByJson<typeof result>(url, { item, roleIds })
             return r
-        }
+        },
+
+        /**
+         * 登录
+         * @param username 用户名
+         * @param password 密码
+         */
+        login: async (username: string, password: string) => {
+            if (!username) throw errors.argumentNull('username')
+            if (!password) throw errors.argumentNull('password')
+
+            let url = this.url('user/login')
+            let r = await this.postByJson<LoginInfo | null>(url, { username, password })
+            if (r == null)
+                throw errors.unexpectedNullResult()
+
+            r.username = username;
+            Service.loginInfo.value = r
+            Service.setStorageLoginInfo(r)
+            events.login.fire(this, r)
+            return r
+        },
+
     }
 
     token = {
@@ -160,9 +173,9 @@ export class PermissionService extends Service {
     }
 
     path = {
-        list: async () => {
+        list: async (resourceId?: string) => {
             let url = this.url("path/list");
-            let r = this.getByJson<Path[]>(url);
+            let r = this.getByJson<Path[]>(url, { resourceId });
             return r;
         },
         add: async (item: Partial<Path>) => {
@@ -259,25 +272,7 @@ export class PermissionService extends Service {
         Service.loginInfo.value = null
     }
 
-    /**
-     * 登录
-     * @param username 用户名
-     * @param password 密码
-     */
-    async login(username: string, password: string) {
-        if (!username) throw errors.argumentNull('username')
-        if (!password) throw errors.argumentNull('password')
 
-        let url = this.url('user/login')
-        let r = await this.postByJson<LoginInfo | null>(url, { username, password })
-        if (r == null)
-            throw errors.unexpectedNullResult()
-
-        Service.loginInfo.value = r
-        Service.setStorageLoginInfo(r)
-        events.login.fire(this, r)
-        return r
-    }
 
     /**
      * 注册

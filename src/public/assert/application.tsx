@@ -16,7 +16,7 @@ config.login.showRegister = true;
 config.firstPanelWidth = "130px";
 config.login.title = "好易微商城";
 
-PermissionService.baseUrl = "http://127.0.0.1:2857";
+PermissionService.baseUrl = "http://127.0.0.1:2857/auth";
 
 
 export class Application extends chitu_react.Application {

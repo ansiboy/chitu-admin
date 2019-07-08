@@ -3,6 +3,7 @@ import { Service as ChiTuSerivce, AjaxOptions, ValueStore } from 'maishu-chitu-s
 export interface LoginInfo {
     token: string,
     userId: string,
+    username: string,
 }
 
 export class Service extends ChiTuSerivce {

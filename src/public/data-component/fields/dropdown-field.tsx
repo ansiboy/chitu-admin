@@ -29,7 +29,7 @@ export class DropdownField<T> extends React.Component<DropdownFieldProps<T>, Dro
         return <ItemPageContext.Consumer>
             {args => {
                 let dataItem = args.dataItem || {}
-                return <div className="item">
+                return <div className="input-control">
                     <label>{label}</label>
                     <span>
                         <select name={name || dataField as string} className="form-control"

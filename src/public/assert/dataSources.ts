@@ -3,7 +3,7 @@ import { PermissionService } from "./services/index";
 import { app } from "./application";
 import { AppService } from "./service";
 import { MenuItem } from "./masters/main-master-page";
-import { User, Role, Path } from "entities";
+import { User, Role, Path, Resource } from "entities";
 
 let permissionService: PermissionService = app.createService<PermissionService>(PermissionService);
 let appService = app.createService(AppService);
@@ -11,11 +11,11 @@ let appService = app.createService(AppService);
 export class MyDataSource<T> extends DataSource<T> {
     getItem: (id: string) => Promise<T>;
 
-    constructor(params: DataSourceArguments<T> & { getItem?: (id: string) => Promise<T> }) {
+    constructor(params: DataSourceArguments<T> & { item?: (id: string) => Promise<T> }) {
         super(params)
 
-        if (params.getItem == null) {
-            params.getItem = async (id: string) => {
+        if (params.item == null) {
+            params.item = async (id: string) => {
                 let filter = `id = '${id}'`
                 let args = new DataSourceSelectArguments()
                 args.filter = filter
@@ -24,7 +24,7 @@ export class MyDataSource<T> extends DataSource<T> {
             }
         }
 
-        this.getItem = params.getItem
+        this.getItem = params.item
     }
 }
 
@@ -36,7 +36,7 @@ function createRoleDataSource() {
             let roles = await permissionService.role.list();
             return { dataItems: roles, totalRowCount: roles.length };
         },
-        async getItem(id) {
+        async item(id) {
             let role = await permissionService.role.item(id);
             return role
         },
@@ -61,18 +61,14 @@ export function createMenuDataSource() {
     let menuDataSource = new MyDataSource<MenuItem>({
         primaryKeys: ['id'],
         async select() {
-            let r = await appService.menuList();
-            let arr = new Array<MenuItem>();
-            for (let i = 0; i < r.length; i++) {
-                arr.push(r[i]);
-                r[i].children.forEach(child => arr.push(child));
-            }
-
+            let resources = await permissionService.resource.list();
+            resources = resources.filter(o => o.type == "menu");
+            let arr = translateToMenuItems(resources);
             return { dataItems: arr, totalRowCount: arr.length };
         },
-        async getItem(id: string) {
-            let items = await menuDataSource.executeSelect({})
-            let stack: MenuItem[] = [...items.dataItems];
+        async item(id: string) {
+            let items = await appService.menuList();
+            let stack: MenuItem[] = [...items];
 
             let arr: MenuItem[] = [];
             while (stack.length > 0) {
@@ -138,6 +134,34 @@ export function createMenuDataSource() {
     return menuDataSource;
 }
 
+export function translateToMenuItems(resources: Resource[]): MenuItem[] {
+    let arr = new Array<MenuItem>();
+    let stack: MenuItem[] = [...resources.filter(o => o.parent_id == null).reverse() as MenuItem[]];
+    while (stack.length > 0) {
+        let item = stack.pop();
+        item.children = resources.filter(o => o.parent_id == item.id) as MenuItem[];
+        if (item.parent_id) {
+            item.parent = resources.filter(o => o.id == item.parent_id)[0] as MenuItem;
+        }
+
+        stack.push(...item.children.reverse());
+
+        arr.push(item);
+    }
+
+    let ids = arr.map(o => o.id);
+    for (let i = 0; i < ids.length; i++) {
+        let item = arr.filter(o => o.id == ids[i])[0];
+        console.assert(item != null);
+
+        if (item.children.length > 1) {
+            item.children.sort((a, b) => a.sort_number < b.sort_number ? -1 : 1);
+        }
+    }
+
+    return arr;
+}
+
 export function createUserDataSource() {
     let userDataSource = new MyDataSource<User>({
         primaryKeys: ["id"],
@@ -145,9 +169,9 @@ export function createUserDataSource() {
             let r = await permissionService.user.list(args);
             r.dataItems.forEach(o => {
                 o.data = o.data || {};
-                let userRoles = o["roles"] as Role[];
-                o["roleNames"] = userRoles.map(o => o.name).join(",");
-                o["roleIds"] = userRoles.map(o => o.id).join(",");
+                // let userRoles = o["roles"] as Role[];
+                // o["roleNames"] = userRoles.map(o => o.name).join(",");
+                // o["roleIds"] = userRoles.map(o => o.id).join(",");
             });
 
             return r;
@@ -158,13 +182,10 @@ export function createUserDataSource() {
         },
         insert: async (item) => {
             let roleIds: string[];
-            if (item["roleIds"]) {
-                roleIds = (item["roleIds"] as string).split(",");
-            }
             let r = await permissionService.user.add(item, roleIds);
-            if (r.roles) {
-                r["roleNames"] = r.roles.map(o => o.name).join(",");
-            }
+            // if (r.roles) {
+            //     r["roleNames"] = r.roles.map(o => o.name).join(",");
+            // }
             return r;
         }
 
@@ -189,7 +210,7 @@ function createTokenDataSource() {
     return tokenDataSource;
 }
 
-function createPathDataSource(resourceId: string) {
+function createPathDataSource() {
     let dataSource = new MyDataSource<Path>({
         primaryKeys: ["id"],
         select: async (args) => {
@@ -201,14 +222,38 @@ function createPathDataSource(resourceId: string) {
     return dataSource;
 }
 
+function createResourceDataSource() {
+    let dataSource = new MyDataSource<Resource>({
+        primaryKeys: ["id"],
+        select: async (args) => {
+            let r = await permissionService.resource.list();
+            return { dataItems: r, totalRowCount: r.length };
+        },
+        item: async (id) => {
+            let r = await permissionService.resource.item(id);
+            debugger
+            return r;
+        },
+        update: async (item) => {
+            let r = await permissionService.resource.update(item);
+            return r;
+        },
+        insert: async (item) => {
+            let r = await permissionService.resource.add(item);
+            return r;
+        }
+    })
+
+    return dataSource;
+}
+
 export class DataSources {
     role = createRoleDataSource();
     menu = createMenuDataSource();
     user = createUserDataSource();
     token = createTokenDataSource();
-    path(resourceId: string) {
-        return createPathDataSource(resourceId);
-    }
+    path = createPathDataSource();
+    resource = createResourceDataSource();
 }
 
 export let dataSources = new DataSources();

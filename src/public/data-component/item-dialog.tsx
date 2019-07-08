@@ -8,7 +8,8 @@ import { ValidateDataField } from "./common";
 
 type BeforeSave = (dataItem: any) => Promise<any>
 
-export function createItemDialog<T extends { id: string }>(dataSource: DataSource<T>, name: string, child: React.ReactElement): { show: (dataItem: T) => void } {
+export function createItemDialog<T extends { id: string }>(
+    dataSource: DataSource<T>, name: string, child: React.ReactElement): { show: (dataItem: T) => void } {
 
     class ItemDialog extends React.Component<{ dataItem: T }, { dataItem: T }> {
 

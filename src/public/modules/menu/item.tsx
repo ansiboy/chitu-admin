@@ -6,65 +6,89 @@ import { PermissionService } from "assert/services/index";
 
 import { ItemPage, ItemPageContext, ItemPageProps, InputField, DropdownField, RadioField } from "../../data-component/index";
 import { MenuItem } from "assert/masters/main-master-page";
-// import { categroyNames, platformCategory } from "../../common";
-// export let platformCategory: Category = 'platform'
-// export let distributorCategory: Category = 'distributor'
-// export let categroyNames = [{ name: "平台", value: platformCategory }, { name: "经销商", value: distributorCategory }]
+import { Path, Resource } from "entities";
+
 interface Props extends ItemPageProps<MenuItem> {
     mode: 'new' | 'edit' | 'readonly',
 }
 
 interface State {
-    checkedChildren: string[]
+    checkedChildren: string[],
+    apiPaths: Path[],
+    buttons: Resource[],
 }
 
 export default class ResourceAdd extends React.Component<Props, State> {
     private operationField: OperationField;
     constructor(props) {
         super(props)
-        this.state = { checkedChildren: [] }
+        this.state = { checkedChildren: [], apiPaths: [], buttons: [] }
+    }
+    componentDidMount() {
+        let ps = this.props.createService(PermissionService);
+        let parentId = this.props.data.id;
+        ps.resource.list(parentId).then(items => {
+            this.setState({ buttons: items });
+        })
+        ps.path.list(parentId).then(items => {
+            this.setState({ apiPaths: items });
+        })
     }
     render() {
-        return <ItemPage {...this.props}
-            beforeSave={async (dataItem: MenuItem) => {
-                dataItem.type = 'menu'
-            }}>
-            <ItemPageContext.Consumer>
-                {args => {
-                    let dataItem: MenuItem = args.dataItem
-                    return <>
-                        <div style={{ display: 'table-cell', borderRight: 'solid 1px #cccccc', paddingRight: 40 }}>
-                            <InputField label="序号" dataField="sort_number" placeholder="用于对菜单排序，可空" />
-                            <DropdownField label="所属菜单" dataField="parent_id"
-                                placeholder="请选择所属菜单，可空"
-                                items={async () => {
-                                    let args: DataSourceSelectArguments = {}
-                                    // if (dataItem.category) {
-                                    //     args.filter = `category = '${dataItem.category}'`;
-                                    // }
+        let { apiPaths, buttons } = this.state
+        return <>
+            <ItemPage key={this.props.data.id} {...this.props}
+                beforeSave={async (dataItem: MenuItem) => {
+                    dataItem.type = 'menu'
+                }}>
+                <ItemPageContext.Consumer>
+                    {args => {
+                        let dataItem: MenuItem = args.dataItem;
+                        let buttons = (dataItem.children || []).filter(o => o.type == "button");
+                        return <>
+                            <div className="well">
+                                <div className="row form-group">
+                                    <div className="col-xs-4">
+                                        <InputField label="序号" dataField="sort_number" placeholder="用于对菜单排序，可空" />
+                                    </div>
+                                    <div className="col-xs-4">
+                                        <DropdownField label="所属菜单" dataField="parent_id"
+                                            placeholder="请选择所属菜单，可空"
+                                            items={async () => {
+                                                let args: DataSourceSelectArguments = {}
+                                                // if (dataItem.category) {
+                                                //     args.filter = `category = '${dataItem.category}'`;
+                                                // }
 
-                                    let menuDataSource = dataSources.menu;
-                                    let result = await menuDataSource.executeSelect(args);
-                                    let r = (result as DataSourceSelectResult<MenuItem>).dataItems.map(o => ({ name: o.name, value: o.id }));
-                                    return r;
-                                }} />
-                            <InputField label="名称" dataField="name" validateRules={[rules.required('请输入菜单名称')]}
-                                placeholder="请输入菜单名称" />
-                            <InputField label="路径" dataField="path"
-                                placeholder="菜单页面的路径，可空" />
+                                                let menuDataSource = dataSources.menu;
+                                                let result = await menuDataSource.executeSelect(args);
+                                                let r = (result as DataSourceSelectResult<MenuItem>).dataItems.map(o => ({ name: o.name, value: o.id }));
+                                                return r;
+                                            }} />
+                                    </div>
+                                    <div className="col-xs-4">
+                                        <InputField label="名称" dataField="name" validateRules={[rules.required('请输入菜单名称')]}
+                                            placeholder="请输入菜单名称" />
+                                    </div>
+                                </div>
 
-                            <ItemPageContext.Consumer>
-                                {args => {
-                                    let ps = this.props.createService(PermissionService)
-                                    return <OperationField ref={e => this.operationField = e || this.operationField}
-                                        dataItem={args.dataItem}
-                                        updatePageState={args.updatePageState} service={ps} />
-                                }}
-                            </ItemPageContext.Consumer>
-                            {/* <RadioField dataType='number' label="类型" dataField="category" items={categroyNames}
-                                defaultValue={platformCategory} /> */}
-                        </div>
-                        <div style={{ display: 'table-cell', paddingLeft: 30 }}>
+                                <div className="row form-group">
+                                    <div className="col-xs-4">
+                                        <InputField label="路径" dataField="path"
+                                            placeholder="菜单页面的路径，可空" />
+                                    </div>
+                                    {/* <div className="col-xs-4">
+                                    <ItemPageContext.Consumer>
+                                        {args => {
+                                            let ps = this.props.createService(PermissionService)
+                                            return <OperationField ref={e => this.operationField = e || this.operationField}
+                                                dataItem={args.dataItem}
+                                                updatePageState={args.updatePageState} service={ps} />
+                                        }}
+                                    </ItemPageContext.Consumer>
+                                </div> */}
+                                </div>
+                                {/* <div style={{ display: 'table-cell', paddingLeft: 30 }}>
                             <ItemPageContext.Consumer>
                                 {args => {
                                     let dataItem: MenuItem = args.dataItem
@@ -78,11 +102,87 @@ export default class ResourceAdd extends React.Component<Props, State> {
                                     </div>
                                 }}
                             </ItemPageContext.Consumer>
-                        </div>
-                    </>
-                }}
-            </ItemPageContext.Consumer>
-        </ItemPage >
+                        </div> */}
+                            </div>
+                        </>
+                    }}
+                </ItemPageContext.Consumer>
+            </ItemPage >
+            <div className="row">
+                <div className="col-md-6">
+                    <table className="table table-striped table-bordered table-hover col-md-6">
+                        <caption>操作项</caption>
+                        <thead>
+                            <tr>
+                                <th style={{ width: 60 }}>序号</th>
+                                <th>名称</th>
+                                <th>路径</th>
+                                <th style={{ width: 80 }}>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {(buttons.length == 0) ?
+                                <tr>
+                                    <td colSpan={4}>
+                                        <div className="empty text-center">暂无操作项</div>
+                                    </td>
+                                </tr> :
+                                buttons.map(o =>
+                                    <tr>
+                                        <td>{o.sort_number}</td>
+                                        <td>{o.name}</td>
+                                        <td>{o.page_path}</td>
+                                        <td>
+                                            <button className="btn btn-minier btn-info" title="点击编辑">
+                                                <i className="icon-pencil"></i>
+                                            </button>
+                                            <button className="btn btn-minier btn-danger" title="点击删除">
+                                                <i className="icon-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colSpan={4}>
+                                    <button className="btn btn-primary btn-block">添加新的操作项</button>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div className="col-md-6">
+                    <table className="table table-striped table-bordered table-hover">
+                        <caption>允许访问路径</caption>
+                        <thead>
+                            <tr>
+                                <th style={{ width: 60 }}>序号</th>
+                                <th>路径</th>
+                                <th style={{ width: 80 }}>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {apiPaths.length == 0 ?
+                                <tr>
+                                    <td colSpan={4}><div className="empty">暂无数据</div></td>
+                                </tr> :
+                                apiPaths.map((o, index) =>
+                                    <tr>
+                                        <td>{index}</td>
+                                        <th>{o.value}</th>
+                                        <th></th>
+                                    </tr>
+                                )
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </>
     }
 }
 
@@ -109,7 +209,7 @@ class OperationTable extends React.Component<{ dataItem: MenuItem }, { dataItem:
                 {dataItem.children.map((r, i) => <tr key={r.id || i}>
                     <td>{r.sort_number}</td>
                     <td>{r.name}</td>
-                    <td>{r.path}</td>
+                    <td>{r.page_path}</td>
                     <td className="text-center">
                         <button className="btn btn-minier btn-info" title="点击编辑">
                             <i className="icon-pencil"> </i>
@@ -186,7 +286,7 @@ class OperationField extends React.Component<OperationFieldProps, { dataItem: Me
         console.assert(dataItem != null)
         selectedNames = dataItem.children.map(o => o.name);
         return <>
-            <div className="item">
+            <div className="input-control">
                 <label>操作项</label>
                 <span>
                     <label>

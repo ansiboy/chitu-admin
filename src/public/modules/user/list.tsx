@@ -4,8 +4,8 @@ import { ListPage, ListPageProps, dateTimeField, sortNumberField, customDataFiel
 import { boundField, customField } from "maishu-wuzhui-helper";
 import { GridViewDataCell, DataSourceSelectArguments } from "maishu-wuzhui";
 import * as ui from 'maishu-ui-toolkit'
-// import { User, ImageService } from "maishu-services-sdk";
 import { dataSources } from "assert/dataSources";
+import { User } from "entities";
 
 interface State {
     person?: any,
@@ -13,7 +13,7 @@ interface State {
 }
 export default class UserListPage extends React.Component<ListPageProps, State> {
     dialogElement: HTMLElement;
-    listPage: ListPage;
+    listPage: ListPage<User>;
     searchTextInput: HTMLInputElement;
 
     constructor(props) {
@@ -54,7 +54,16 @@ export default class UserListPage extends React.Component<ListPageProps, State> 
                 headerText: '邮箱',
                 dataField: 'email'
             }),
-            boundField({ dataField: 'roleNames', headerText: '用户身份' }),
+            // boundField({ dataField: 'roleNames', headerText: '用户身份' }),
+            customDataField<User>({
+                headerText: "用户身份",
+                render(dataItem) {
+                    if (!dataItem.role)
+                        return "";
+
+                    return dataItem.role.name;
+                }
+            }),
             dateTimeField({ dataField: 'lastest_login', headerText: '最后登录时间' }),
             // customField({
             //     headerText: '个人认证',
@@ -86,7 +95,7 @@ export default class UserListPage extends React.Component<ListPageProps, State> 
 
         let { person } = this.state
         return <>
-            <ListPage {...this.props as any} dataSource={dataSources.user} columns={columns} ref={e => this.listPage = e || this.listPage}
+            <ListPage<User> {...this.props as any} dataSource={dataSources.user} columns={columns} ref={e => this.listPage = e || this.listPage}
                 search={<>
                     <li className="pull-right">
                         <button className="btn btn-primary" onClick={() => this.search(this.searchTextInput.value)}>

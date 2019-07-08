@@ -6,7 +6,7 @@ import { PermissionService } from 'assert/services/index'
 import { Application, Page } from "maishu-chitu-react";
 
 interface State {
-    addButton?: JSX.Element,
+    buttons?: JSX.Element[],
     title?: string,
 }
 
@@ -23,19 +23,19 @@ export interface ListPageProps {
     onAdd?: () => void,
 }
 
-interface Props extends ListPageProps {
+interface Props<T> extends ListPageProps {
     search?: JSX.Element,
     right?: JSX.Element,
-    dataSource: DataSource<any>,
+    dataSource: DataSource<T>,
 }
 
 export let ListPageContext = React.createContext<{ dataSource: DataSource<any> }>(null)
 
-export class ListPage extends React.Component<Props, State> {
-    dataSource: DataSource<any>
-    gridView: GridView<any>
+export class ListPage<T> extends React.Component<Props<T>, State> {
+    dataSource: DataSource<T>
+    gridView: GridView<T>
     table: any;
-    constructor(props: ListPage['props']) {
+    constructor(props: ListPage<T>['props']) {
         super(props)
 
         this.state = {};
@@ -43,46 +43,74 @@ export class ListPage extends React.Component<Props, State> {
 
         if (props.data.resourceId) {
             let ps = this.props.createService<PermissionService>(PermissionService)
-            ps.resource.list({ filter: `id = '${props.data.resourceId}'` })
+            ps.resource.list()
                 .then(r => {
-                    if (r.dataItems.length > 0)
-                        this.setState({ title: r.dataItems[0].name })
+                    //{ filter: `id = '${props.data.resourceId}'` }
+                    // if (r.dataItems.length > 0)
+                    //     this.setState({ title: r.dataItems[0].name })
+                    let resource = r.filter(o => o.id == props.data.resourceId)[0];
+                    if (resource) {
+                        this.setState({ title: resource.name });
+                    }
                 })
         }
     }
 
-    async loadResourceAddButton() {
+    async loadResourceButtons() {
         let resource_id = this.props.data.resourceId;
         if (!resource_id) return null
 
         let ps = this.props.createService<PermissionService>(PermissionService)
         let resources = await ps.resource.list();
-        let menuItem = resources.dataItems.filter(o => o.id == resource_id)[0];
+        let menuItem = resources.filter(o => o.id == resource_id)[0];
         console.assert(menuItem != null)
-        let menuItemChildren = resources.dataItems.filter(o => o.parent_id == menuItem.id);
-        let addItem = (menuItemChildren || []).filter(o => o.name == '添加')[0]
-        if (!addItem) return null
+        let menuItemChildren = resources.filter(o => o.parent_id == menuItem.id);
 
-        let path: string = addItem.path || "";
-        let addButton = <button className="btn btn-primary pull-right"
-            onClick={async () => {
-                if (this.props.onAdd) {
-                    this.props.onAdd();
-                    return;
-                }
-                if (path.endsWith("js")) {
-                    let func = await loadItemModule(path);
-                    func({ resource: menuItem, dataItem: {} })
-                }
-                else {
-                    this.props.app.forward(path, this.props.data)
-                }
-            }}>
-            <i className="icon-plus" />
-            <span>添加</span>
-        </button>
+        let buttons = menuItemChildren.filter(o => o.data != null && o.data.position == "top")
+            .map(o => {
+                let path = o.page_path || "";
+                return <button key={o.id} className={o.data.class_name} title={o.data.title}
+                    onClick={async e => {
+                        if (this.props.onAdd) {
+                            this.props.onAdd();
+                            return;
+                        }
+                        if (path.endsWith("js")) {
+                            let func = await loadItemModule(path);
+                            func({ resource: menuItem, dataItem: {} })
+                        }
+                        else {
+                            this.props.app.forward(path, this.props.data)
+                        }
+                    }}>
+                    {o.data.icon ? <i className={o.data.icon} /> : null}
+                    {o.data.text ? <span>{o.data.text}</span> : null}
+                </button>
+            })
 
-        return addButton
+        // let addItem = (menuItemChildren || []).filter(o => o.name == '添加')[0]
+        // if (!addItem) return null
+
+        // let path: string = addItem.page_path || "";
+        // let addButton = <button className="btn btn-primary pull-right"
+        //     onClick={async () => {
+        //         if (this.props.onAdd) {
+        //             this.props.onAdd();
+        //             return;
+        //         }
+        //         if (path.endsWith("js")) {
+        //             let func = await loadItemModule(path);
+        //             func({ resource: menuItem, dataItem: {} })
+        //         }
+        //         else {
+        //             this.props.app.forward(path, this.props.data)
+        //         }
+        //     }}>
+        //     <i className="icon-plus" />
+        //     <span>添加</span>
+        // </button>
+
+        return buttons
     }
 
     async componentDidMount() {
@@ -103,13 +131,13 @@ export class ListPage extends React.Component<Props, State> {
 
         })
 
-        let addButton = await this.loadResourceAddButton()
-        this.setState({ addButton })
+        let buttons = await this.loadResourceButtons()
+        this.setState({ buttons })
     }
 
 
     render() {
-        let { addButton, title } = this.state || {} as State
+        let { buttons, title } = this.state || {} as State
         let { search, right } = this.props
         if (!right) {
             right = <li className="pull-left">
@@ -121,7 +149,7 @@ export class ListPage extends React.Component<Props, State> {
                 <ul className="nav nav-tabs" style={{ minHeight: 34 }}>
                     {right}
                     <li className="pull-right" ref={e => { }}>
-                        {addButton}
+                        {buttons}
                     </li>
                     {search}
                 </ul>

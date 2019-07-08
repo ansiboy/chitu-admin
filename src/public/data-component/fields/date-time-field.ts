@@ -1,6 +1,6 @@
 import { customDataField } from "./custom-data-field";
 
-export function dateTimeField<T>(args: { dataField: string, headerText: string, }) {
+export function dateTimeField<T>(args: { dataField: Extract<keyof T, string>, headerText: string, }) {
 
     return customDataField<T>({
         // dataField: args.dataField,
@@ -9,14 +9,14 @@ export function dateTimeField<T>(args: { dataField: string, headerText: string, 
         itemStyle: { textAlign: 'center', width: `160px` } as CSSStyleDeclaration,
         // dataFormatString: "{gg}"
         render: (dataItem) => {
-            let value = dataItem[args.dataField]
+            let value = dataItem[args.dataField] as any;
             // if (typeof value == 'number')
             return toDateTimeString(value)
         }
     })
 }
 
-function toDateTimeString(datetime: number | Date) {
+export function toDateTimeString(datetime: number | Date) {
     if (datetime == null)
         return null
 

@@ -5,8 +5,8 @@ import { Application } from '../application';
 import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
 import { Resource } from 'entities';
-import { AppService } from 'assert/service';
 import { errors } from 'data-component/errors';
+import { PermissionService } from 'assert/services/index';
 
 export type MenuItem = Resource & { icon?: string, parent: MenuItem, children: MenuItem[] }
 
@@ -33,7 +33,7 @@ export class MainMasterPage extends MasterPage<State> {
 
         this.state = { menus: [] }
         this.app = props.app;
-        AppService.loginInfo.add((value) => {
+        PermissionService.loginInfo.add((value) => {
             if (value) {
                 this.setState({ username: value.username })
             }
@@ -42,14 +42,14 @@ export class MainMasterPage extends MasterPage<State> {
 
     private showPageByNode(node: MenuItem) {
         let children = node.children || []
-        if (!node.path && (node.children || []).length > 0) {
+        if (!node.page_path && (node.children || []).length > 0) {
             this.showPageByNode(children[0])
             return
         }
-        let pagePath = node.path;
+        let pagePath = node.page_path;
         if (pagePath == null && children.length > 0) {
             node = children[0];
-            pagePath = node.path;
+            pagePath = node.page_path;
         }
 
         if (!pagePath) {
@@ -92,8 +92,8 @@ export class MainMasterPage extends MasterPage<State> {
             if (item == null)
                 throw new Error("item is null")
 
-            if (item.path) {
-                let obj = this.app.parseUrl(item.path) || { pageName: '' }
+            if (item.page_path) {
+                let obj = this.app.parseUrl(item.page_path) || { pageName: '' }
                 if (obj.pageName == pageName)
                     return item
             }
@@ -115,13 +115,13 @@ export class MainMasterPage extends MasterPage<State> {
         let stack = new Array<MenuItem>(...menus)
         while (stack.length > 0) {
             let item = stack.pop()
-            if (item.path) {
-                let arr = item.path.split('/')
-                if (item.path.indexOf('?') >= 0) {
-                    item.path = `${item.path}&resourceId=${item.id}`
+            if (item.page_path) {
+                let arr = item.page_path.split('/')
+                if (item.page_path.indexOf('?') >= 0) {
+                    item.page_path = `${item.page_path}&resourceId=${item.id}`
                 }
                 else {
-                    item.path = `${item.path}?resourceId=${item.id}`
+                    item.page_path = `${item.page_path}?resourceId=${item.id}`
                 }
             }
             stack.push(...(item.children || []))

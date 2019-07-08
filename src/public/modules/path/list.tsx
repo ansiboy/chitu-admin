@@ -1,27 +1,143 @@
-import { ListPageProps, ListPage, dateTimeField, operationField } from "data-component/index";
+import { ListPageProps, renderOperationButtons, dateTimeField, operationField, customDataField } from "data-component/index";
 import React = require("react");
-import { boundField } from "maishu-wuzhui-helper";
-import { dataSources, MyDataSource } from "assert/dataSources";
-import { Path } from "entities";
+import { dataSources, MyDataSource, translateToMenuItems } from "assert/dataSources";
+import { Path, Resource } from "entities";
+import { PermissionService } from "assert/services/index";
+import { MenuItem } from "assert/masters/main-master-page";
+import { createGridView, boundField, customField } from "maishu-wuzhui-helper";
+import { GridViewDataCell } from "maishu-wuzhui";
+import ReactDOM = require("react-dom");
 
-export default class PathListPage extends React.Component<ListPageProps>{
+let sortFieldWidth = 80
+let nameFieldWidth = 280
+let operationFieldWidth = 200
+let createDateTimeFieldWidth = 160
+let hideFieldWidth = 90
+
+let typeFieldWidth = 140
+
+interface State {
+
+}
+
+export default class PathListPage extends React.Component<ListPageProps, State>{
     private dataSource: MyDataSource<Path>;
+    private ps: PermissionService;
+    gridView: import("d:/projects/chitu-admin/node_modules/maishu-wuzhui/out/GridView").GridView<Resource>;
+    dataTable: HTMLTableElement;
+    allPaths: any;
 
     constructor(props) {
         super(props);
-        this.dataSource = dataSources.path(this.props.data.resourceId);
+        this.state = {};
+
+        this.ps = this.props.createService(PermissionService);
     }
 
-    render() {
-        return <ListPage {...this.props} dataSource={this.dataSource}
-            columns={[
-                boundField({ dataField: 'id', headerText: '编号', headerStyle: { width: '300px' }, itemStyle: { textAlign: 'center' } }),
-                boundField({ dataField: 'name', headerText: '名称' }),
-                dateTimeField({ dataField: 'create_date_time', headerText: '创建时间' }),
-                operationField(this.props, 'role', '160px')
-            ]}
-        >
+    async componentDidMount() {
+        let [, resources] = await Promise.all([this.getPaths(), this.ps.resource.list()]);
+        let menuItems = translateToMenuItems(resources);
+        let currentMenuItem = menuItems.filter(o => o.id == this.props.data.resourceId)[0];
 
-        </ListPage>
+        this.gridView = createGridView({
+            dataSource: dataSources.resource,
+            element: this.dataTable,
+            showHeader: false,
+            showFooter: false,
+            pageSize: null,
+            columns: [
+                boundField<MenuItem>({ dataField: 'sort_number', itemStyle: { width: `${sortFieldWidth}px` } }),
+                customField<MenuItem>({
+                    headerText: '功能模块',
+                    itemStyle: { width: `${nameFieldWidth}px` },
+                    createItemCell: () => {
+                        let cell = new GridViewDataCell<MenuItem>({
+                            render: (item: MenuItem, element) => {
+                                element.style.paddingLeft = `${this.parentDeep(item) * 20 + 10}px`
+                                element.innerHTML = item.name;
+                            }
+                        })
+
+                        return cell
+                    }
+                }),
+                customDataField<MenuItem>({
+                    headerText: "路径",
+                    render: (dataItem, element) => {
+                        this.getPaths().then(paths => {
+                            paths = paths.filter(o => o.resource_id == dataItem.id);
+                            ReactDOM.render(<>
+                                {paths.map(o =>
+                                    <div key={o.id} style={{ paddingBottom: 6 }}>{o.value}</div>
+                                )}
+                            </>, element)
+                        })
+                    }
+                }),
+                operationField<MenuItem>(currentMenuItem, this.props.app, `${operationFieldWidth - 18}px`)
+            ],
+            sort: (dataItems) => {
+                dataItems = translateToMenuItems(dataItems)
+                return dataItems;
+            }
+
+        })
+    }
+
+    displayName(menuItem: MenuItem) {
+        let names: string[] = [];
+        let parent = menuItem;
+        while (parent) {
+            names.unshift(parent.name);
+            parent = parent.parent;
+        }
+
+        let name = names.join(" - ");
+        return name;
+    }
+
+    parentDeep(menuItem: MenuItem) {
+        let deep = 0;
+        let parent = menuItem.parent;
+        while (parent) {
+            deep = deep + 1;
+            parent = parent.parent;
+        }
+
+        return deep;
+    }
+
+    async getPaths(): Promise<Path[]> {
+        if (!this.allPaths) {
+            this.allPaths = await this.ps.path.list();
+        }
+        return this.allPaths;
+    }
+
+
+
+    render() {
+        let { } = this.state;
+        let num = 0;
+        return <>
+            <table className="table table-striped table-bordered table-hover" style={{ margin: 0 }}>
+                <thead>
+                    <tr>
+                        <th style={{ width: sortFieldWidth }}>序号</th>
+                        <th style={{ width: nameFieldWidth }}>功能模块</th>
+                        <th style={{}}>允许访问 API</th>
+                        <th style={{ width: operationFieldWidth }}>操作</th>
+                    </tr>
+                </thead>
+            </table>
+            <div style={{ height: 'calc(100% - 160px)', width: 'calc(100% - 290px)', position: 'absolute', overflowY: 'scroll' }}>
+                <table className="table table-striped table-bordered table-hover" ref={e => this.dataTable = e || this.dataTable}>
+
+                </table>
+            </div>
+
+
+        </>
+
     }
 }

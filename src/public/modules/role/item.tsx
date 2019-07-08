@@ -10,11 +10,15 @@ let itemDialog: ReturnType<typeof createItemDialog>;
 export default function (args: ButtonInvokeArguments<Role>) {
     if (itemDialog == null) {
         itemDialog = createItemDialog(dataSources.role, "角色", <>
-            <InputField dataField="name" label="名称*" placeholder="请输入角色名称"
-                validateRules={[
-                    rules.required("请输入角色名称")
-                ]} />
-            <InputField dataField="remark" label="备注" placeholder="请输入备注" />
+            <div className="form-group clearfix">
+                <InputField dataField="name" label="名称*" placeholder="请输入角色名称"
+                    validateRules={[
+                        rules.required("请输入角色名称")
+                    ]} />
+            </div>
+            <div className="form-group clearfix">
+                <InputField dataField="remark" label="备注" placeholder="请输入备注" />
+            </div>
         </>)
     }
 

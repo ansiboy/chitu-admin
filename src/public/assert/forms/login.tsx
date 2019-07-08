@@ -1,9 +1,8 @@
 import { FormValidator, rules as r } from "maishu-dilu";
 import { errors } from "../errors";
 import { buttonOnClick } from "maishu-ui-toolkit";
-// import { app } from "../index";
 import { Application } from "maishu-chitu-react";
-import { AppService } from "../service";
+import { PermissionService } from "assert/services/index";
 
 type LoginOptions = { redirectURL: string }
 
@@ -36,11 +35,11 @@ export function setForm(formElement: HTMLElement, options: LoginOptions, app: Ap
         if (validator.check() == false)
             return Promise.reject('validate fail')
 
-        let service = app.createService(AppService);
+        let service = app.createService(PermissionService);
         let username = usernameInput.value
         let password = passwordInput.value
 
-        await service.login(username, password)
+        await service.user.login(username, password)
 
         console.assert(options.redirectURL != null)
         location.href = options.redirectURL

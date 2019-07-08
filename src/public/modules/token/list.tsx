@@ -11,11 +11,11 @@ export default class TokenListPage extends React.Component<ListPageProps> {
 
     render() {
         return <>
-            <ListPage {...this.props} dataSource={dataSources.token}
+            <ListPage<Token> {...this.props} dataSource={dataSources.token}
                 columns={[
                     boundField<Token>({ dataField: "id", headerText: "编号", headerStyle: { width: "300px" } }),
                     boundField<Token>({ dataField: "content", headerText: "内容" }),
-                    dateTimeField<Token>({ dataField: "createDateTime", headerText: "创建时间" })
+                    dateTimeField<Token>({ dataField: "create_date_time", headerText: "创建时间" })
                 ]}
                 onAdd={() => {
                     showDialog(this.dialogElement);

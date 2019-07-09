@@ -13,9 +13,6 @@ export function customDataField<T>(params: {
         createItemCell() {
             let cell = new GridViewDataCell({
                 render(dataItem: T, element) {
-                    // if (dataItem.data != null && dataItem.data.nick_name != null) {
-                    //     element.innerHTML = dataItem.data.nick_name
-                    // }
                     let r = params.render(dataItem, element)
                     if (r)
                         element.innerHTML = r

@@ -79,4 +79,8 @@ export let errors = {
         let msg = `Service '${serviceName}' base url can not null.`
         return new Error(msg)
     },
+    unknonwResourceName(resourceName: string) {
+        let msg = `Resource name '${resourceName}' is unknown.`
+        return new Error(msg)
+    }
 }

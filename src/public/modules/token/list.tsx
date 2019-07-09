@@ -17,9 +17,6 @@ export default class TokenListPage extends React.Component<ListPageProps> {
                     boundField<Token>({ dataField: "content", headerText: "内容" }),
                     dateTimeField<Token>({ dataField: "create_date_time", headerText: "创建时间" })
                 ]}
-                onAdd={() => {
-                    showDialog(this.dialogElement);
-                }}
             />
             <div className="modal fade" ref={e => this.dialogElement = e || this.dialogElement}>
                 <div className="modal-dialog">

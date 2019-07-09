@@ -6,18 +6,18 @@ import { DataSource } from "maishu-wuzhui";
 import { FormValidator, ValidateField } from "maishu-dilu";
 import { ValidateDataField } from "./common";
 
-type BeforeSave = (dataItem: any) => Promise<any>
+type BeforeSave<T> = (dataItem: T) => Promise<any>
 
-export function createItemDialog<T extends { id: string }>(
-    dataSource: DataSource<T>, name: string, child: React.ReactElement): { show: (dataItem: T) => void } {
+export function createItemDialog<T extends { id: string }>
+    (dataSource: DataSource<T>, name: string, child: React.ReactElement, beforeSave?: BeforeSave<T>): { show: (args: T) => void } {
 
     class ItemDialog extends React.Component<{ dataItem: T }, { dataItem: T }> {
 
         private static instance: ItemDialog;
-        private static dialogElement: HTMLElement;
+        private dialogElement: HTMLElement;
 
         validator: FormValidator;
-        private beforeSaves: BeforeSave[];
+        private beforeSaves: BeforeSave<T>[];
         private fieldsConatiner: HTMLElement;
 
         constructor(props: ItemDialog["props"]) {
@@ -34,10 +34,15 @@ export function createItemDialog<T extends { id: string }>(
             }
 
             await this.save(dataItem);
-            hideDialog(ItemDialog.dialogElement);
+            hideDialog(this.dialogElement);
         }
 
         async save(dataItem: T) {
+
+            if (beforeSave) {
+                await beforeSave(dataItem);
+            }
+
             if (this.beforeSaves.length > 0) {
                 await Promise.all(this.beforeSaves.map(m => m(dataItem)));
             }
@@ -82,7 +87,7 @@ export function createItemDialog<T extends { id: string }>(
                             updatePageState: (dataItem) => {
                                 this.setState({ dataItem })
                             },
-                            beforeSave: (callback: BeforeSave) => {
+                            beforeSave: (callback: BeforeSave<T>) => {
                                 this.beforeSaves.push(callback);
                             }
                         }}>
@@ -91,7 +96,7 @@ export function createItemDialog<T extends { id: string }>(
 
                     </div>
                     <div className="modal-footer">
-                        <button className="btn btn-default" onClick={e => { hideDialog(ItemDialog.dialogElement) }}>
+                        <button className="btn btn-default" onClick={e => { hideDialog(this.dialogElement) }}>
                             <i className="icon-reply" />
                             <span>取消</span>
                         </button>
@@ -105,15 +110,16 @@ export function createItemDialog<T extends { id: string }>(
         }
 
         static show(dataItem: T) {
-            if (!ItemDialog.dialogElement) {
-                ItemDialog.dialogElement = document.createElement("div");
-                ItemDialog.dialogElement.className = "modal fade-in";
-                document.body.appendChild(ItemDialog.dialogElement);
-                ItemDialog.instance = ReactDOM.render(<ItemDialog dataItem={dataItem} />, ItemDialog.dialogElement) as any;
+            if (!ItemDialog.instance) {
+                let dialogElement = document.createElement("div");
+                dialogElement.className = "modal fade-in";
+                document.body.appendChild(dialogElement);
+                ItemDialog.instance = ReactDOM.render(<ItemDialog dataItem={dataItem} />, dialogElement) as any;
+                ItemDialog.instance.dialogElement = dialogElement;
             }
 
             ItemDialog.instance.setState({ dataItem: dataItem });
-            showDialog(ItemDialog.dialogElement);
+            showDialog(ItemDialog.instance.dialogElement);
         }
     }
 

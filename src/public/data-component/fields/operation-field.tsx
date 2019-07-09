@@ -1,10 +1,9 @@
 import { PermissionService } from 'assert/services/index'
-import { constants, loadItemModule as loadItemModule, ButtonInvokeArguments } from "../common";
+import { loadItemModule as loadItemModule } from "../common";
 import ReactDOM = require("react-dom");
 import React = require("react");
 import { customField } from "maishu-wuzhui-helper";
 import { GridViewCell } from "maishu-wuzhui";
-import { ButtonResourceData } from 'entities';
 import { Application } from 'maishu-chitu-react';
 import { MenuItem } from 'assert/masters/main-master-page';
 import { ValueStore } from 'maishu-chitu';
@@ -50,46 +49,15 @@ export function operationField<T extends Entity>(resourceId: string, app: Applic
 
 }
 
-export function renderOperationButtons<T extends { id: string }>(menuItem: MenuItem, element: HTMLElement, dataItem: T, app: Application) {
+export async function renderOperationButtons<T extends { id: string }>(menuItem: MenuItem, element: HTMLElement, dataItem: T, app: Application) {
     let children = menuItem.children || [];
-    for (let i = 0; i < children.length; i++) {
+    children.forEach(o => o.data = o.data || {} as any);
+    children = children.filter(o => o.data.position == "in-list");
+    let funcs = await Promise.all(children.map(o => loadItemModule(o.page_path)))
+    let controlElements = children.map((o, i) => funcs[i]({ resource: o, dataItem }));
 
-        let data: ButtonResourceData = children[i].data || {} as any;
-        if (data.position != "in-list") {
-            continue;
-        }
-
-        let button = document.createElement('button');
-        let iconClassName: string;
-
-        button.className = data.class_name;
-        button.title = data.title;
-        iconClassName = data.icon;
-        ReactDOM.render(<div>
-            {iconClassName ? <i className={iconClassName} /> : null}
-            {data.text ? <span>{data.text}</span> : null}
-        </div>, button)
-
-        element.appendChild(button);
-        button.onclick = async function () {
-            let path = children[i].page_path || "";
-            let args: ButtonInvokeArguments<any> = {
-                resource: children[i],
-                dataItem,
-            }
-            if (path.endsWith(".js")) {
-                let func = await loadItemModule(path);
-                func(args);
-            }
-            else if (path.startsWith("#")) {
-                path = path.substr(1)
-                app.redirect(path, { id: dataItem.id, resourceId: menuItem.id });
-            }
-            else {
-                app.redirect(path, { id: dataItem.id, resourceId: menuItem.id });
-            }
-        }
-    }
-
+    ReactDOM.render(<React.Fragment>
+        {controlElements}
+    </React.Fragment>, element)
 }
 

@@ -1,12 +1,13 @@
 import React = require("react");
-import { boundField, customField, createGridView } from 'maishu-wuzhui-helper'
-import { operationField, valueTextField, dateTimeField, ListPageProps, toDateTimeString, renderOperationButtons } from "../../data-component/index";
-import { GridViewDataCell, DataSource, GridView } from "maishu-wuzhui";
+import { boundField, customField } from 'maishu-wuzhui-helper'
+import { operationField, dateTimeField, ListPageProps, ListPage } from "../../data-component/index";
+import { GridViewDataCell, GridView } from "maishu-wuzhui";
 import ReactDOM = require("react-dom");
 import { PermissionService } from "assert/services/index";
 import { dataSources, translateToMenuItems } from "assert/dataSources";
 import { Resource } from "entities";
 import { MenuItem } from "assert/masters/main-master-page";
+import { localText } from "assert/common";
 
 interface State {
 }
@@ -14,7 +15,6 @@ interface State {
 let sortFieldWidth = 80
 let nameFieldWidth = 280
 let operationFieldWidth = 200
-let createDateTimeFieldWidth = 160
 let typeFieldWidth = 140
 let remarkWidth = 240
 
@@ -30,44 +30,44 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
     }
     async componentDidMount() {
 
-        let [resources] = await Promise.all([this.permissionService.resource.list()]);
-        let menuItems = translateToMenuItems(resources);
+        // let [resources] = await Promise.all([this.permissionService.resource.list()]);
+        // let menuItems = translateToMenuItems(resources);
 
-        this.gridView = createGridView({
-            dataSource: dataSources.resource,
-            element: this.dataTable,
-            showHeader: false,
-            showFooter: false,
-            pageSize: null,
-            columns: [
-                boundField<MenuItem>({ dataField: 'sort_number', itemStyle: { width: `${sortFieldWidth}px` } }),
-                customField<MenuItem>({
-                    headerText: '菜单名称',
-                    itemStyle: { width: `${nameFieldWidth}px` },
-                    createItemCell: () => {
-                        let cell = new GridViewDataCell<MenuItem>({
-                            render: (item: MenuItem, element) => {
-                                element.style.paddingLeft = `${this.parentDeep(item) * 20 + 10}px`
-                                element.innerHTML = item.name;
-                            }
-                        })
+        // this.gridView = createGridView({
+        //     dataSource: dataSources.resource,
+        //     element: this.dataTable,
+        //     showHeader: false,
+        //     showFooter: false,
+        //     pageSize: null,
+        //     columns: [
+        //         boundField<MenuItem>({ dataField: 'sort_number', itemStyle: { width: `${sortFieldWidth}px` } }),
+        //         customField<MenuItem>({
+        //             headerText: '菜单名称',
+        //             itemStyle: { width: `${nameFieldWidth}px` },
+        //             createItemCell: () => {
+        //                 let cell = new GridViewDataCell<MenuItem>({
+        //                     render: (item: MenuItem, element) => {
+        //                         element.style.paddingLeft = `${this.parentDeep(item) * 20 + 10}px`
+        //                         element.innerHTML = item.name;
+        //                     }
+        //                 })
 
-                        return cell
-                    }
-                }),
-                boundField<MenuItem>({ dataField: "page_path", headerText: "路径" }),
-                boundField<MenuItem>({ dataField: "remark", headerText: "备注", itemStyle: { width: `${remarkWidth}px` } }),
-                boundField<MenuItem>({ dataField: "type", headerText: "类型", itemStyle: { width: `${typeFieldWidth}px` } }),
-                dateTimeField<MenuItem>({ dataField: 'create_date_time', headerText: '创建时间', }),
-                operationField<MenuItem>(this.props.data.resourceId, this.props.app, `${operationFieldWidth}px`)
-            ],
-            sort: (dataItems) => {
-                dataItems = dataItems.filter(o => o.type == "menu" || o.type == "button");
-                dataItems = translateToMenuItems(dataItems)
-                return dataItems;
-            }
+        //                 return cell
+        //             }
+        //         }),
+        //         boundField<MenuItem>({ dataField: "page_path", headerText: "路径" }),
+        //         boundField<MenuItem>({ dataField: "remark", headerText: "备注", itemStyle: { width: `${remarkWidth}px` } }),
+        //         boundField<MenuItem>({ dataField: "type", headerText: "类型", itemStyle: { width: `${typeFieldWidth}px` } }),
+        //         dateTimeField<MenuItem>({ dataField: 'create_date_time', headerText: '创建时间', }),
+        //         operationField<MenuItem>(this.props.data.resourceId, this.props.app, `${operationFieldWidth}px`)
+        //     ],
+        //     sort: (dataItems) => {
+        //         dataItems = dataItems.filter(o => o.type == "menu" || o.type == "button");
+        //         dataItems = translateToMenuItems(dataItems)
+        //         return dataItems;
+        //     }
 
-        })
+        // })
     }
 
     parentDeep(menuItem: MenuItem) {
@@ -82,40 +82,76 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
     }
 
     render() {
-        return <>
-            <div className="tabbable">
-                <ul className="nav nav-tabs" style={{ minHeight: 34 }}>
-                    <li className="pull-left">
-                        <div style={{ fontWeight: 'bold', fontSize: 16 }}>菜单管理</div>
-                    </li>
-                    <li className="pull-right">
-                        <button className="btn btn-primary pull-right"
-                            onClick={() => {
-                                this.props.app.forward('menu/item', this.props.data)
-                            }}>
-                            <i className="icon-plus" />
-                            <span>添加</span>
-                        </button>
-                    </li>
-                </ul>
-            </div>
-            <table className="table table-striped table-bordered table-hover" style={{ margin: 0 }}>
-                <thead>
-                    <tr>
-                        <th style={{ width: sortFieldWidth }}>序号</th>
-                        <th style={{ width: nameFieldWidth }}>菜单名称</th>
-                        <th style={{}}>路径</th>
-                        <th style={{ width: remarkWidth }}>备注</th>
-                        <th style={{ width: typeFieldWidth }}>类型</th>
-                        <th style={{ width: createDateTimeFieldWidth }}>创建时间</th>
-                        <th style={{ width: operationFieldWidth + 18 }}>操作</th>
-                    </tr>
-                </thead>
-            </table>
-            <div style={{ height: 'calc(100% - 160px)', width: 'calc(100% - 290px)', position: 'absolute', overflowY: 'scroll' }}>
-                <table className="table table-striped table-bordered table-hover"
-                    ref={e => this.dataTable = e || this.dataTable}>
-                    {/* <tbody>
+        return <ListPage {...this.props} dataSource={dataSources.resource}
+            pageSize={null}
+            transform={(items) => {
+                items.sort((a, b) => a.sort_number < b.sort_number ? -1 : 1);
+                items = translateToMenuItems(items)
+                return items;
+            }}
+            columns={[
+                boundField<MenuItem>({ dataField: 'sort_number', itemStyle: { width: `${sortFieldWidth}px` }, headerText: "序号" }),
+                customField<MenuItem>({
+                    headerText: '菜单名称',
+                    itemStyle: { width: `${nameFieldWidth}px` },
+                    createItemCell: () => {
+                        let cell = new GridViewDataCell<MenuItem>({
+                            render: (item: MenuItem, element) => {
+                                element.style.paddingLeft = `${this.parentDeep(item) * 20 + 10}px`
+                                element.innerHTML = localText(item.name);
+                            }
+                        })
+
+                        return cell
+                    }
+                }),
+                boundField<MenuItem>({ dataField: "page_path", headerText: "路径" }),
+                boundField<MenuItem>({ dataField: "remark", headerText: "备注", itemStyle: { width: `${remarkWidth}px` } }),
+                boundField<MenuItem>({ dataField: "type", headerText: "类型", itemStyle: { width: `${typeFieldWidth}px` } }),
+                dateTimeField<MenuItem>({ dataField: 'create_date_time', headerText: '创建时间', }),
+                operationField<MenuItem>(this.props.data.resourceId, this.props.app, `${operationFieldWidth}px`)
+            ]} />
+    }
+}
+
+// return <>
+//     <div className="tabbable">
+//         <ul className="nav nav-tabs" style={{ minHeight: 34 }}>
+//             <li className="pull-left">
+//                 <div style={{ fontWeight: 'bold', fontSize: 16 }}>菜单管理</div>
+//             </li>
+//             <li className="pull-right">
+//                 <button className="btn btn-primary pull-right"
+//                     onClick={() => {
+//                         this.props.app.forward('menu/item', this.props.data)
+//                     }}>
+//                     <i className="icon-plus" />
+//                     <span>添加</span>
+//                 </button>
+//             </li>
+//         </ul>
+//     </div>
+//     <table className="table table-striped table-bordered table-hover" style={{ margin: 0 }}>
+//         <thead>
+//             <tr>
+//                 <th style={{ width: sortFieldWidth }}>序号</th>
+//                 <th style={{ width: nameFieldWidth }}>菜单名称</th>
+//                 <th style={{}}>路径</th>
+//                 <th style={{ width: remarkWidth }}>备注</th>
+//                 <th style={{ width: typeFieldWidth }}>类型</th>
+//                 <th style={{ width: createDateTimeFieldWidth }}>创建时间</th>
+//                 <th style={{ width: operationFieldWidth + 18 }}>操作</th>
+//             </tr>
+//         </thead>
+//     </table>
+//     <div style={{ height: 'calc(100% - 160px)', width: 'calc(100% - 290px)', position: 'absolute', overflowY: 'scroll' }}>
+//         <table className="table table-striped table-bordered table-hover"
+//             ref={e => this.dataTable = e || this.dataTable}>
+
+//         </table>
+//     </div>
+// </>
+{/* <tbody>
                         {resources.map(resource =>
                             <tr key={resource.id}>
                                 <td style={{ width: sortFieldWidth }}>{resource.sort_number}</td>
@@ -135,8 +171,3 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
                             </tr>
                         )}
                     </tbody> */}
-                </table>
-            </div>
-        </>
-    }
-}

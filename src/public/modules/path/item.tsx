@@ -8,12 +8,16 @@ import { rules } from "maishu-dilu";
 let itemDialog: ReturnType<typeof createItemDialog> & { resourceId?: string };
 export default function (args: ButtonInvokeArguments<Path>) {
     if (itemDialog == null) {
-        itemDialog = createItemDialog(dataSources.path(args.resource.id), "路径", <>
-            <InputField<Path> dataField="value" label="路径*" placeholder="请输入路径"
-                validateRules={[
-                    rules.required("请输入路径")
-                ]} />
-            <InputField<Path> dataField="remark" label="备注" placeholder="请输入备注" />
+        itemDialog = createItemDialog(dataSources.path, "路径", <>
+            <div className="form-group clearfix">
+                <InputField<Path> dataField="value" label="路径*" placeholder="请输入路径"
+                    validateRules={[
+                        rules.required("请输入路径")
+                    ]} />
+            </div>
+            <div className="form-group clearfix">
+                <InputField<Path> dataField="remark" label="备注" placeholder="请输入备注" />
+            </div>
             {/* <RadioField<Path, Role> dataSource={dataSources.role(args.resource.id)} dataField={"role_ids"} valueField={"id"} nameField={"name"} dataType="string" label="角色" /> */}
         </>)
         itemDialog.resourceId = args.resource.id;

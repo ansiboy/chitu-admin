@@ -4,10 +4,10 @@ import { ValidateDataField } from "data-component/common";
 
 interface InputFieldProps<T> {
     dataField: keyof T, label: string, name?: string,
-    placeholder?: string, type?: 'text' | 'password'
+    placeholder?: string, type?: 'text' | 'password',
 }
 
-export class InputField<T> extends React.Component<InputFieldProps<T> & ValidateDataField> {
+export class TextField<T> extends React.Component<InputFieldProps<T> & ValidateDataField> {
     input: HTMLInputElement;
     constructor(props) {
         super(props)

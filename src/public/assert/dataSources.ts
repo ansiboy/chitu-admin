@@ -235,11 +235,20 @@ function createResourceDataSource() {
             return r;
         },
         update: async (item) => {
+            item = Object.assign({}, item);
+            let menuItem = item as MenuItem;
+            delete menuItem.children;
+            delete menuItem.parent;
+            
             let r = await permissionService.resource.update(item);
             return r;
         },
         insert: async (item) => {
             let r = await permissionService.resource.add(item);
+            return r;
+        },
+        delete: async (item) => {
+            let r = await permissionService.resource.remove(item.id);
             return r;
         }
     })

@@ -58,7 +58,7 @@ export interface ButtonInvokeArguments<T> {
     dataItem: T;
 }
 
-export function loadItemModule<T>(path: string): Promise<(args: ButtonInvokeArguments<T>) => void> {
+export function loadItemModule<T>(path: string): Promise<(args: ButtonInvokeArguments<T>) => React.ReactElement> {
     if (path.endsWith(".js"))
         path = path.substr(0, path.length - 3)
 

@@ -7,6 +7,7 @@ import { MenuItem } from "assert/masters/main-master-page";
 import { createGridView, boundField, customField } from "maishu-wuzhui-helper";
 import { GridViewDataCell } from "maishu-wuzhui";
 import ReactDOM = require("react-dom");
+import { ValueStore } from "maishu-chitu";
 
 let sortFieldWidth = 80
 let nameFieldWidth = 280
@@ -20,22 +21,28 @@ interface State {
 
 }
 
+
+
 export default class PathListPage extends React.Component<ListPageProps, State>{
     private dataSource: MyDataSource<Path>;
     private ps: PermissionService;
     gridView: import("d:/projects/chitu-admin/node_modules/maishu-wuzhui/out/GridView").GridView<Resource>;
     dataTable: HTMLTableElement;
     allPaths: any;
+    private pathsStorage = new ValueStore<Path[]>();
 
     constructor(props) {
         super(props);
         this.state = {};
 
         this.ps = this.props.createService(PermissionService);
+        this.ps.path.list().then(paths => {
+            this.pathsStorage.value = paths;
+        })
     }
 
     async componentDidMount() {
-        let [, resources] = await Promise.all([this.getPaths(), this.ps.resource.list()]);
+        let [resources] = await Promise.all([this.ps.resource.list()]);
         let menuItems = translateToMenuItems(resources);
         let currentMenuItem = menuItems.filter(o => o.id == this.props.data.resourceId)[0];
 
@@ -64,20 +71,31 @@ export default class PathListPage extends React.Component<ListPageProps, State>{
                 customDataField<MenuItem>({
                     headerText: "路径",
                     render: (dataItem, element) => {
-                        this.getPaths().then(paths => {
+                        let renderPaths = (paths: Path[]) => {
                             paths = paths.filter(o => o.resource_id == dataItem.id);
                             ReactDOM.render(<>
                                 {paths.map(o =>
                                     <div key={o.id} style={{ paddingBottom: 6 }}>{o.value}</div>
                                 )}
                             </>, element)
+                        }
+
+                        if (this.pathsStorage.value) {
+                            renderPaths(this.pathsStorage.value)
+                        }
+
+                        this.pathsStorage.add((value) => {
+                            renderPaths(value)
                         })
+                        // this.getPaths().then(paths => {
+
+                        // })
                     }
                 }),
                 operationField<MenuItem>(this.props.data.resourceId, this.props.app, `${operationFieldWidth - 18}px`)
             ],
             sort: (dataItems) => {
-                dataItems = translateToMenuItems(dataItems)
+                dataItems = translateToMenuItems(dataItems);
                 return dataItems;
             }
 
@@ -107,12 +125,12 @@ export default class PathListPage extends React.Component<ListPageProps, State>{
         return deep;
     }
 
-    async getPaths(): Promise<Path[]> {
-        if (!this.allPaths) {
-            this.allPaths = await this.ps.path.list();
-        }
-        return this.allPaths;
-    }
+    // async getPaths(): Promise<Path[]> {
+    //     if (!this.allPaths) {
+    //         this.allPaths = await this.ps.path.list();
+    //     }
+    //     return this.allPaths;
+    // }
 
 
 

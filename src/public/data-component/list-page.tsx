@@ -47,9 +47,6 @@ export class ListPage<T> extends React.Component<Props<T>, State> {
             let ps = this.props.createService<PermissionService>(PermissionService)
             ps.resource.list()
                 .then(r => {
-                    //{ filter: `id = '${props.data.resourceId}'` }
-                    // if (r.dataItems.length > 0)
-                    //     this.setState({ title: r.dataItems[0].name })
                     let resource = r.filter(o => o.id == props.data.resourceId)[0];
                     if (resource) {
                         this.setState({ title: resource.name });
@@ -58,7 +55,7 @@ export class ListPage<T> extends React.Component<Props<T>, State> {
         }
     }
 
-    async loadResourceButtons(): Promise<React.ReactElement[]> {
+    async loadTopControls(): Promise<React.ReactElement[]> {
         let resource_id = this.props.data.resourceId;
         if (!resource_id) return null
 
@@ -72,29 +69,6 @@ export class ListPage<T> extends React.Component<Props<T>, State> {
 
         let controls = controlFuns.map((func, i) => func({ resource: controlResources[i], dataItem: {} }));
         return controls;
-        // for (let i = 0; i < controlFuns.length; i++) {
-        //     let control = controlFuns[i]({ resource: menuItem, dataItem: {} })
-        // }
-        // let buttons = menuItemChildren.filter(o => o.data != null && o.data.position == "top")
-        //     .map(o => {
-        //         let path = o.page_path || "";
-        //         return <button key={o.id} className={o.data.class_name} title={o.data.title}
-        //             onClick={async e => {
-        //                 if (path.endsWith("js")) {
-        //                     let func = await loadItemModule(path);
-        //                     func({ resource: menuItem, dataItem: {} })
-        //                 }
-        //                 else {
-        //                     this.props.app.forward(path, this.props.data)
-        //                 }
-        //             }}>
-        //             {o.data.icon ? <i className={o.data.icon} /> : null}
-        //             {o.data.text ? <span>{o.data.text}</span> : null}
-        //         </button>
-        //     })
-
-
-        // return buttons
     }
 
     async componentDidMount() {
@@ -115,7 +89,8 @@ export class ListPage<T> extends React.Component<Props<T>, State> {
             showHeader: this.tableIsFixed ? false : true,
         })
 
-        let buttons = await this.loadResourceButtons()
+        let buttons = await this.loadTopControls();
+        buttons.reverse();
         this.setState({ buttons })
     }
 

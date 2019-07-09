@@ -2,12 +2,10 @@ import React = require("react");
 import { boundField, customField } from 'maishu-wuzhui-helper'
 import { operationField, dateTimeField, ListPageProps, ListPage } from "../../data-component/index";
 import { GridViewDataCell, GridView } from "maishu-wuzhui";
-import ReactDOM = require("react-dom");
 import { PermissionService } from "assert/services/index";
 import { dataSources, translateToMenuItems } from "assert/dataSources";
 import { Resource } from "entities";
 import { MenuItem } from "assert/masters/main-master-page";
-import { localText } from "assert/common";
 
 interface State {
 }
@@ -85,6 +83,7 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
         return <ListPage {...this.props} dataSource={dataSources.resource}
             pageSize={null}
             transform={(items) => {
+                items = items.filter(o => o.type == "menu" || o.type == "button");
                 items.sort((a, b) => a.sort_number < b.sort_number ? -1 : 1);
                 items = translateToMenuItems(items)
                 return items;
@@ -98,7 +97,7 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
                         let cell = new GridViewDataCell<MenuItem>({
                             render: (item: MenuItem, element) => {
                                 element.style.paddingLeft = `${this.parentDeep(item) * 20 + 10}px`
-                                element.innerHTML = localText(item.name);
+                                element.innerHTML = item.name;
                             }
                         })
 

@@ -1,30 +1,28 @@
-import React = require("react");
+import { Path, Role, Resource } from "entities";
 import { ButtonInvokeArguments } from "data-component/common";
-import { createItemDialog } from "data-component/index";
+import { createItemDialog, InputField, RadioField } from "data-component/index";
 import { dataSources } from "assert/dataSources";
-import { InputField } from "data-component/index";
+import React = require("react");
 import { rules } from "maishu-dilu";
-import { Role } from "entities";
-import { Buttons } from "assert/buttons";
 import { constants } from "assert/common";
+import { Buttons } from "assert/buttons";
 import { errors } from "assert/errors";
-import { app } from "assert/application";
 import * as ui from "maishu-ui-toolkit";
 
-let itemDialog = createItemDialog(dataSources.role, "角色", <>
+let itemDialog = createItemDialog(dataSources.path, "路径", <>
     <div className="form-group clearfix">
-        <InputField dataField="name" label="名称*" placeholder="请输入角色名称"
+        <InputField<Resource> dataField="name" label="路径*" placeholder="请输入路径"
             validateRules={[
-                rules.required("请输入角色名称")
+                rules.required("请输入路径")
             ]} />
     </div>
     <div className="form-group clearfix">
-        <InputField dataField="remark" label="备注" placeholder="请输入备注" />
+        <InputField<Resource> dataField="remark" label="备注" placeholder="请输入备注" />
     </div>
+    {/* <RadioField<Path, Role> dataSource={dataSources.role(args.resource.id)} dataField={"role_ids"} valueField={"id"} nameField={"name"} dataType="string" label="角色" /> */}
 </>);
 
-
-export default function (args: ButtonInvokeArguments<Role>) {
+export default function (args: ButtonInvokeArguments<Path>) {
     let control: React.ReactElement;
     switch (args.resource.data.code) {
         case constants.buttons.add:
@@ -40,9 +38,9 @@ export default function (args: ButtonInvokeArguments<Role>) {
         case constants.buttons.remove:
             control = Buttons.createListDeleteButton(() => {
                 ui.confirm({
-                    title: "提示", message: `确定删除角色'${args.dataItem.name}'吗?`,
+                    title: "提示", message: `确定删除路径'${args.dataItem.value}'吗?`,
                     confirm: () => {
-                        return dataSources.role.delete(args.dataItem);
+                        return dataSources.path.delete(args.dataItem);
                     }
                 })
             })
@@ -52,18 +50,12 @@ export default function (args: ButtonInvokeArguments<Role>) {
                 itemDialog.show(args.dataItem);
             })
             break;
-        case "role_permission":
-            control = <button key={Math.random()} className="btn btn-minier btn-default"
-                onClick={e => {
-                    app.redirect("role/permission", { resourceId: args.resource.id })
-                }}>
-                <span>权限设置</span>
-            </button>
-            break;
         default:
             throw errors.unknonwResourceName(args.resource.name);
     }
 
     return control;
 
+    // console.assert(itemDialog.resourceId == args.resource.id);
+    // itemDialog.show(args.dataItem);
 }

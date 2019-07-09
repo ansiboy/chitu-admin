@@ -1,10 +1,9 @@
-import { string } from "prop-types";
 
 export let constants = {
     buttons: {
         add: "add",
         edit: "edit",
-        delete: "delete",
+        remove: "remove",
         view: "view",
     }
 }

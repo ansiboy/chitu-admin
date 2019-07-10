@@ -1,12 +1,11 @@
-
-
 import React = require('react');
 import { Application } from '../application';
 import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
 import { Resource } from 'entities';
 import { errors } from 'data-component/errors';
-import { PermissionService } from 'assert/services/index';
+import { PermissionService, Service } from 'assert/services/index';
+import { translateToMenuItems } from 'assert/dataSources';
 
 export type MenuItem = Resource & { icon?: string, parent: MenuItem, children: MenuItem[] }
 
@@ -27,17 +26,22 @@ export class MainMasterPage extends MasterPage<State> {
     pageContainer: HTMLElement;
     element: HTMLElement;
     private app: Application;
+    ps: PermissionService;
 
     constructor(props: MasterPageProps) {
         super(props);
 
-        this.state = { menus: [] }
+        let username = Service.loginInfo.value ? Service.loginInfo.value.username : "";
+        this.state = { menus: [], username }
+
         this.app = props.app;
-        PermissionService.loginInfo.add((value) => {
+        Service.loginInfo.add((value) => {
             if (value) {
                 this.setState({ username: value.username })
             }
         })
+
+        this.ps = this.app.createService(PermissionService);
     }
 
     private showPageByNode(node: MenuItem) {
@@ -59,7 +63,7 @@ export class MainMasterPage extends MasterPage<State> {
 
         if (pagePath.startsWith("#")) {
             pagePath = pagePath.substr(1);
-            this.app.redirect(pagePath);
+            this.app.redirect(pagePath, { resourceId: node.id });
             return;
         }
 
@@ -105,54 +109,62 @@ export class MainMasterPage extends MasterPage<State> {
         return null
     }
 
-    /** 设置工具栏 */
-    setToolbar(toolbar: JSX.Element) {
-        this.setState({ toolbar })
+    // /** 设置菜单 */
+    // setMenus(menus: MenuItem[]) {
+    //     let stack = new Array<MenuItem>(...menus)
+    //     while (stack.length > 0) {
+    //         let item = stack.pop()
+    //         if (item.page_path) {
+    //             let arr = item.page_path.split('/')
+    //             if (item.page_path.indexOf('?') >= 0) {
+    //                 item.page_path = `${item.page_path}&resourceId=${item.id}`
+    //             }
+    //             else {
+    //                 item.page_path = `${item.page_path}?resourceId=${item.id}`
+    //             }
+    //         }
+    //         stack.push(...(item.children || []))
+    //     }
+
+    //     let currentPageName = this.app.currentPage ? this.app.currentPage.name : undefined;
+    //     let resourceId = this.app.currentPage ? (this.app.currentPage.data.resourceId || this.app.currentPage.data.resourceId) as string : undefined
+    //     this.setState({ menus, currentPageName: currentPageName, resourceId: resourceId })
+    // }
+
+    logout() {
+        let s = this.app.createService(PermissionService)
+        s.logout()
+        location.href = `#login`
     }
 
-    /** 设置菜单 */
-    setMenus(menus: MenuItem[]) {
-        let stack = new Array<MenuItem>(...menus)
-        while (stack.length > 0) {
-            let item = stack.pop()
-            if (item.page_path) {
-                let arr = item.page_path.split('/')
-                if (item.page_path.indexOf('?') >= 0) {
-                    item.page_path = `${item.page_path}&resourceId=${item.id}`
-                }
-                else {
-                    item.page_path = `${item.page_path}?resourceId=${item.id}`
-                }
-            }
-            stack.push(...(item.children || []))
-        }
-
-        let currentPageName = this.app.currentPage ? this.app.currentPage.name : undefined;
-        let resourceId = this.app.currentPage ? (this.app.currentPage.data.resourceId || this.app.currentPage.data.resourceId) as string : undefined
-        this.setState({ menus, currentPageName: currentPageName, resourceId: resourceId })
-    }
-
-    /** 获取菜单 */
-    getMenus() {
-        return this.state.menus || []
-    }
-
-    setHideMenuPages(pageNames: string[]) {
-        this.setState({ hideMenuPages: pageNames || [] })
-    }
-
-    get application(): Application {
-        return this.app;
+    loadMenuItmes() {
+        this.ps.resource.list().then(resources => {
+            let menuItems = translateToMenuItems(resources).filter(o => o.parent == null);
+            this.setState({ menus: menuItems });
+        })
     }
 
     componentDidMount() {
-        // this.app = new Application(this)
         this.app.pageCreated.add((sender, page) => {
             page.shown.add(() => {
                 this.setState({ currentPageName: page.name })
                 this.setState({ resourceId: (page.data.resourceId || page.data.resource_id) as string })
             })
         })
+
+        if (Service.loginInfo.value) {
+            this.loadMenuItmes();
+        }
+        else {
+            Service.loginInfo.add((value) => {
+                if (value) {
+                    this.loadMenuItmes();
+                }
+                else {
+                    this.setState({ menus: [] })
+                }
+            });
+        }
 
     }
 
@@ -227,7 +239,7 @@ export class MainMasterPage extends MasterPage<State> {
                     <nav className="navbar navbar-default">
                         <ul className="toolbar">
                             {this.state.toolbar}
-                            <li className="light-blue pull-right">
+                            <li className="light-blue pull-right" onClick={() => this.logout()}>
                                 <i className="icon-off"></i>
                                 <span style={{ paddingLeft: 4, cursor: "pointer" }}>退出</span>
                             </li>

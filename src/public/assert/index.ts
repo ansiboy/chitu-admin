@@ -35,13 +35,16 @@ requirejs.config({
     }
 })
 
-requirejs(['assert/application', "/clientjs_init.js"], function (appModule, initModule) {
+requirejs(['assert/application', "/clientjs_init.js", "assert/startup"], function (appModule, initModule, startupModule) {
 
     if (initModule && typeof initModule.default == 'function') {
         initModule.default(appModule.app)
     }
 
-    console.assert(appModule != null && appModule.app != null);
-    appModule.app.run();
+    // console.assert(appModule != null && appModule.app != null);
+    // appModule.app.run();
+
+    console.assert(startupModule!=null && typeof startupModule["default"] == "function");
+    startupModule["default"]();
 
 })

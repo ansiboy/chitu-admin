@@ -1,12 +1,10 @@
 import { DataSource, DataSourceSelectArguments, DataSourceSelectResult, DataSourceArguments } from "maishu-wuzhui";
 import { PermissionService } from "./services/index";
 import { app } from "./application";
-import { AppService } from "./service";
 import { MenuItem } from "./masters/main-master-page";
 import { User, Role, Path, Resource } from "entities";
 
 let permissionService: PermissionService = app.createService<PermissionService>(PermissionService);
-let appService = app.createService(AppService);
 
 export class MyDataSource<T> extends DataSource<T> {
     getItem: (id: string) => Promise<T>;
@@ -55,83 +53,6 @@ function createRoleDataSource() {
     })
 
     return roleDataSource;
-}
-
-export function createMenuDataSource() {
-    let menuDataSource = new MyDataSource<MenuItem>({
-        primaryKeys: ['id'],
-        async select() {
-            let resources = await permissionService.resource.list();
-            resources = resources.filter(o => o.type == "menu");
-            let arr = translateToMenuItems(resources);
-            return { dataItems: arr, totalRowCount: arr.length };
-        },
-        async item(id: string) {
-            let items = await appService.menuList();
-            let stack: MenuItem[] = [...items];
-
-            let arr: MenuItem[] = [];
-            while (stack.length > 0) {
-                let item = stack.pop();
-                delete item.parent;
-                arr.push(item);
-                stack.push(...item.children);
-            }
-
-            return arr.filter(o => o.id == id)[0];
-        },
-        delete(item) {
-            return permissionService.resource.remove(item.id);
-        },
-        async insert(item) {
-            // let obj: typeof item = JSON.parse(JSON.stringify(item))
-            // delete obj.children
-            // delete obj.originalChildren
-            // delete obj.visible
-
-            // let r = await permissionService.resource.add(obj)
-            // console.assert(r.id != null)
-            // Object.assign(item, r)
-
-            // item.children.forEach(child => {
-            //     child.parent_id = item.id
-            //     permissionService.addResource(child)
-            // })
-
-            // return r
-        },
-        async update(item) {
-            // item.children = item.children || []
-            // item.originalChildren = item.originalChildren || []
-            // // 查找要删除的
-            // for (let i = 0; i < item.originalChildren.length; i++) {
-            //     let child = item.children.filter(o => o.id == item.originalChildren[i].id)[0]
-            //     if (child == null) {
-            //         permissionService.deleteResource(item.originalChildren[i].id)
-            //     }
-            // }
-
-            // // 查找要添加的
-            // for (let i = 0; i < item.children.length; i++) {
-            //     let child = item.originalChildren.filter(o => o.id == item.children[i].id)[0]
-            //     if (child == null) {
-            //         console.assert(item.children[i].parent_id == item.id)
-            //         let obj = Object.assign({}, item.children[i])
-            //         delete obj.children
-            //         delete obj.originalChildren
-            //         delete obj.visible
-            //         permissionService.resource.add(obj)
-            //     }
-            // }
-            // item.parent_id = !item.parent_id ? null : item.parent_id
-            // let obj: typeof item = JSON.parse(JSON.stringify(item))
-            // delete obj.children
-            // delete obj.originalChildren
-            // await permissionService.resource.update(obj)
-            // item.children = Object.assign([], item.originalChildren)
-        }
-    })
-    return menuDataSource;
 }
 
 export function translateToMenuItems(resources: Resource[]): MenuItem[] {
@@ -258,7 +179,6 @@ function createResourceDataSource() {
 
 export class DataSources {
     role = createRoleDataSource();
-    menu = createMenuDataSource();
     user = createUserDataSource();
     token = createTokenDataSource();
     path = createPathDataSource();

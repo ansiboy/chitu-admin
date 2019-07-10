@@ -2,9 +2,10 @@ import React = require("react");
 import { ListPage, ListPageProps, dateTimeField } from "data-component/index";
 import { dataSources } from "assert/dataSources";
 import { boundField } from "maishu-wuzhui-helper";
-import { showDialog, hideDialog } from "maishu-ui-toolkit";
+import { hideDialog } from "maishu-ui-toolkit";
 import { Token } from "entities";
-import { PageProps } from "maishu-chitu-react";
+import { PageProps } from "assert/components/index";
+import { constants } from "data-component/common";
 
 export default class TokenListPage extends React.Component<PageProps> {
 
@@ -12,7 +13,7 @@ export default class TokenListPage extends React.Component<PageProps> {
 
     render() {
         return <>
-            <ListPage<Token> parent={this} dataSource={dataSources.token}
+            <ListPage<Token> {...this.props} parent={this} dataSource={dataSources.token}
                 columns={[
                     boundField<Token>({ dataField: "id", headerText: "编号", headerStyle: { width: "300px" } }),
                     boundField<Token>({ dataField: "content", headerText: "内容" }),

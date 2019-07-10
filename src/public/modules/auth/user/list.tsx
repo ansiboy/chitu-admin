@@ -5,7 +5,7 @@ import { DataSourceSelectArguments } from "maishu-wuzhui";
 import * as ui from 'maishu-ui-toolkit'
 import { dataSources } from "assert/dataSources";
 import { User } from "entities";
-import { PageProps } from "maishu-chitu-react";
+import { PageProps } from "assert/components/index";
 
 interface State {
     person?: any,
@@ -42,6 +42,7 @@ export default class UserListPage extends React.Component<PageProps, State> {
         let { person } = this.state
         return <>
             <ListPage<User> parent={this}
+                {...this.props}
                 ref={e => this.listPage = e || this.listPage}
                 dataSource={dataSources.user}
                 columns={[

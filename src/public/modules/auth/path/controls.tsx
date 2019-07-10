@@ -21,7 +21,7 @@ let itemDialog = createItemDialog(dataSources.path, "路径", <>
 </>);
 
 export default function (args: ControlArguments<Path>) {
-    let control: React.ReactElement;
+    let control: HTMLElement;
     switch (args.resource.data.code) {
         case Buttons.codes.add:
             control = Buttons.createPageAddButton(async () => {

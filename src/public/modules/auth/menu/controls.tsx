@@ -8,6 +8,7 @@ import { Resource } from "entities";
 import { Buttons } from "data-component/index";
 import { errors } from "assert/errors";
 import * as ui from "maishu-ui-toolkit";
+import ReactDOM = require("react-dom");
 
 let menuItemDialog = createItemDialog(dataSources.resource, "菜单",
     <>
@@ -74,14 +75,15 @@ function showDialog(dataItem: Resource) {
 
 
 export default function (args: ControlArguments<Resource>) {
-    let control: React.ReactElement;
+    let control: HTMLElement;
     switch (args.resource.data.code) {
         case Buttons.codes.add:
-            control = <button key={Math.random()} className="btn btn-primary pull-right"
+            control = document.createElement("div");
+            ReactDOM.render(<button key={Math.random()} className="btn btn-primary pull-right"
                 onClick={() => showDialog(args.dataItem)} >
                 <i className="icon-plus" />
                 <span>添加菜单</span>
-            </button>
+            </button>, control);
             break;
         case Buttons.codes.edit:
             control = Buttons.createListEditButton(() => {
@@ -105,10 +107,11 @@ export default function (args: ControlArguments<Resource>) {
             break;
         case "add_control":
         case "添加控件":
-            control = <button key={Math.random()} className="btn btn-primary pull-right" >
+            control = document.createElement("div");
+            ReactDOM.render(<button key={Math.random()} className="btn btn-primary pull-right" >
                 <i className="icon-plus" />
                 <span>添加控件</span>
-            </button>
+            </button>, control);
             break;
         default:
             throw errors.unknonwResourceName(args.resource.data.code);

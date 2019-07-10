@@ -56,10 +56,10 @@ export function toDataSource<T>(source: Promise<T[]>): DataSource<T> {
 export interface ControlArguments<T> {
     resource: Resource;
     dataItem: T;
-    page: React.Component
+    context: object
 }
 
-export function loadItemModule<T>(path: string): Promise<(args: ControlArguments<T>) => React.ReactElement> {
+export function loadItemModule<T>(path: string): Promise<(args: ControlArguments<T>) => HTMLElement> {
     if (path.endsWith(".js"))
         path = path.substr(0, path.length - 3)
 

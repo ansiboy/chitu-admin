@@ -17,7 +17,7 @@ import { errors } from "assert/errors";
 
 
 export default function (args: ControlArguments<Role>) {
-    let control: React.ReactElement;
+    let control: HTMLElement;
     switch (args.resource.data.code) {
         case Buttons.codes.add:
             control = Buttons.createPageAddButton(async () => {

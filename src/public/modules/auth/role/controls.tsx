@@ -8,6 +8,7 @@ import { errors } from "assert/errors";
 import { app } from "assert/application";
 import * as ui from "maishu-ui-toolkit";
 import { Props as PermissionListPageProps } from "../permission/list"
+import ReactDOM = require("react-dom");
 
 let itemDialog = createItemDialog(dataSources.role, "角色", <>
     <div className="form-group clearfix">
@@ -23,7 +24,7 @@ let itemDialog = createItemDialog(dataSources.role, "角色", <>
 
 
 export default function (args: ControlArguments<Role>) {
-    let control: React.ReactElement;
+    let control: HTMLElement;
     switch (args.resource.data.code) {
         case Buttons.codes.add:
             control = Buttons.createPageAddButton(async () => {
@@ -51,13 +52,22 @@ export default function (args: ControlArguments<Role>) {
             })
             break;
         case "role_permission":
-            control = <button key={Math.random()} className="btn btn-minier btn-default"
-                onClick={e => {
-                    let data: PermissionListPageProps["data"] = { resourceId: args.resource.id, roleId: args.dataItem.id };
-                    app.redirect("auth/permission/list", data);
-                }}>
-                <span>权限设置</span>
-            </button>
+            // control = document.createElement("div");
+            // ReactDOM.render(<button key={Math.random()} className="btn btn-minier btn-default"
+            //     onClick={e => {
+            //         let data: PermissionListPageProps["data"] = { resourceId: args.resource.id, roleId: args.dataItem.id };
+            //         app.redirect("auth/permission/list", data);
+            //     }}>
+            //     <span>权限设置</span>
+            // </button>, control);
+            control = document.createElement("button");
+            control.className = "btn btn-minier btn-default";
+            control.innerHTML = "<span>权限设置</span>";
+            control.onclick = () => {
+                let data: PermissionListPageProps["data"] = { resourceId: args.resource.id, roleId: args.dataItem.id };
+                app.redirect("auth/permission/list", data);
+            }
+
             break;
         default:
             throw errors.unknonwResourceName(args.resource.data.code);

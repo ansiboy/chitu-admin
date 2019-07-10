@@ -8,7 +8,7 @@ import { createGridView, boundField, customField } from "maishu-wuzhui-helper";
 import { GridViewDataCell } from "maishu-wuzhui";
 import ReactDOM = require("react-dom");
 import { ValueStore } from "maishu-chitu";
-import { PageProps } from "maishu-chitu-react";
+import { PageProps } from "assert/components/index";
 
 let sortFieldWidth = 80
 let nameFieldWidth = 280
@@ -44,8 +44,6 @@ export default class PathListPage extends React.Component<PageProps, State>{
 
     async componentDidMount() {
         let [resources] = await Promise.all([this.ps.resource.list()]);
-        let menuItems = translateToMenuItems(resources);
-        let listPage = this;
         this.gridView = createGridView({
             dataSource: dataSources.resource,
             element: this.dataTable,
@@ -53,14 +51,14 @@ export default class PathListPage extends React.Component<PageProps, State>{
             showFooter: false,
             pageSize: null,
             columns: [
-                boundField<MenuItem>({ dataField: 'sort_number', itemStyle: { width: `${sortFieldWidth}px` } }),
+                // boundField<MenuItem>({ dataField: 'sort_number', itemStyle: { width: `${sortFieldWidth}px` } }),
                 customField<MenuItem>({
                     headerText: '功能模块',
                     itemStyle: { width: `${nameFieldWidth}px` },
                     createItemCell: () => {
                         let cell = new GridViewDataCell<MenuItem>({
                             render: (item: MenuItem, element) => {
-                                element.style.paddingLeft = `${this.parentDeep(item) * 20 + 10}px`
+                                element.style.paddingLeft = `${this.parentDeep(item) * 20 + 20}px`
                                 element.innerHTML = item.name;
                             }
                         })
@@ -73,11 +71,14 @@ export default class PathListPage extends React.Component<PageProps, State>{
                     render: (dataItem, element) => {
                         let renderPaths = (paths: Path[]) => {
                             paths = paths.filter(o => o.resource_id == dataItem.id);
-                            ReactDOM.render(<>
-                                {paths.map(o =>
-                                    <div key={o.id} style={{ paddingBottom: 6 }}>{o.value}</div>
-                                )}
-                            </>, element)
+                            ReactDOM.render(<table className="table" style={{ marginBottom: 0, backgroundColor: "unset" }}>
+                                <tbody>
+                                    {paths.map(o =>
+                                        <tr key={o.id} style={{ paddingBottom: 6 }}>
+                                            <td style={{ borderTop: 0 }}>{o.value}</td></tr>
+                                    )}
+                                </tbody>
+                            </table>, element)
                         }
 
                         if (this.pathsStorage.value) {
@@ -92,7 +93,7 @@ export default class PathListPage extends React.Component<PageProps, State>{
                         // })
                     }
                 }),
-                operationField<MenuItem>(this, `${operationFieldWidth - 18}px`)
+                operationField<MenuItem>(this.props.data.resourceId, this.ps, this, `${operationFieldWidth - 18}px`)
                 // operationField<MenuItem>(this.props.data.resourceId, `${operationFieldWidth - 18}px`)
             ],
             sort: (dataItems) => {
@@ -142,7 +143,6 @@ export default class PathListPage extends React.Component<PageProps, State>{
             <table className="table table-striped table-bordered table-hover" style={{ margin: 0 }}>
                 <thead>
                     <tr>
-                        <th style={{ width: sortFieldWidth }}>序号</th>
                         <th style={{ width: nameFieldWidth }}>功能模块</th>
                         <th style={{}}>允许访问 API</th>
                         <th style={{ width: operationFieldWidth }}>操作</th>

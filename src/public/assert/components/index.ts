@@ -1,0 +1,1 @@
+export { PageProps } from "./page-props";

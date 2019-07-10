@@ -10,7 +10,7 @@
         "bootstrap": "^3.4.1",
         "less": "^3.9.0",
         "maishu-chitu": "^3.4.6",
-        "maishu-chitu-react": "^1.5.10",
+        "maishu-chitu-react": "^1.8.2",
         "maishu-chitu-service": "^1.5.5",
         "maishu-dilu": "file:../dilu",
         "maishu-node-mvc": "^1.6.10",

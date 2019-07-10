@@ -6,7 +6,7 @@ import { PermissionService } from "assert/services/index";
 import { dataSources, translateToMenuItems } from "assert/dataSources";
 import { Resource } from "entities";
 import { MenuItem } from "assert/masters/main-master-page";
-import { PageProps } from "maishu-chitu-react";
+import { PageProps } from "assert/components/index";
 
 interface State {
 }
@@ -81,7 +81,7 @@ export default class ResourceListPage extends React.Component<PageProps, State> 
     }
 
     render() {
-        return <ListPage parent={this} dataSource={dataSources.resource}
+        return <ListPage<Resource> {...this.props} parent={this} dataSource={dataSources.resource}
             pageSize={null}
             transform={(items) => {
                 items = items.filter(o => o.type == "menu" || o.type == "control");
@@ -109,7 +109,7 @@ export default class ResourceListPage extends React.Component<PageProps, State> 
                 boundField<MenuItem>({ dataField: "remark", headerText: "备注", itemStyle: { width: `${remarkWidth}px` } }),
                 boundField<MenuItem>({ dataField: "type", headerText: "类型", itemStyle: { width: `${typeFieldWidth}px` } }),
                 dateTimeField<MenuItem>({ dataField: 'create_date_time', headerText: '创建时间', }),
-                operationField<MenuItem>(this, `${operationFieldWidth}px`)
+                operationField<MenuItem>(this.props.data.resourceId, this.permissionService, this, `${operationFieldWidth}px`)
             ]} />
     }
 }

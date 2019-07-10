@@ -7,17 +7,16 @@ import { GridViewCell, DataControlField } from "maishu-wuzhui";
 import { MenuItem } from 'assert/masters/main-master-page';
 import { ValueStore } from 'maishu-chitu';
 import { translateToMenuItems } from 'assert/dataSources';
-import { PageProps } from 'maishu-chitu-react';
 
 
 export function operationField<T extends Entity>
-    (listPage: React.Component<PageProps>, width?: string) {
+    (resourceId: string, permissionService: PermissionService, pageView: object, width?: string) {
 
     // return function <P extends ListPageProps>(listPage: React.Component<P>): DataControlField<T> {
     width = width || '120px'
-    let resourceId = listPage.props.data.resourceId;
+    // let resourceId = listPage.props.data.resourceId;
     let menuItemStorage = new ValueStore<MenuItem>();
-    let permissionService = listPage.props.createService(PermissionService);
+    // let permissionService = listPage.props.createService(PermissionService);
     permissionService.resource.list().then(resources => {
         let menuItems = translateToMenuItems(resources);
         let currentMenuItem = menuItems.filter(o => o.id == resourceId)[0];
@@ -38,11 +37,11 @@ export function operationField<T extends Entity>
 
     async function renderCell(dataItem: T, cell: GridViewCell) {
         if (menuItemStorage.value) {
-            renderOperationButtons(menuItemStorage.value, cell.element, dataItem, listPage)
+            renderOperationButtons(menuItemStorage.value, cell.element, dataItem, pageView)
         }
         else {
             menuItemStorage.add((menuItem) => {
-                renderOperationButtons(menuItem, cell.element, dataItem, listPage)
+                renderOperationButtons(menuItem, cell.element, dataItem, pageView)
             })
         }
 
@@ -51,18 +50,20 @@ export function operationField<T extends Entity>
     // }
 }
 
-export async function renderOperationButtons<T extends { id: string }, P extends PageProps>
-    (menuItem: MenuItem, element: HTMLElement, dataItem: T, listPage: React.Component<P>) {
+export async function renderOperationButtons<T>
+    (menuItem: MenuItem, element: HTMLElement, dataItem: T, pageView: any) {
     let children = menuItem.children || [];
     children.forEach(o => o.data = o.data || {} as any);
     children = children.filter(o => o.data.position == "in-list");
     let funcs = await Promise.all(children.map(o => loadItemModule(o.page_path)))
-    let controlElements = children.map((o, i) => funcs[i]({ resource: o, dataItem, page: listPage }));
-
-    ReactDOM.render(<React.Fragment>
-        {controlElements.map((o, i) =>
-            <React.Fragment key={i}>{o}</React.Fragment>
-        )}
-    </React.Fragment>, element)
+    let controlElements = children.map((o, i) => funcs[i]({ resource: o, dataItem, context: pageView }));
+    controlElements.forEach(child => {
+        element.appendChild(child)
+    })
+    // ReactDOM.render(<React.Fragment>
+    //     {controlElements.map((o, i) =>
+    //         <React.Fragment key={i}>{o}</React.Fragment>
+    //     )}
+    // </React.Fragment>, element)
 }
 

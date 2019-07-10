@@ -72,7 +72,7 @@ export default class PermissionPage extends React.Component<Props>{
         return <PageSpiner load={() => this.loadData()}>
             <PageSpinerContext.Consumer>
                 {args => {
-                    return <ListPage<Resource> parent={this} dataSource={dataSources.resource}
+                    return <ListPage<Resource> {...this.props} parent={this} dataSource={dataSources.resource}
                         pageSize={null}
                         transform={(items) => {
                             items = items.filter(o => o.type == "menu" || o.type == "control");

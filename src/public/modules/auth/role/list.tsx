@@ -4,7 +4,7 @@ import { boundField } from "maishu-wuzhui-helper";
 import { dataSources, translateToMenuItems } from "assert/dataSources";
 import { PermissionService } from "assert/services/index";
 import { MenuItem } from "assert/masters/main-master-page";
-import { PageProps } from "maishu-chitu-react";
+import { PageProps } from "assert/components/page-props";
 
 interface State {
     currentMenuItem?: MenuItem
@@ -34,12 +34,12 @@ export default class RoleListPage extends React.Component<PageProps, State> {
             </div>
         }
 
-        return <ListPage parent={this} dataSource={dataSources.role}
+        return <ListPage {...this.props} parent={this} dataSource={dataSources.role}
             columns={[
                 boundField({ dataField: 'id', headerText: '编号', headerStyle: { width: '300px' }, itemStyle: { textAlign: 'center' } }),
                 boundField({ dataField: 'name', headerText: '名称' }),
                 dateTimeField({ dataField: 'create_date_time', headerText: '创建时间' }),
-                operationField(this, '160px')
+                operationField(this.props.data.resourceId, this.ps, this, '160px')
             ]}
         >
 

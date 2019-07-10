@@ -4,11 +4,11 @@ import { errors } from "assert/errors";
 import PermissionPage from "./list";
 
 export default function (args: ControlArguments<Resource>) {
-    let control: React.ReactElement;
+    let control: HTMLElement;
     switch (args.resource.data.code) {
         case Buttons.codes.save:
             control = Buttons.createPageTopRightButton("保存", "icon-save",
-                () => (args.page as PermissionPage).save(),
+                () => (args.context as PermissionPage).save(),
                 { toast: "保存成功" }
             )
             break;

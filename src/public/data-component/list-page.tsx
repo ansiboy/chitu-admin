@@ -16,17 +16,17 @@ export interface ListPageProps {
         resourceId: string,
     };
     createService: Page["createService"];
-    columns: DataControlField<any>[],
-    showHeader?: boolean,
-    pageSize?: number,
+
     source: Page,
 }
 
 interface Props<T> extends ListPageProps {
-    search?: JSX.Element,
     right?: JSX.Element,
     dataSource: DataSource<T>,
     transform?: (items: T[]) => T[];
+    columns: (DataControlField<T> | ((listPage: ListPage<T>) => DataControlField<T>))[],
+    showHeader?: boolean,
+    pageSize?: number,
 }
 
 export let ListPageContext = React.createContext<{ dataSource: DataSource<any> }>(null)
@@ -36,6 +36,7 @@ export class ListPage<T> extends React.Component<Props<T>, State> {
     gridView: GridView<T>
     private table: HTMLTableElement;
     private tableIsFixed = false;
+    private columns: DataControlField<T>[];
 
     constructor(props: ListPage<T>['props']) {
         super(props)
@@ -43,6 +44,8 @@ export class ListPage<T> extends React.Component<Props<T>, State> {
         this.state = {};
         this.dataSource = props.dataSource;
         this.tableIsFixed = props.pageSize === null;
+        this.columns = this.props.columns.map(col => typeof col == "function" ? col(this) : col);
+
         if (props.data.resourceId) {
             let ps = this.props.createService<PermissionService>(PermissionService)
             ps.resource.list()
@@ -67,16 +70,17 @@ export class ListPage<T> extends React.Component<Props<T>, State> {
         let controlResources = menuItemChildren.filter(o => o.data != null && o.data.position == "top");
         let controlFuns = await Promise.all(controlResources.map(o => loadItemModule(o.page_path)));
 
-        let controls = controlFuns.map((func, i) => func({ resource: controlResources[i], dataItem: {} }));
+        let controls = controlFuns.map((func, i) => func({ resource: controlResources[i], dataItem: {}, listPage: this }));
         return controls;
     }
 
     async componentDidMount() {
 
+
         this.gridView = createGridView({
             element: this.table,
             dataSource: this.dataSource,
-            columns: this.props.columns,
+            columns: this.columns,
             pageSize: this.tableIsFixed ? null : this.props.pageSize || constants.pageSize,
             pagerSettings: {
                 activeButtonClassName: 'active',
@@ -121,9 +125,9 @@ export class ListPage<T> extends React.Component<Props<T>, State> {
 
     render() {
         let { buttons, title } = this.state || {} as State
-        let { search, right, columns } = this.props;
-        columns.forEach(col => col.itemStyle = col.itemStyle || {});
-
+        let { right } = this.props;
+        this.columns.forEach(col => col.itemStyle = col.itemStyle || {});
+        buttons = buttons || [];
         if (!right) {
             right = <li className="pull-left">
                 <div style={{ fontWeight: 'bold', fontSize: 16 }}>{title}</div>
@@ -133,13 +137,14 @@ export class ListPage<T> extends React.Component<Props<T>, State> {
             <div className="tabbable">
                 <ul className="nav nav-tabs" style={{ minHeight: 34 }}>
                     {right}
-                    <li className="pull-right" ref={e => { }}>
-                        {buttons}
-                    </li>
-                    {search}
+                    {buttons.map((o, i) =>
+                        <li key={i} className="pull-right">
+                            {o}
+                        </li>
+                    )}
                 </ul>
             </div>
-            {this.tableIsFixed ? this.renderFixedSizeTable(columns) : this.renderDefaultTable()}
+            {this.tableIsFixed ? this.renderFixedSizeTable(this.columns) : this.renderDefaultTable()}
         </ListPageContext.Provider>
     }
 }

@@ -44,8 +44,7 @@ export default class PathListPage extends React.Component<ListPageProps, State>{
     async componentDidMount() {
         let [resources] = await Promise.all([this.ps.resource.list()]);
         let menuItems = translateToMenuItems(resources);
-        let currentMenuItem = menuItems.filter(o => o.id == this.props.data.resourceId)[0];
-
+        let listPage = this;
         this.gridView = createGridView({
             dataSource: dataSources.resource,
             element: this.dataTable,
@@ -92,7 +91,8 @@ export default class PathListPage extends React.Component<ListPageProps, State>{
                         // })
                     }
                 }),
-                operationField<MenuItem>(this.props.data.resourceId, this.props.app, `${operationFieldWidth - 18}px`)
+                operationField<MenuItem>(this.props.data.resourceId,  `${operationFieldWidth - 18}px`)(listPage)
+                // operationField<MenuItem>(this.props.data.resourceId, `${operationFieldWidth - 18}px`)
             ],
             sort: (dataItems) => {
                 dataItems = translateToMenuItems(dataItems);

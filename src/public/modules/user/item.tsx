@@ -1,12 +1,11 @@
 import React = require("react");
-import { InputField, createItemDialog, RadioField } from "data-component/index";
+import { InputField, createItemDialog, RadioField, ControlArguments } from "data-component/index";
 import { rules } from "maishu-dilu";
 import { dataSources } from "assert/dataSources";
-import { ButtonInvokeArguments } from "data-component/common";
 import { User, Role } from "entities";
 
 let itemDialog: ReturnType<typeof createItemDialog>;
-export default function (args: ButtonInvokeArguments<User>) {
+export default function (args: ControlArguments<User>) {
     if (itemDialog == null) {
         itemDialog = createItemDialog(dataSources.user, "用户", <>
             <div className="form-group clearfix">

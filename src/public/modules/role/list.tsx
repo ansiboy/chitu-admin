@@ -38,7 +38,7 @@ export default class RoleListPage extends React.Component<ListPageProps, State> 
                 boundField({ dataField: 'id', headerText: '编号', headerStyle: { width: '300px' }, itemStyle: { textAlign: 'center' } }),
                 boundField({ dataField: 'name', headerText: '名称' }),
                 dateTimeField({ dataField: 'create_date_time', headerText: '创建时间' }),
-                operationField(this.props.data.resourceId, this.props.app, '160px')
+                operationField(this.props.data.resourceId, '160px')
             ]}
         >
 

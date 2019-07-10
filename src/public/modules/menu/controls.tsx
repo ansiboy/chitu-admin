@@ -1,11 +1,11 @@
 import React = require("react");
-import { ButtonInvokeArguments } from "data-component/common";
+import { ControlArguments } from "data-component/common";
 import { createItemDialog, DropdownField } from "data-component/index";
 import { dataSources } from "assert/dataSources";
 import { InputField } from "data-component/index";
 import { rules } from "maishu-dilu";
 import { Resource } from "entities";
-import { Buttons } from "assert/buttons";
+import { Buttons } from "data-component/index";
 import { constants } from "assert/common";
 import { errors } from "assert/errors";
 import * as ui from "maishu-ui-toolkit";
@@ -69,12 +69,12 @@ let controlResourceDialog = createItemDialog(dataSources.resource, "菜单",
 function showDialog(dataItem: Resource) {
     if (dataItem.type == "menu")
         menuItemDialog.show(dataItem);
-    else if (dataItem.type == "button")
+    else if (dataItem.type == "control")
         controlResourceDialog.show(dataItem);
 }
 
 
-export default function (args: ButtonInvokeArguments<Resource>) {
+export default function (args: ControlArguments<Resource>) {
     let control: React.ReactElement;
     switch (args.resource.data.code) {
         case constants.buttons.add:

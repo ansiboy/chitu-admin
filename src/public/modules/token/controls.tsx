@@ -1,11 +1,6 @@
 import React = require("react");
-import { ButtonInvokeArguments } from "data-component/common";
-import { createItemDialog } from "data-component/index";
-import { dataSources } from "assert/dataSources";
-import { InputField } from "data-component/index";
-import { rules } from "maishu-dilu";
-import { Role, Token } from "entities";
-import { Buttons } from "assert/buttons";
+import { ControlArguments, Buttons } from "data-component/index";
+import { Role } from "entities";
 import { constants } from "assert/common";
 import { errors } from "assert/errors";
 
@@ -22,7 +17,7 @@ import { errors } from "assert/errors";
 // </>);
 
 
-export default function (args: ButtonInvokeArguments<Role>) {
+export default function (args: ControlArguments<Role>) {
     let control: React.ReactElement;
     switch (args.resource.data.code) {
         case constants.buttons.add:
@@ -31,7 +26,7 @@ export default function (args: ButtonInvokeArguments<Role>) {
             })
             break;
         default:
-            throw errors.unknonwResourceName(args.resource.name);
+            throw errors.unknonwResourceName(args.resource.data.code);
     }
 
     return control;

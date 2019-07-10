@@ -6,7 +6,6 @@ import * as ui from 'maishu-ui-toolkit'
 import { PermissionService } from "assert/services/index";
 import { ItemPageProps, customDataField } from "data-component/index";
 import { AppService } from "assert/service";
-import { MenuItem } from "assert/masters/main-master-page";
 import { Resource } from "entities";
 
 type Item = Resource & { children?: Item[], selected?: boolean }
@@ -110,7 +109,7 @@ export default class PermissionPage extends React.Component<ItemPageProps<Item>,
         }
 
         resources.forEach(c => {
-            c.children = c.children.filter(o => o.type == "button");
+            c.children = c.children.filter(o => o.type == "control");
         })
 
         // resources.reverse();

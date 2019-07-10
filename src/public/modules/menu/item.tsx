@@ -1,14 +1,13 @@
 
 import React = require("react");
-import { ButtonInvokeArguments } from "data-component/common";
-import { createItemDialog, DropdownField } from "data-component/index";
+import { createItemDialog, DropdownField, ControlArguments } from "data-component/index";
 import { dataSources } from "assert/dataSources";
 import { InputField } from "data-component/index";
 import { rules } from "maishu-dilu";
 import { Resource } from "entities";
 
 let itemDialog: ReturnType<typeof createItemDialog>;
-export default function (args: ButtonInvokeArguments<Resource>) {
+export default function (args: ControlArguments<Resource>) {
     if (itemDialog == null) {
         itemDialog = createItemDialog(dataSources.resource, "菜单",
             <>

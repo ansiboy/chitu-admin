@@ -83,7 +83,7 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
         return <ListPage {...this.props} dataSource={dataSources.resource}
             pageSize={null}
             transform={(items) => {
-                items = items.filter(o => o.type == "menu" || o.type == "button");
+                items = items.filter(o => o.type == "menu" || o.type == "control");
                 items.sort((a, b) => a.sort_number < b.sort_number ? -1 : 1);
                 items = translateToMenuItems(items)
                 return items;
@@ -108,7 +108,7 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
                 boundField<MenuItem>({ dataField: "remark", headerText: "备注", itemStyle: { width: `${remarkWidth}px` } }),
                 boundField<MenuItem>({ dataField: "type", headerText: "类型", itemStyle: { width: `${typeFieldWidth}px` } }),
                 dateTimeField<MenuItem>({ dataField: 'create_date_time', headerText: '创建时间', }),
-                operationField<MenuItem>(this.props.data.resourceId, this.props.app, `${operationFieldWidth}px`)
+                operationField<MenuItem>(this.props.data.resourceId, `${operationFieldWidth}px`)
             ]} />
     }
 }

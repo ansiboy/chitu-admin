@@ -1,11 +1,10 @@
 import { Path, Role, Resource } from "entities";
-import { ButtonInvokeArguments } from "data-component/common";
-import { createItemDialog, InputField, RadioField } from "data-component/index";
+import { ControlArguments } from "data-component/common";
+import { createItemDialog, InputField, Buttons } from "data-component/index";
 import { dataSources } from "assert/dataSources";
 import React = require("react");
 import { rules } from "maishu-dilu";
 import { constants } from "assert/common";
-import { Buttons } from "assert/buttons";
 import { errors } from "assert/errors";
 import * as ui from "maishu-ui-toolkit";
 
@@ -22,7 +21,7 @@ let itemDialog = createItemDialog(dataSources.path, "路径", <>
     {/* <RadioField<Path, Role> dataSource={dataSources.role(args.resource.id)} dataField={"role_ids"} valueField={"id"} nameField={"name"} dataType="string" label="角色" /> */}
 </>);
 
-export default function (args: ButtonInvokeArguments<Path>) {
+export default function (args: ControlArguments<Path>) {
     let control: React.ReactElement;
     switch (args.resource.data.code) {
         case constants.buttons.add:

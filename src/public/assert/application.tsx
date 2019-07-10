@@ -9,6 +9,7 @@ import 'text!../content/admin_style_default.less'
 import { SimpleMasterPage } from './masters/simple-master-page';
 import { AppService } from './service';
 import { PageData, Page } from "maishu-chitu"
+import errorHandle from 'error-handle';
 
 config.login = config.login || {} as any;
 config.login.showForgetPassword = true;
@@ -33,8 +34,7 @@ export class Application extends chitu_react.Application {
             }
         })
 
-        this.error.add((sender, error) => {
-        })
+        this.error.add((sender, error, page) => errorHandle(sender, error, page as chitu_react.Page))
     }
 
     createPageElement(pageName: string, containerName: string) {

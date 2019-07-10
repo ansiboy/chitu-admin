@@ -4,12 +4,13 @@ import { boundField } from "maishu-wuzhui-helper";
 import { dataSources, translateToMenuItems } from "assert/dataSources";
 import { PermissionService } from "assert/services/index";
 import { MenuItem } from "assert/masters/main-master-page";
+import { PageProps } from "maishu-chitu-react";
 
 interface State {
     currentMenuItem?: MenuItem
 }
 
-export default class RoleListPage extends React.Component<ListPageProps, State> {
+export default class RoleListPage extends React.Component<PageProps, State> {
     ps: any;
 
     constructor(props) {
@@ -33,12 +34,12 @@ export default class RoleListPage extends React.Component<ListPageProps, State> 
             </div>
         }
 
-        return <ListPage {...this.props} dataSource={dataSources.role}
+        return <ListPage parent={this} dataSource={dataSources.role}
             columns={[
                 boundField({ dataField: 'id', headerText: '编号', headerStyle: { width: '300px' }, itemStyle: { textAlign: 'center' } }),
                 boundField({ dataField: 'name', headerText: '名称' }),
                 dateTimeField({ dataField: 'create_date_time', headerText: '创建时间' }),
-                operationField(this.props.data.resourceId, '160px')
+                operationField(this, '160px')
             ]}
         >
 

@@ -1,11 +1,12 @@
 import React = require("react");
 import { boundField, customField } from 'maishu-wuzhui-helper'
-import { operationField, dateTimeField, ListPageProps, ListPage } from "../../data-component/index";
+import { operationField, dateTimeField, ListPageProps, ListPage } from "data-component/index";
 import { GridViewDataCell, GridView } from "maishu-wuzhui";
 import { PermissionService } from "assert/services/index";
 import { dataSources, translateToMenuItems } from "assert/dataSources";
 import { Resource } from "entities";
 import { MenuItem } from "assert/masters/main-master-page";
+import { PageProps } from "maishu-chitu-react";
 
 interface State {
 }
@@ -16,7 +17,7 @@ let operationFieldWidth = 200
 let typeFieldWidth = 140
 let remarkWidth = 240
 
-export default class ResourceListPage extends React.Component<ListPageProps, State> {
+export default class ResourceListPage extends React.Component<PageProps, State> {
     dataTable: HTMLTableElement;
     gridView: GridView<Resource>;
     permissionService: PermissionService;
@@ -80,7 +81,7 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
     }
 
     render() {
-        return <ListPage {...this.props} dataSource={dataSources.resource}
+        return <ListPage parent={this} dataSource={dataSources.resource}
             pageSize={null}
             transform={(items) => {
                 items = items.filter(o => o.type == "menu" || o.type == "control");
@@ -108,7 +109,7 @@ export default class ResourceListPage extends React.Component<ListPageProps, Sta
                 boundField<MenuItem>({ dataField: "remark", headerText: "备注", itemStyle: { width: `${remarkWidth}px` } }),
                 boundField<MenuItem>({ dataField: "type", headerText: "类型", itemStyle: { width: `${typeFieldWidth}px` } }),
                 dateTimeField<MenuItem>({ dataField: 'create_date_time', headerText: '创建时间', }),
-                operationField<MenuItem>(this.props.data.resourceId, `${operationFieldWidth}px`)
+                operationField<MenuItem>(this, `${operationFieldWidth}px`)
             ]} />
     }
 }

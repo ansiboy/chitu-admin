@@ -2,7 +2,6 @@ import { ControlArguments, Buttons } from "data-component/index";
 import { User } from "entities";
 import React = require("react");
 import { errors } from "assert/errors";
-import { constants } from "assert/common";
 
 export default function (args: ControlArguments<User>) {
     let control: React.ReactElement;
@@ -27,8 +26,8 @@ export default function (args: ControlArguments<User>) {
                     }} />
             </React.Fragment>
             break;
-        case constants.buttons.add:
-            control = Buttons.createPageAddButton(() => {
+        case Buttons.codes.add:
+            control = Buttons.createPageAddButton(async () => {
 
             })
             break;

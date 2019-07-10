@@ -4,10 +4,10 @@ import { dataSources } from "assert/dataSources";
 import { InputField } from "data-component/index";
 import { rules } from "maishu-dilu";
 import { Role } from "entities";
-import { constants } from "assert/common";
 import { errors } from "assert/errors";
 import { app } from "assert/application";
 import * as ui from "maishu-ui-toolkit";
+import { Props as PermissionListPageProps } from "../permission/list"
 
 let itemDialog = createItemDialog(dataSources.role, "角色", <>
     <div className="form-group clearfix">
@@ -25,17 +25,17 @@ let itemDialog = createItemDialog(dataSources.role, "角色", <>
 export default function (args: ControlArguments<Role>) {
     let control: React.ReactElement;
     switch (args.resource.data.code) {
-        case constants.buttons.add:
-            control = Buttons.createPageAddButton(() => {
+        case Buttons.codes.add:
+            control = Buttons.createPageAddButton(async () => {
                 itemDialog.show(args.dataItem);
             })
             break;
-        case constants.buttons.edit:
+        case Buttons.codes.edit:
             control = Buttons.createListEditButton(() => {
                 itemDialog.show(args.dataItem);
             })
             break;
-        case constants.buttons.remove:
+        case Buttons.codes.remove:
             control = Buttons.createListDeleteButton(() => {
                 ui.confirm({
                     title: "提示", message: `确定删除角色'${args.dataItem.name}'吗?`,
@@ -45,7 +45,7 @@ export default function (args: ControlArguments<Role>) {
                 })
             })
             break;
-        case constants.buttons.view:
+        case Buttons.codes.view:
             control = Buttons.createListViewButton(() => {
                 itemDialog.show(args.dataItem);
             })
@@ -53,13 +53,14 @@ export default function (args: ControlArguments<Role>) {
         case "role_permission":
             control = <button key={Math.random()} className="btn btn-minier btn-default"
                 onClick={e => {
-                    app.redirect("role/permission", { resourceId: args.resource.id })
+                    let data: PermissionListPageProps["data"] = { resourceId: args.resource.id, roleId: args.dataItem.id };
+                    app.redirect("auth/permission/list", data);
                 }}>
                 <span>权限设置</span>
             </button>
             break;
         default:
-            throw errors.unknonwResourceName(args.resource.name);
+            throw errors.unknonwResourceName(args.resource.data.code);
     }
 
     return control;

@@ -6,7 +6,6 @@ import { InputField } from "data-component/index";
 import { rules } from "maishu-dilu";
 import { Resource } from "entities";
 import { Buttons } from "data-component/index";
-import { constants } from "assert/common";
 import { errors } from "assert/errors";
 import * as ui from "maishu-ui-toolkit";
 
@@ -77,19 +76,19 @@ function showDialog(dataItem: Resource) {
 export default function (args: ControlArguments<Resource>) {
     let control: React.ReactElement;
     switch (args.resource.data.code) {
-        case constants.buttons.add:
+        case Buttons.codes.add:
             control = <button key={Math.random()} className="btn btn-primary pull-right"
                 onClick={() => showDialog(args.dataItem)} >
                 <i className="icon-plus" />
                 <span>添加菜单</span>
             </button>
             break;
-        case constants.buttons.edit:
+        case Buttons.codes.edit:
             control = Buttons.createListEditButton(() => {
                 showDialog(args.dataItem);
             })
             break;
-        case constants.buttons.remove:
+        case Buttons.codes.remove:
             control = Buttons.createListDeleteButton(() => {
                 ui.confirm({
                     title: "提示", message: `确定删除菜单'${args.dataItem.name}'吗?`,
@@ -99,7 +98,7 @@ export default function (args: ControlArguments<Resource>) {
                 })
             })
             break;
-        case constants.buttons.view:
+        case Buttons.codes.view:
             control = Buttons.createListViewButton(() => {
                 menuItemDialog.show(args.dataItem);
             })
@@ -112,7 +111,7 @@ export default function (args: ControlArguments<Resource>) {
             </button>
             break;
         default:
-            throw errors.unknonwResourceName(args.resource.name);
+            throw errors.unknonwResourceName(args.resource.data.code);
     }
 
     return control;

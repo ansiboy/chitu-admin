@@ -56,7 +56,7 @@ export function toDataSource<T>(source: Promise<T[]>): DataSource<T> {
 export interface ControlArguments<T> {
     resource: Resource;
     dataItem: T;
-    listPage: React.Component
+    page: React.Component
 }
 
 export function loadItemModule<T>(path: string): Promise<(args: ControlArguments<T>) => React.ReactElement> {

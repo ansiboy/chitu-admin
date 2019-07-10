@@ -1,7 +1,6 @@
 import React = require("react");
 import { ControlArguments, Buttons } from "data-component/index";
 import { Role } from "entities";
-import { constants } from "assert/common";
 import { errors } from "assert/errors";
 
 // let itemDialog = createItemDialog(dataSources.token, "令牌", <>
@@ -20,8 +19,8 @@ import { errors } from "assert/errors";
 export default function (args: ControlArguments<Role>) {
     let control: React.ReactElement;
     switch (args.resource.data.code) {
-        case constants.buttons.add:
-            control = Buttons.createPageAddButton(() => {
+        case Buttons.codes.add:
+            control = Buttons.createPageAddButton(async () => {
                 // itemDialog.show(args.dataItem);
             })
             break;

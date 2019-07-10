@@ -2,6 +2,7 @@ import { Service, LoginInfo } from "./service";
 import { errors } from "../errors";
 import { User, Resource, Role, Token, Path } from "entities";
 import { events } from "../events";
+import { string } from "prop-types";
 
 export class PermissionService extends Service {
 
@@ -67,7 +68,8 @@ export class PermissionService extends Service {
              */
             ids: async (roleId: string) => {
                 if (!roleId) throw errors.argumentNull('roleId')
-                let url = this.url('role/resourceIds')
+
+                let url = this.url('role/resource/ids')
                 let r = await this.getByJson<string[]>(url, { roleId })
                 return r || []
             },
@@ -81,16 +83,16 @@ export class PermissionService extends Service {
                 if (!roleId) throw errors.argumentNull('roleId')
                 if (!resourceIds) throw errors.argumentNull('resourceIds')
 
-                let url = this.url('role/setResources')
+                let url = this.url('role/resource/set')
                 return this.postByJson(url, { roleId, resourceIds })
             }
         }
     };
 
     resource = {
-        list: (parentId?: string) => {
+        list: () => {
             let url = this.url("resource/list");
-            return this.get<Resource[]>(url, { parentId });
+            return this.get<Resource[]>(url);
         },
         item: (id: string) => {
             let url = this.url("resource/item");

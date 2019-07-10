@@ -4,14 +4,15 @@ import { dataSources } from "assert/dataSources";
 import { boundField } from "maishu-wuzhui-helper";
 import { showDialog, hideDialog } from "maishu-ui-toolkit";
 import { Token } from "entities";
+import { PageProps } from "maishu-chitu-react";
 
-export default class TokenListPage extends React.Component<ListPageProps> {
+export default class TokenListPage extends React.Component<PageProps> {
 
     dialogElement: HTMLElement;
 
     render() {
         return <>
-            <ListPage<Token> {...this.props} dataSource={dataSources.token}
+            <ListPage<Token> parent={this} dataSource={dataSources.token}
                 columns={[
                     boundField<Token>({ dataField: "id", headerText: "编号", headerStyle: { width: "300px" } }),
                     boundField<Token>({ dataField: "content", headerText: "内容" }),

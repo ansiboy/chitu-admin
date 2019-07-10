@@ -3,25 +3,18 @@ import { DataSource, GridView, DataControlField } from "maishu-wuzhui";
 import { createGridView } from "maishu-wuzhui-helper";
 import { constants, loadItemModule } from "./common";
 import { PermissionService } from 'assert/services/index'
-import { Application, Page } from "maishu-chitu-react";
+import { Application, Page, PageProps } from "maishu-chitu-react";
+import { MenuItem } from "assert/masters/main-master-page";
+import { translateToMenuItems } from "assert/dataSources";
 
 interface State {
     buttons?: JSX.Element[],
     title?: string,
 }
 
-export interface ListPageProps {
-    app: Application;
-    data: {
-        resourceId: string,
-    };
-    createService: Page["createService"];
-
-    source: Page,
-}
-
-interface Props<T> extends ListPageProps {
+export interface ListPageProps<T> {
     right?: JSX.Element,
+    parent: React.Component<PageProps>,
     dataSource: DataSource<T>,
     transform?: (items: T[]) => T[];
     columns: (DataControlField<T> | ((listPage: ListPage<T>) => DataControlField<T>))[],
@@ -31,12 +24,15 @@ interface Props<T> extends ListPageProps {
 
 export let ListPageContext = React.createContext<{ dataSource: DataSource<any> }>(null)
 
-export class ListPage<T> extends React.Component<Props<T>, State> {
+export class ListPage<T> extends React.Component<ListPageProps<T>, State> {
     dataSource: DataSource<T>
     gridView: GridView<T>
     private table: HTMLTableElement;
     private tableIsFixed = false;
     private columns: DataControlField<T>[];
+    private ps: PermissionService;
+    private allMenuItems: MenuItem[];
+    private backButton: HTMLElement;
 
     constructor(props: ListPage<T>['props']) {
         super(props)
@@ -46,23 +42,34 @@ export class ListPage<T> extends React.Component<Props<T>, State> {
         this.tableIsFixed = props.pageSize === null;
         this.columns = this.props.columns.map(col => typeof col == "function" ? col(this) : col);
 
-        if (props.data.resourceId) {
-            let ps = this.props.createService<PermissionService>(PermissionService)
-            ps.resource.list()
-                .then(r => {
-                    let resource = r.filter(o => o.id == props.data.resourceId)[0];
-                    if (resource) {
-                        this.setState({ title: resource.name });
-                    }
-                })
+        let parent = this.props.parent;
+        this.ps = parent.props.createService<PermissionService>(PermissionService)
+
+        if (parent.props.data.resourceId) {
+            // ps.resource.list().then(r => {
+            //     let resource = r.filter(o => o.id == parent.props.data.resourceId)[0];
+            //     if (resource) {
+            //         this.setState({ title: resource.name });
+            //     }
+            // })
         }
     }
 
+    async getAllMenuItems(): Promise<MenuItem[]> {
+        if (this.allMenuItems) {
+            return this.allMenuItems;
+        }
+        let resources = await this.ps.resource.list();
+        this.allMenuItems = translateToMenuItems(resources);
+        return this.allMenuItems;
+    }
+
     async loadTopControls(): Promise<React.ReactElement[]> {
-        let resource_id = this.props.data.resourceId;
+        let parent = this.props.parent;
+        let resource_id = parent.props.data.resourceId;
         if (!resource_id) return null
 
-        let ps = this.props.createService<PermissionService>(PermissionService)
+        let ps = parent.props.createService<PermissionService>(PermissionService)
         let resources = await ps.resource.list();
         let menuItem = resources.filter(o => o.id == resource_id)[0];
         console.assert(menuItem != null)
@@ -70,12 +77,25 @@ export class ListPage<T> extends React.Component<Props<T>, State> {
         let controlResources = menuItemChildren.filter(o => o.data != null && o.data.position == "top");
         let controlFuns = await Promise.all(controlResources.map(o => loadItemModule(o.page_path)));
 
-        let controls = controlFuns.map((func, i) => func({ resource: controlResources[i], dataItem: {}, listPage: this }));
+        let controls = controlFuns.map((func, i) => func({ resource: controlResources[i], dataItem: {}, page: parent }));
         return controls;
     }
 
     async componentDidMount() {
 
+        let parent = this.props.parent;
+        if (parent.props.data.resourceId) {
+            let menuItems = await this.getAllMenuItems();
+            let resource = menuItems.filter(o => o.id == parent.props.data.resourceId)[0];
+            if (resource != null) {
+                this.setState({ title: resource.name });
+                let parentDeep = this.parentDeep(resource);
+                if (parentDeep > 1) {
+                    this.backButton.style.removeProperty("display");
+                }
+            }
+
+        }
 
         this.gridView = createGridView({
             element: this.table,
@@ -96,6 +116,17 @@ export class ListPage<T> extends React.Component<Props<T>, State> {
         let buttons = await this.loadTopControls();
         buttons.reverse();
         this.setState({ buttons })
+    }
+
+    parentDeep(menuItem: MenuItem) {
+        let deep = 0;
+        let parent = menuItem.parent;
+        while (parent) {
+            deep = deep + 1;
+            parent = parent.parent;
+        }
+
+        return deep;
     }
 
     renderFixedSizeTable(columns: DataControlField<any>[]) {
@@ -137,6 +168,12 @@ export class ListPage<T> extends React.Component<Props<T>, State> {
             <div className="tabbable">
                 <ul className="nav nav-tabs" style={{ minHeight: 34 }}>
                     {right}
+                    <li className="pull-right" style={{ display: "none" }} ref={e => this.backButton = this.backButton || e}>
+                        <button className="btn btn-primary pull-right" onClick={() => this.props.parent.props.app.back()}>
+                            <i className="icon-reply" />
+                            <span>返回</span>
+                        </button>
+                    </li>
                     {buttons.map((o, i) =>
                         <li key={i} className="pull-right">
                             {o}

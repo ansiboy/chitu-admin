@@ -8,6 +8,7 @@ import { createGridView, boundField, customField } from "maishu-wuzhui-helper";
 import { GridViewDataCell } from "maishu-wuzhui";
 import ReactDOM = require("react-dom");
 import { ValueStore } from "maishu-chitu";
+import { PageProps } from "maishu-chitu-react";
 
 let sortFieldWidth = 80
 let nameFieldWidth = 280
@@ -23,7 +24,7 @@ interface State {
 
 
 
-export default class PathListPage extends React.Component<ListPageProps, State>{
+export default class PathListPage extends React.Component<PageProps, State>{
     private dataSource: MyDataSource<Path>;
     private ps: PermissionService;
     gridView: import("d:/projects/chitu-admin/node_modules/maishu-wuzhui/out/GridView").GridView<Resource>;
@@ -91,7 +92,7 @@ export default class PathListPage extends React.Component<ListPageProps, State>{
                         // })
                     }
                 }),
-                operationField<MenuItem>(this.props.data.resourceId,  `${operationFieldWidth - 18}px`)(listPage)
+                operationField<MenuItem>(this, `${operationFieldWidth - 18}px`)
                 // operationField<MenuItem>(this.props.data.resourceId, `${operationFieldWidth - 18}px`)
             ],
             sort: (dataItems) => {

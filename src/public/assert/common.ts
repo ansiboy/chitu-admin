@@ -1,12 +1,12 @@
 
-export let constants = {
-    buttons: {
-        add: "add",
-        edit: "edit",
-        remove: "remove",
-        view: "view",
-    }
-}
+// export let constants = {
+//     buttons: {
+//         add: "add",
+//         edit: "edit",
+//         remove: "remove",
+//         view: "view",
+//     }
+// }
 
 export let localText = function (text: string) {
 

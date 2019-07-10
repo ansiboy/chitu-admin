@@ -134,7 +134,7 @@ export class MainMasterPage extends MasterPage<State> {
     logout() {
         let s = this.app.createService(PermissionService)
         s.logout()
-        location.href = `#login`
+        location.href = `?${Date.now()}#login`
     }
 
     loadMenuItmes() {

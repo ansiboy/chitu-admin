@@ -1,7 +1,7 @@
 import React = require("react");
 import { setForm, MOBILE, VERIFY_CODE, CONFIRM_PASSWORD, REGISTER, SEND_VERIFY_CODE, PASSWORD } from "assert/forms/register";
 import { FormValidator } from "maishu-dilu";
-import { config } from "assert/config";
+import { config } from "../config";
 import { Application, PageProps } from "maishu-chitu-react";
 
 type State = { buttonText: string, buttonEnable: boolean }

@@ -2,7 +2,6 @@ import { Service, LoginInfo } from "./service";
 import { errors } from "../errors";
 import { User, Resource, Role, Token, Path } from "entities";
 import { events } from "../events";
-import { string } from "prop-types";
 
 export class PermissionService extends Service {
 

@@ -5,7 +5,7 @@ export let config = {
     logoutRedirectURL: "",
     registerRedirectURL: "",
     login: {
-        title: "好易微商城",
+        title: "好易权限管理系统",
         showForgetPassword: true,
         showRegister: true,
     },

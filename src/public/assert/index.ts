@@ -41,9 +41,6 @@ requirejs(['assert/application', "/clientjs_init.js", "assert/startup"], functio
         initModule.default(appModule.app)
     }
 
-    // console.assert(appModule != null && appModule.app != null);
-    // appModule.app.run();
-
     console.assert(startupModule!=null && typeof startupModule["default"] == "function");
     startupModule["default"]();
 

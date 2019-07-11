@@ -59,7 +59,7 @@ export interface ControlArguments<T> {
     context: object
 }
 
-export function loadItemModule<T>(path: string): Promise<(args: ControlArguments<T>) => HTMLElement> {
+export function loadControlModule<T>(path: string): Promise<(args: ControlArguments<T>) => HTMLElement> {
     if (path.endsWith(".js"))
         path = path.substr(0, path.length - 3)
 

@@ -1,6 +1,6 @@
 export let config = {
     firstPanelWidth: "130px",
-    secondPanelWidth: "",
+    secondPanelWidth: "140px",
     loginRedirectURL: "",
     logoutRedirectURL: "",
     registerRedirectURL: "",

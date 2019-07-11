@@ -4,7 +4,6 @@ import React = require("react");
 import { errors } from "assert/errors";
 import { dataSources } from "assert/dataSources";
 import { rules } from "maishu-dilu";
-import { element } from "prop-types";
 import ReactDOM = require("react-dom");
 
 let itemDialog = createItemDialog(dataSources.user, "用户", <>
@@ -63,6 +62,16 @@ export default function (args: ControlArguments<User>) {
         case Buttons.codes.add:
             control = Buttons.createPageAddButton(async () => {
                 itemDialog.show({} as any);
+            })
+            break;
+        case Buttons.codes.edit:
+            control = Buttons.createListEditButton(async () => {
+                itemDialog.show(args.dataItem);
+            })
+            break;
+        case Buttons.codes.remove:
+            control = Buttons.createListDeleteButton(async () => {
+                itemDialog.show(args.dataItem);
             })
             break;
         default:

@@ -20,7 +20,7 @@ export class Application extends chitu_react.Application {
             }
         })
 
-        this.error.add((sender, error, page) => errorHandle(sender, error, page as chitu_react.Page))
+        this.error.add((sender, error, page) => errorHandle(error, sender, page as chitu_react.Page))
     }
 
     createPageElement(pageName: string, containerName: string) {

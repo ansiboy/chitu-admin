@@ -90,7 +90,7 @@ async function sendVerifyCode(mobile: string, button: HTMLButtonElement, app: Ap
     if (!button) throw errors.argumentNull('button')
 
     let userService = app.createService(PermissionService)
-    let data = await userService.sendRegisterVerifyCode(mobile)
+    let data = await userService.sms.sendRegisterVerifyCode(mobile)
     button.setAttribute("disabled", "")
 
     let buttonText = button.innerText
@@ -113,5 +113,5 @@ async function sendVerifyCode(mobile: string, button: HTMLButtonElement, app: Ap
 
 function register(mobile: string, password: string, smsId: string, verifyCode: string, data: any, app: Application) {
     let userService = app.createService(PermissionService)
-    return userService.register(mobile, password, smsId, verifyCode, data)
+    return userService.user.register(mobile, password, smsId, verifyCode, data)
 }

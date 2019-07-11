@@ -11,10 +11,6 @@ export class Service extends ChiTuSerivce {
     static loginInfo = new ValueStore<LoginInfo | null>(Service.getStorageLoginInfo())
     static applicationId: string | (() => string)
 
-    constructor() {
-        super();
-    }
-
     static getStorageLoginInfo(): LoginInfo | null {
         let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName)
         if (!loginInfoSerialString)

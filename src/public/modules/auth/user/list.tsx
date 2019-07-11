@@ -1,11 +1,12 @@
 import React = require("react");
-import { ListPage, ListPageProps, dateTimeField, sortNumberField, customDataField } from "data-component/index";
+import { ListPage, ListPageProps, dateTimeField, sortNumberField, customDataField, operationField } from "data-component/index";
 import { boundField } from "maishu-wuzhui-helper";
 import { DataSourceSelectArguments } from "maishu-wuzhui";
 import * as ui from 'maishu-ui-toolkit'
 import { dataSources } from "assert/dataSources";
 import { User } from "entities";
 import { PageProps } from "assert/components/index";
+import { PermissionService } from "assert/services/index";
 
 interface State {
     person?: any,
@@ -15,10 +16,12 @@ export default class UserListPage extends React.Component<PageProps, State> {
     dialogElement: HTMLElement;
     listPage: ListPage<User>;
     searchTextInput: HTMLInputElement;
+    ps: PermissionService;
 
     constructor(props) {
         super(props)
-        this.state = { activeIndex: 0 }
+        this.state = { activeIndex: 0 };
+        this.ps = this.props.createService(PermissionService);
     }
 
     async active(activeIndex: number) {
@@ -66,6 +69,7 @@ export default class UserListPage extends React.Component<PageProps, State> {
                     }),
                     dateTimeField({ dataField: 'lastest_login', headerText: '最后登录时间' }),
                     dateTimeField({ dataField: 'create_date_time', headerText: '创建时间', }),
+                    operationField(this.props.data.resourceId, this.ps, this, '160px')
                 ]} />
 
         </>

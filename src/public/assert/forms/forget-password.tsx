@@ -59,7 +59,7 @@ export function setForm(formElement: HTMLElement, app: Application) {
         let verifyCode = verifyCodeInput.value
         // await register(mobile, password, smsId, verifyCode, data)
         let userService = app.createService(UserService)
-        await userService.resetPassword(mobile, password, smsId, verifyCode)
+        await userService.user.resetPassword(mobile, password, smsId, verifyCode)
         alert({ title: '提示', message: '重置密码成功' })
     })
 
@@ -76,7 +76,7 @@ async function sendVerifyCode(mobile: string, button: HTMLButtonElement, app: Ap
     if (!button) throw errors.argumentNull('button')
 
     let userService = app.createService(UserService)
-    let data = await userService.sendResetVerifyCode(mobile)
+    let data = await userService.sms.sendResetVerifyCode(mobile)
     button.setAttribute("disabled", "")
 
     let buttonText = button.innerText

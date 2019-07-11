@@ -1,5 +1,5 @@
 import { PermissionService } from 'assert/services/index'
-import { loadItemModule as loadItemModule } from "../common";
+import { loadControlModule as loadControlModule } from "../common";
 import ReactDOM = require("react-dom");
 import React = require("react");
 import { customField } from "maishu-wuzhui-helper";
@@ -55,7 +55,7 @@ export async function renderOperationButtons<T>
     let children = menuItem.children || [];
     children.forEach(o => o.data = o.data || {} as any);
     children = children.filter(o => o.data.position == "in-list");
-    let funcs = await Promise.all(children.map(o => loadItemModule(o.page_path)))
+    let funcs = await Promise.all(children.map(o => loadControlModule(o.page_path)))
     let controlElements = children.map((o, i) => funcs[i]({ resource: o, dataItem, context: pageView }));
     controlElements.forEach(child => {
         element.appendChild(child)

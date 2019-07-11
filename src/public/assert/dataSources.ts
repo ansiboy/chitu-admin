@@ -1,10 +1,11 @@
 import { DataSource, DataSourceSelectArguments, DataSourceSelectResult, DataSourceArguments } from "maishu-wuzhui";
 import { PermissionService } from "./services/index";
-import { app } from "./application";
 import { MenuItem } from "./masters/main-master-page";
 import { User, Role, Path, Resource } from "entities";
+import { ValueStore } from "maishu-chitu";
+import errorHandle from "../error-handle";
 
-let permissionService: PermissionService = app.createService<PermissionService>(PermissionService);
+let permissionService: PermissionService = new PermissionService((error) => errorHandle(error));
 
 export class MyDataSource<T> extends DataSource<T> {
     getItem: (id: string) => Promise<T>;
@@ -115,6 +116,22 @@ export function createUserDataSource() {
     return userDataSource;
 }
 
+// let menuItemsStorage = new ValueStore<MenuItem[]>();
+// export function getMenuItems(): Promise<MenuItem[]> {
+//     return new Promise((resolve, reject) => {
+//         if (menuItemsStorage.value)
+//             resolve(menuItemsStorage.value);
+
+//         menuItemsStorage.add((value) => {
+//             resolve(value);
+//         })
+//     })
+// }
+
+// permissionService.resource.list().then(items => {
+//     menuItemsStorage.value = translateToMenuItems(items);
+// })
+
 function createTokenDataSource() {
     let tokenDataSource = new MyDataSource<any>({
         primaryKeys: ["id"],
@@ -160,7 +177,7 @@ function createResourceDataSource() {
             let menuItem = item as MenuItem;
             delete menuItem.children;
             delete menuItem.parent;
-            
+
             let r = await permissionService.resource.update(item);
             return r;
         },

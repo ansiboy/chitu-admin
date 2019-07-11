@@ -133,7 +133,7 @@ export class MainMasterPage extends MasterPage<State> {
 
     logout() {
         let s = this.app.createService(PermissionService)
-        s.logout()
+        s.user.logout()
         location.href = `?${Date.now()}#login`
     }
 
@@ -227,6 +227,7 @@ export class MainMasterPage extends MasterPage<State> {
                             <li key={i} className={o == secondLevelNode ? "list-group-item active" : "list-group-item"}
                                 style={{ cursor: 'pointer', display: o.type != "menu" ? "none" : '' }}
                                 onClick={() => this.showPageByNode(o)}>
+                                <i className={o.icon}></i>
                                 <span>{o.name}</span>
                             </li>
                         )}

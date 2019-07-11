@@ -1,11 +1,12 @@
 import { Application, app } from "./application";
 import ReactDOM = require("react-dom");
 import { SimpleMasterPage } from "./masters/simple-master-page";
-import { MainMasterPage } from "./masters/main-master-page";
+import { MainMasterPage, MenuItem } from "./masters/main-master-page";
 import React = require("react");
 import { MasterPage } from "./masters/master-page";
 import { PermissionService } from "./services/index";
 import { config } from '../config';
+import { ValueStore } from "maishu-chitu";
 
 PermissionService.baseUrl = config.permissionServiceUrl;
 
@@ -30,6 +31,7 @@ export default function startup() {
 
     app.masterPages = masterPages;
     app.run();
+
 }
 
 /** 加载样式文件 */
@@ -55,3 +57,5 @@ function loadStyle() {
         style.innerText = result.css
     })
 }
+
+

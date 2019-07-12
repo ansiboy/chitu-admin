@@ -3,7 +3,7 @@ import { DataSource, DataControlField } from "maishu-wuzhui";
 import { PermissionService } from 'assert/services/index'
 import { translateToMenuItems } from "assert/dataSources";
 import { ListView } from "../controls/list-view";
-import { PageProps } from "assert/components/index";
+import { PageProps } from "assert/index";
 import { constants } from "./constants";
 
 interface State {

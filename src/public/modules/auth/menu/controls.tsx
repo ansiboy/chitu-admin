@@ -9,7 +9,7 @@ import { Buttons } from "assert/index";
 import { errors } from "assert/errors";
 import * as ui from "maishu-ui-toolkit";
 import ReactDOM = require("react-dom");
-import { createItemDialog } from "assert/components/index";
+import { createItemDialog } from "assert/index";
 
 let menuItemDialog = createItemDialog(dataSources.resource, "菜单",
     <>

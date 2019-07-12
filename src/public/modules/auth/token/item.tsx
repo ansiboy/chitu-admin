@@ -1,5 +1,5 @@
 import React = require("react");
-import { ItemPageProps, ItemPage } from "assert/components/index";
+import { ItemPageProps, ItemPage } from "assert/index";
 import { Token } from "entities";
 
 export default class TokenItemPage extends React.Component<ItemPageProps<Token>> {

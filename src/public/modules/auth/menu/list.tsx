@@ -1,13 +1,12 @@
 import React = require("react");
 import { boundField, customField } from 'maishu-wuzhui-helper'
 import { operationField, dateTimeField } from "assert/index";
-import { ListPage } from "assert/components/index";
 import { GridViewDataCell, GridView } from "maishu-wuzhui";
 import { PermissionService } from "assert/services/index";
 import { dataSources, translateToMenuItems } from "assert/dataSources";
 import { Resource } from "entities";
 import { MenuItem } from "assert/masters/main-master-page";
-import { PageProps } from "assert/components/index";
+import { PageProps, ListPage } from "assert/index";
 
 interface State {
 }

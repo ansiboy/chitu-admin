@@ -1,12 +1,12 @@
 import React = require("react");
 import { dateTimeField, sortNumberField, customDataField, operationField, InputField, RadioField } from "assert/index";
-import { createItemDialog, ListPage } from "assert/components/index";
+import { createItemDialog, ListPage } from "assert/index";
 import { boundField } from "maishu-wuzhui-helper";
 import { DataSourceSelectArguments } from "maishu-wuzhui";
 import * as ui from 'maishu-ui-toolkit'
 import { dataSources } from "assert/dataSources";
 import { User, Role } from "entities";
-import { PageProps } from "assert/components/index";
+import { PageProps } from "assert/index";
 import { PermissionService } from "assert/services/index";
 import { rules } from "maishu-dilu";
 

@@ -1,5 +1,5 @@
 import React = require("react");
-import { PageProps } from "assert/components/index";
+import { PageProps } from "assert/index";
 import { PermissionService } from "assert/services/index";
 
 const NEW_MOBILE = "new_mobile";

@@ -5,7 +5,7 @@ import { dataSources } from "assert/dataSources";
 import { InputField } from "assert/index";
 import { rules } from "maishu-dilu";
 import { Resource } from "entities";
-import { createItemDialog } from "assert/components/index";
+import { createItemDialog } from "assert/index";
 
 let itemDialog: ReturnType<typeof createItemDialog>;
 export default function (args: ControlArguments<Resource>) {

@@ -8,7 +8,7 @@ import { createGridView, customField } from "maishu-wuzhui-helper";
 import { GridViewDataCell } from "maishu-wuzhui";
 import ReactDOM = require("react-dom");
 import { ValueStore } from "maishu-chitu";
-import { PageProps } from "assert/components/index";
+import { PageProps } from "assert/index";
 
 let nameFieldWidth = 280
 let operationFieldWidth = 200

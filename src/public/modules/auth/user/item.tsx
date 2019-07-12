@@ -3,7 +3,7 @@ import { InputField, createItemDialog, RadioField } from "data-component/index";
 import { rules } from "maishu-dilu";
 import { dataSources } from "assert/dataSources";
 import { User, Role } from "entities";
-import { ControlArguments } from "controls/index";
+import { ControlArguments } from "assert/controls/index";
 
 let itemDialog: ReturnType<typeof createItemDialog>;
 export default function (args: ControlArguments<User>) {

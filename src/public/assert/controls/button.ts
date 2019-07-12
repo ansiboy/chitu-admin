@@ -24,16 +24,19 @@ export default function (args: ControlArguments<any>): HTMLButtonElement {
     button.innerHTML = html;
 
     buttonOnClick(button, async () => {
-        let execute_path = buttonInfo.execute_path;
-        if (!execute_path)
+        let executePath = buttonInfo.execute_path;
+        if (!executePath)
             throw errors.buttonExecutePahtIsEmpty(args.resource);
 
-        if (execute_path.startsWith("func:")) {
-            let methodName = execute_path.substring("func:".length);
+        if (executePath.startsWith("func:")) {
+            let methodName = executePath.substring("func:".length);
             if (!methodName)
-                throw errors.executePathIncorrect(execute_path);
+                throw errors.executePathIncorrect(executePath);
 
             console.assert(args.context != null);
+            if (args.context == null)
+                throw errors.contextIsNull();
+
             if (!args.context[methodName])
                 throw errors.contextMemberIsNotExist(methodName);
 
@@ -42,17 +45,20 @@ export default function (args: ControlArguments<any>): HTMLButtonElement {
 
             await args.context[methodName](args.dataItem);
         }
-        else if (execute_path.startsWith("#")) {
+        else if (executePath.startsWith("#")) {
             let data = { resourceId: args.resource.id };
             if (args.dataItem.id)
                 data["dataItemId"] = args.dataItem.id;
 
-            app.redirect(execute_path.substring(1), data);
+            app.redirect(executePath.substring(1), data);
+        }
+        else {
+            throw errors.executePathIncorrect(executePath);
         }
 
     }, { toast: buttonInfo.toast })
 
     return button;
 
-   
+
 }

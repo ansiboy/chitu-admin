@@ -2,6 +2,7 @@ import { Service, LoginInfo } from "./service";
 import { errors } from "../errors";
 import { User, Resource, Role, Token, Path } from "entities";
 import { events } from "../events";
+import md5 = require("js-md5");
 
 export class PermissionService extends Service {
 
@@ -84,28 +85,85 @@ export class PermissionService extends Service {
         }
     };
 
-    resource = {
-        list: () => {
-            let url = this.url("resource/list");
-            return this.get<Resource[]>(url);
-        },
-        item: (id: string) => {
-            let url = this.url("resource/item");
-            return this.getByJson<Resource>(url, { id })
-        },
-        remove: (id: string) => {
-            let url = this.url("resource/remove");
-            return this.post(url, { id });
-        },
-        add: (item: Partial<Resource>) => {
-            let url = this.url("resource/add");
-            return this.postByJson<{ id: string }>(url, { item })
-        },
-        update: (item: Partial<Resource>) => {
-            let url = this.url("resource/update");
-            return this.postByJson<{ id: string }>(url, { item })
+    resource = (() => {
+
+        let allResources: Resource[] = null;
+        let listExecuting = false;
+        let listPromiseStack: {
+            resolve: (value: Resource[]) => void,
+            reject: (error: any) => void
+        }[] = [];
+
+        function deepClone<T>(obj: T) {
+            if (obj == null)
+                return null;
+
+            let value = JSON.parse(JSON.stringify(obj));
+            value = Service.travelJSON(value);
+            return value;
         }
-    };
+
+        return {
+            list: async (): Promise<Resource[]> => {
+                if (allResources == null) {
+                    let result = new Promise<Resource[]>((resolve, reject) => {
+                        listPromiseStack.push({ resolve, reject });
+                    })
+
+                    if (listExecuting)
+                        return result;
+
+                    listExecuting = true;
+                    let url = this.url("resource/list");
+                    try {
+                        allResources = await this.get<Resource[]>(url);
+                        listPromiseStack.forEach(o => o.resolve(deepClone(allResources)));
+                    }
+                    catch (err) {
+                        listPromiseStack.forEach(o => o.reject(err));
+                        throw err;
+                    }
+                    finally {
+                        listExecuting = false;
+                    }
+
+                }
+
+                return deepClone(allResources);
+            },
+            item: async (id: string) => {
+                let all = await this.resource.list();
+                let item = all.filter(o => o.id == id)[0];
+                return deepClone(item);
+            },
+            remove: (id: string) => {
+                let url = this.url("resource/remove");
+                return this.post(url, { id }).then(r => {
+                    allResources = allResources.filter(o => o.id != id);
+                    return r;
+                });
+            },
+            add: (item: Partial<Resource>) => {
+                let url = this.url("resource/add");
+                return this.postByJson<{ id: string }>(url, { item }).then(o => {
+                    item = Object.assign(item, o);
+                    allResources.push(item as Resource);
+                    return o;
+                })
+            },
+            update: async (item: Partial<Resource>) => {
+                let url = this.url("resource/update");
+                let r = await this.postByJson<{ id: string }>(url, { item });
+                let source = allResources.filter(o => o.id == item.id)[0];
+                console.assert(source != null);
+                let names = Object.getOwnPropertyNames(source);
+                for (let i = 0; i < names.length; i++) {
+                    source[names[i]] = r[names[i]] || item[names[i]];
+                }
+                return r;
+            }
+        }
+    })();
 
     user = {
         list: async (args?: DataSourceSelectArguments) => {
@@ -118,6 +176,9 @@ export class PermissionService extends Service {
         },
         update: async (item: Partial<User>) => {
             let url = this.url('user/update');
+            if (item.password)
+                item.password = md5(item.password);
+
             let result = await this.postByJson(url, { user: item });
             return result;
         },
@@ -128,8 +189,11 @@ export class PermissionService extends Service {
          */
         add: async (item: Partial<User>, roleIds?: string[]) => {
             let url = this.url('user/add')
-            let result: { id: string }
-            let r = await this.postByJson<typeof result>(url, { item, roleIds })
+
+            console.assert(item.password != null);
+            item.password = md5(item.password);
+
+            let r = await this.postByJson<{ id: string }>(url, { item, roleIds })
             return r
         },
 
@@ -160,6 +224,7 @@ export class PermissionService extends Service {
             if (!username) throw errors.argumentNull('username')
             if (!password) throw errors.argumentNull('password')
 
+            password = md5(password);
             let url = this.url('user/login')
             let r = await this.postByJson<LoginInfo | null>(url, { username, password })
             if (r == null)
@@ -199,6 +264,7 @@ export class PermissionService extends Service {
             if (!smsId) throw errors.argumentNull('smsId')
             if (!verifyCode) throw errors.argumentNull('verifyCode')
 
+            password = md5(password);
             let url = this.url('user/resetPassword')
             return this.postByJson(url, { mobile, password, smsId, verifyCode })
         },

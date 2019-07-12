@@ -1,8 +1,5 @@
-import { Rule } from "maishu-dilu";
 import { parseUrl } from "maishu-chitu";
 import { DataSource } from "maishu-wuzhui";
-import { errors } from "assert/errors";
-import { Resource } from "entities";
 
 export let constants = {
     pageSize: 15,
@@ -26,18 +23,12 @@ export let services = {
     imageService: null
 }
 
-
-// export interface ValidateDataField {
-//     validateRules?: Rule[]
-// }
-
 export interface NameValue {
     name: string,
     value: any,
 }
 
 export function getObjectType(url: string) {
-    // let url = location.hash.substr(1);
     let obj = parseUrl(url)
     let arr = obj.pageName.split('/')
     return arr[0];

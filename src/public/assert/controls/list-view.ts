@@ -23,11 +23,12 @@ export class ListView<T> extends PageView {
             this.showBackButton();
         }
 
+        this.createGridView(args)
     }
 
-    protected render(element) {
-        this.createGridView(element, this.args as ListViewArguments<T>)
-    }
+    // protected render(element) {
+    //     this.createGridView(element, this.args as ListViewArguments<T>)
+    // }
 
     get gridView() {
         return this._gridView;
@@ -44,7 +45,7 @@ export class ListView<T> extends PageView {
         return deep;
     }
 
-    private createGridView<T>(container: HTMLElement, args: ListViewArguments<T>): GridView<T> {
+    private createGridView<T>(args: ListViewArguments<T>): GridView<T> {
         let tableElement = document.createElement("table");
 
         let tableIsFixed = args.pageSize == null;
@@ -98,10 +99,10 @@ export class ListView<T> extends PageView {
                 tableHeader.appendChild(th);
             })
 
-            container.appendChild(element);
+            args.element.appendChild(element);
         }
         else {
-            container.appendChild(tableElement);
+            args.element.appendChild(tableElement);
         }
 
         return _gridView;

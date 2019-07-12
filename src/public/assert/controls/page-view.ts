@@ -6,7 +6,7 @@ export type PageViewArguments = {
     element: HTMLElement,
     menuItems: MenuItem[],
     resourceId: string,
-    render?: (element: HTMLElement) => void,
+    // render?: (element: HTMLElement) => void,
     context?: object,
     showBackButton?: boolean,
 }
@@ -23,7 +23,7 @@ export class PageView {
         console.assert(resource != null);
 
         this.initElement(args, resource);
-        this.createBody(args);
+        // this.createBody(args);
 
         if (args.showBackButton)
             this.showBackButton();
@@ -42,13 +42,13 @@ export class PageView {
         })
     }
 
-    private createBody(args: PageViewArguments) {
-        let body = document.createElement("div");
-        args.element.appendChild(body);
-        this.render(body);
+    // private createBody(args: PageViewArguments) {
+    //     let body = document.createElement("div");
+    //     args.element.appendChild(body);
+    //     this.render(body);
 
-        return body;
-    }
+    //     return body;
+    // }
 
     protected showBackButton() {
         this.backButton.style.removeProperty("display");
@@ -77,10 +77,10 @@ export class PageView {
         this.navBar = args.element.querySelector("ul");
     }
 
-    protected render(element: HTMLElement) {
-        if (this.args.render)
-            this.args.render(element);
-    }
+    // protected render(element: HTMLElement) {
+    //     if (this.args.render)
+    //         this.args.render(element);
+    // }
 
 
 

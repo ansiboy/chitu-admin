@@ -6,19 +6,19 @@ import { DataSource } from "maishu-wuzhui";
 interface DropdownFieldProps<T, S> {
     dataField: keyof T, label: string, name?: string,
     placeholder?: string,
-    // items: () => Promise<NameValue[]>,
     dataSource: DataSource<S>,
     nameField: Extract<keyof S, string>,
     valueField: Extract<keyof S, string>,
     validateRules?: Rule[],
-    onChange?: (value: string, dataItem: T) => void
+    onChange?: (value: string, dataItem: T) => void,
+    itemStyle?: (item: S) => React.CSSProperties
 }
 
-interface DropdownFieldState {
-    items: { name: string, value: string }[]
+interface DropdownFieldState<T> {
+    items: T[]
 }
 
-export class DropdownField<T, S> extends React.Component<DropdownFieldProps<T, S>, DropdownFieldState> {
+export class DropdownField<T, S> extends React.Component<DropdownFieldProps<T, S>, DropdownFieldState<S>> {
     constructor(props: DropdownField<T, S>['props']) {
         super(props)
 
@@ -27,16 +27,17 @@ export class DropdownField<T, S> extends React.Component<DropdownFieldProps<T, S
     componentDidMount() {
         let { nameField, valueField } = this.props;
         this.props.dataSource.select({}).then(r => {
-            let items = r.dataItems.map(o => ({ name: `${o[nameField]}`, value: `${o[valueField]}` }));
-            this.setState({ items })
+            // let items = r.dataItems.map(o => ({ name: `${o[nameField]}`, value: `${o[valueField]}` }));
+            this.setState({ items: r.dataItems })
         });
         this.props.dataSource.inserted.add((sender, item) => {
             let { items } = this.state;
-            items.push({ name: `${item[nameField]}`, value: `${item[valueField]}` });
+            items.push(item);
+            this.setState({ items });
         })
     }
     render() {
-        let { dataField, label, name, placeholder } = this.props;
+        let { dataField, label, name, placeholder, itemStyle, nameField, valueField } = this.props;
         let { items } = this.state;
         return <ItemPageContext.Consumer>
             {args => {
@@ -56,22 +57,12 @@ export class DropdownField<T, S> extends React.Component<DropdownFieldProps<T, S
 
                                     args.updatePageState(dataItem)
                                 }
-
-                                // this.props.items().then(items => {
-                                //     items.forEach(item => {
-                                //         let optionElement = document.createElement('option');
-                                //         optionElement.value = item.value;
-                                //         optionElement.innerHTML = item.name;
-                                //         e.options.add(optionElement);
-                                //         return optionElement;
-                                //     })
-                                // })
-
                             }} >
                             {placeholder ? <option value="">{placeholder}</option> : null}
-                            {items.map((o, i) =>
-                                <option key={i} value={o.value}>{o.name}</option>
-                            )}
+                            {items.map((o, i) => {
+                                let style: React.CSSProperties = itemStyle ? itemStyle(o) : {};
+                                return <option key={i} value={`${o[valueField]}`} style={style}>{o[nameField]}</option>
+                            })}
                         </select>
                     </span>
                 </div>

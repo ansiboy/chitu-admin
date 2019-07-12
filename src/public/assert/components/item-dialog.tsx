@@ -19,7 +19,7 @@ export function createItemDialog<T extends { id: string }>
         private static instance: ItemDialog;
         private dialogElement: HTMLElement;
 
-        validator: FormValidator;
+        private validator: FormValidator;
         private beforeSaves: BeforeSave<T>[];
         private fieldsConatiner: HTMLElement;
 
@@ -41,7 +41,6 @@ export function createItemDialog<T extends { id: string }>
         }
 
         async save(dataItem: T) {
-
             if (beforeSave) {
                 await beforeSave(dataItem);
             }
@@ -58,18 +57,28 @@ export function createItemDialog<T extends { id: string }>
             }
         }
 
-        componentDidMount() {
-            let nodes: React.ReactNode[] = Array.isArray(child.props.children) ? child.props.children : [child.props.children];
-            var validateFields = nodes.filter(o => o != null)
-                .map((o: React.ReactElement<any>) => {
-                    let props = o.props as ValidateDataField & { dataField: string, name: string }
-                    if (props == null || props.validateRules == null)
-                        return null
+        childrenToArray(children: any): React.ReactElement[] {
+            let r = Array.isArray(children) ? children : [children];
+            r = r.filter(o => o);
+            return r;
+        }
 
-                    let f: ValidateField = { name: props.name || props.dataField, rules: props.validateRules || [] }
-                    return f
-                })
-                .filter(o => o != null)
+        componentDidMount() {
+            let nodes: React.ReactElement[] = this.childrenToArray(child.props.children) //Array.isArray(child.props.children) ? child.props.children : [child.props.children];
+            var validateFields: ValidateField[] = []
+
+            let stack: React.ReactElement[] = [...nodes];
+            while (stack.length > 0) {
+                let item = stack.pop();
+
+                let props = item.props as ValidateDataField & { dataField: string, name: string }
+                if (props != null && props.validateRules != null) {
+                    let f: ValidateField = { name: props.name || props.dataField, rules: props.validateRules || [] };
+                    validateFields.push(f);
+                }
+                let children = this.childrenToArray(item.props.children);
+                stack.push(...children);
+            }
 
             this.validator = new FormValidator(this.fieldsConatiner, ...validateFields)
         }
@@ -121,6 +130,7 @@ export function createItemDialog<T extends { id: string }>
                 ItemDialog.instance.dialogElement = dialogElement;
             }
 
+            ItemDialog.instance.validator.clearErrors();
             ItemDialog.instance.setState({ dataItem: dataItem });
             showDialog(ItemDialog.instance.dialogElement);
         }

@@ -17,6 +17,10 @@ export let errors = {
         let msg = `Execute path '${executePath}' is incorrect.`;
         return new Error(msg);
     },
+    contextIsNull() {
+        let msg = `The context object is null.`;
+        return new Error(msg);
+    },
     contextMemberIsNotExist(memberName: string) {
         let msg = `Context member '${memberName}' is not exists.`;
         return new Error(msg);
@@ -36,5 +40,5 @@ export let errors = {
     moduleHasDefaultExportIsNotFunction(path: string) {
         let msg = `Default export of module ${path} is not a function.`
         return new Error(msg);
-    },
+    }
 }

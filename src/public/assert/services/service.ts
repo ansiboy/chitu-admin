@@ -98,7 +98,7 @@ export class Service extends ChiTuSerivce {
             data = d;
         }
 
-        this.travelJSON(data);
+        Service.travelJSON(data);
         return data;
     }
 
@@ -106,7 +106,7 @@ export class Service extends ChiTuSerivce {
      * 遍历 JSON 对象各个字段，将日期字符串转换为 Date 对象
      * @param obj 要转换的 JSON 对象
      */
-    private travelJSON(obj: any) {
+    protected static travelJSON(obj: any) {
 
         if (typeof obj === 'string' && this.isDateString(obj)) {
             return new Date(obj);
@@ -141,7 +141,7 @@ export class Service extends ChiTuSerivce {
         return obj;
     }
 
-    private isDateString(text: string): boolean {
+    private static isDateString(text: string): boolean {
         const datePattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
         const datePattern1 = /\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/;
         return text.match(datePattern) != null || text.match(datePattern1) != null

@@ -14,6 +14,8 @@ requirejs.config({
         "jquery.event.drag": `${lib}/jquery.event.drag-2.2/jquery.event.drag-2.2`,
         "jquery.event.drag.live": `${lib}/jquery.event.drag-2.2/jquery.event.drag.live-2.2`,
 
+        "js-md5": `${node_modules}/js-md5/src/md5`,
+
         pin: `${lib}/jquery.pin/jquery.pin.min`,
 
         "react": `${node_modules}/react/umd/react.development`,
@@ -41,7 +43,7 @@ requirejs(['assert/application', "/clientjs_init.js", "assert/startup"], functio
         initModule.default(appModule.app)
     }
 
-    console.assert(startupModule!=null && typeof startupModule["default"] == "function");
+    console.assert(startupModule != null && typeof startupModule["default"] == "function");
     startupModule["default"]();
 
 })

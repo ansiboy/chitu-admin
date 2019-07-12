@@ -7,3 +7,10 @@ declare module 'fs' {
 // declare module "./content/admin_style_default.less"
 
 declare let requirejs: any;
+
+declare module "js-md5" {
+    let md5: {
+        (text: string): string;
+    };
+    export = md5;
+}

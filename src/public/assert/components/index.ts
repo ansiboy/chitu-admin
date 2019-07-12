@@ -12,3 +12,4 @@ export { RadioListField as RadioField } from "./fields/radio-field";
 export { sortNumberField } from "./fields/sortNumberField";
 export { Buttons } from "./buttons";
 export { PageSpiner, PageSpinerContext } from "./page-spiner";
+export { Page } from "./page-view";

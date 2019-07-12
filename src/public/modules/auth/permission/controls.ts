@@ -1,4 +1,4 @@
-import { ControlArguments, Buttons } from "data-component/index";
+import { ControlArguments, Buttons } from "assert/index";
 import { Resource } from "entities";
 import { errors } from "assert/errors";
 import PermissionPage from "./list";

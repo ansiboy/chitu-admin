@@ -3,10 +3,13 @@ import { hideDialog, showDialog } from "maishu-ui-toolkit";
 import ReactDOM = require("react-dom");
 import { ItemPageContext } from "./item-page";
 import { DataSource } from "maishu-wuzhui";
-import { FormValidator, ValidateField } from "maishu-dilu";
-import { ValidateDataField } from "./common";
+import { FormValidator, ValidateField, Rule } from "maishu-dilu";
 
 type BeforeSave<T> = (dataItem: T) => Promise<any>
+
+export interface ValidateDataField {
+    validateRules?: Rule[]
+}
 
 export function createItemDialog<T extends { id: string }>
     (dataSource: DataSource<T>, name: string, child: React.ReactElement, beforeSave?: BeforeSave<T>): { show: (args: T) => void } {

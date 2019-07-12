@@ -1,5 +1,6 @@
 import React = require("react");
-import { ListPage, dateTimeField, sortNumberField, customDataField, operationField, createItemDialog, InputField, RadioField } from "data-component/index";
+import { dateTimeField, sortNumberField, customDataField, operationField, InputField, RadioField } from "assert/index";
+import { createItemDialog, ListPage } from "assert/components/index";
 import { boundField } from "maishu-wuzhui-helper";
 import { DataSourceSelectArguments } from "maishu-wuzhui";
 import * as ui from 'maishu-ui-toolkit'

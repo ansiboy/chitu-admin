@@ -3,7 +3,7 @@ import { Application } from '../application';
 import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
 import { Resource } from 'entities';
-import { errors } from 'data-component/errors';
+import { errors } from 'assert/errors';
 import { PermissionService, Service } from 'assert/services/index';
 import { translateToMenuItems } from 'assert/dataSources';
 

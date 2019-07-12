@@ -1,10 +1,10 @@
-import { ListPageProps, ListPage, sortNumberField, dateTimeField, operationField, PageSpiner, PageSpinerContext, customDataField } from "data-component/index";
+import { sortNumberField, dateTimeField, PageSpiner, PageSpinerContext, customDataField } from "assert/index";
+import { ListPage, } from "assert/index";
 import React = require("react");
 import { Resource } from "entities";
-import { dataSources, translateToMenuItems } from "assert/dataSources";
-import { boundField, customField } from "maishu-wuzhui-helper";
+import { dataSources, translateToMenuItems } from "assert/index";
+import { boundField } from "maishu-wuzhui-helper";
 import { MenuItem } from "assert/masters/main-master-page";
-import { GridViewDataCell } from "maishu-wuzhui";
 import ReactDOM = require("react-dom");
 import { PermissionService } from "assert/services/index";
 import { PageProps } from "maishu-chitu-react";
@@ -122,7 +122,7 @@ export default class PermissionPage extends React.Component<Props>{
 // import ReactDOM = require("react-dom");
 // import * as ui from 'maishu-ui-toolkit'
 // import { PermissionService } from "assert/services/index";
-// import { ItemPageProps, customDataField } from "data-component/index";
+// import { ItemPageProps, customDataField } from "assert/index";
 // import { AppService } from "assert/service";
 // import { Resource } from "entities";
 

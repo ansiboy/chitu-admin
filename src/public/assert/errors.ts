@@ -17,6 +17,9 @@ export let errors = {
         error.name = errors.fieldNull.name
         return error
     },
+    notImplement() {
+        return new Error('Not implement.')
+    },
     masterPageNameCanntEmpty() {
         let msg = `Name of the master page can be null or empty.`
         let error = new Error(msg)

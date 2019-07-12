@@ -1,6 +1,6 @@
 import React = require("react");
-import { ItemPageContext } from "data-component/item-page";
-import { ValidateDataField } from "data-component/common";
+import { ValidateDataField } from "assert/index";
+import { ItemPageContext } from "../index";
 
 interface InputFieldProps<T> {
     dataField: keyof T, label: string, name?: string,

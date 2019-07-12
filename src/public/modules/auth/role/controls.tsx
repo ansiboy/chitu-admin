@@ -1,7 +1,5 @@
 import React = require("react");
-import { createItemDialog, ControlArguments, Buttons } from "data-component/index";
-import { dataSources } from "assert/dataSources";
-import { InputField } from "data-component/index";
+import { createItemDialog, ControlArguments, Buttons, dataSources, InputField } from "assert/index";
 import { rules } from "maishu-dilu";
 import { Role } from "entities";
 import { errors } from "assert/errors";

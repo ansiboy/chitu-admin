@@ -1,11 +1,11 @@
 import React = require("react");
-import { ListPage, ListPageProps, dateTimeField } from "data-component/index";
+import { dateTimeField } from "assert/index";
+import { ListPage } from "assert/index";
 import { dataSources } from "assert/dataSources";
 import { boundField } from "maishu-wuzhui-helper";
 import { hideDialog } from "maishu-ui-toolkit";
 import { Token } from "entities";
-import { PageProps } from "assert/components/index";
-import { constants } from "data-component/common";
+import { PageProps } from "assert/index";
 
 export default class TokenListPage extends React.Component<PageProps> {
 

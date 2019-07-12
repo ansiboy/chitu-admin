@@ -1,5 +1,6 @@
 import React = require("react");
-import { ListPage, ListPageProps, dateTimeField, operationField } from "data-component/index";
+import { dateTimeField, operationField } from "assert/index";
+import { ListPage, ListPageProps, } from "assert/index";
 import { boundField } from "maishu-wuzhui-helper";
 import { dataSources, translateToMenuItems } from "assert/dataSources";
 import { PermissionService } from "assert/services/index";

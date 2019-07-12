@@ -1,4 +1,4 @@
-import { ControlArguments } from "data-component/index";
+import { ControlArguments } from "assert/index";
 import { errors } from "./errors";
 import { buttonOnClick } from "maishu-ui-toolkit";
 import { app } from "assert/application";

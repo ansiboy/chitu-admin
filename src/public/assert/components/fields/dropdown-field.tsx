@@ -1,6 +1,5 @@
 import React = require("react");
 import { Rule } from "maishu-dilu";
-import { NameValue } from "../common";
 import { ItemPageContext } from "../item-page";
 import { DataSource } from "maishu-wuzhui";
 

@@ -1,4 +1,4 @@
-import { ControlArguments, Buttons } from "data-component/index";
+import { ControlArguments, Buttons } from "assert/index";
 import { dataSources } from "assert/dataSources";
 import * as ui from "maishu-ui-toolkit";
 import { Role } from "entities";

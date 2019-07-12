@@ -1,4 +1,4 @@
-import { operationField, customDataField } from "data-component/index";
+import { operationField, customDataField } from "assert/index";
 import React = require("react");
 import { dataSources, MyDataSource, translateToMenuItems } from "assert/dataSources";
 import { Path, Resource } from "entities";

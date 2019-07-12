@@ -1,10 +1,11 @@
 
 import React = require("react");
-import { createItemDialog, DropdownField, ControlArguments } from "data-component/index";
+import { DropdownField, ControlArguments } from "assert/index";
 import { dataSources } from "assert/dataSources";
-import { InputField } from "data-component/index";
+import { InputField } from "assert/index";
 import { rules } from "maishu-dilu";
 import { Resource } from "entities";
+import { createItemDialog } from "assert/components/index";
 
 let itemDialog: ReturnType<typeof createItemDialog>;
 export default function (args: ControlArguments<Resource>) {
@@ -52,7 +53,7 @@ export default function (args: ControlArguments<Resource>) {
 // import { DataSourceSelectArguments, DataSourceSelectResult } from "maishu-wuzhui";
 // import { PermissionService } from "assert/services/index";
 
-// import { ItemPage, ItemPageContext, ItemPageProps, InputField, DropdownField, RadioField } from "../../data-component/index";
+// import { ItemPage, ItemPageContext, ItemPageProps, InputField, DropdownField, RadioField } from "../../assert/index";
 // import { MenuItem } from "assert/masters/main-master-page";
 // import { Path, Resource } from "entities";
 

@@ -1,5 +1,5 @@
 import React = require("react");
-import { ItemPageProps, ItemPage, InputField } from "data-component/index";
+import { ItemPageProps, ItemPage } from "assert/components/index";
 import { Token } from "entities";
 
 export default class TokenItemPage extends React.Component<ItemPageProps<Token>> {
@@ -8,7 +8,7 @@ export default class TokenItemPage extends React.Component<ItemPageProps<Token>>
             <div className="item">
                 <label>用户名</label>
                 <span>
-             
+
                 </span>
             </div>
         </ItemPage>

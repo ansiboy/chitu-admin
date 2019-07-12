@@ -1,5 +1,5 @@
 import React = require("react");
-import { ControlArguments, Buttons } from "data-component/index";
+import { ControlArguments, Buttons } from "assert/index";
 import { Role } from "entities";
 import { errors } from "assert/errors";
 

@@ -1,4 +1,5 @@
-import { ControlArguments, Buttons, InputField, createItemDialog, RadioField } from "data-component/index";
+import { ControlArguments, Buttons, InputField, RadioField } from "assert/index";
+import { createItemDialog } from "assert/index";
 import { User, Role } from "entities";
 import React = require("react");
 import { errors } from "assert/errors";

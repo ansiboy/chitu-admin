@@ -1,9 +1,21 @@
 import React = require("react");
 import * as ui from 'maishu-ui-toolkit'
 import { dataSources, MyDataSource } from "assert/dataSources";
-import { FormValidator, ValidateField } from 'maishu-dilu'
+import { FormValidator, ValidateField, Rule } from 'maishu-dilu'
 import { Page, Application } from "maishu-chitu-react";
-import { ValidateDataField, getObjectType } from "./common";
+import { parseUrl } from "maishu-chitu";
+
+
+function getObjectType(url: string) {
+    // let url = location.hash.substr(1);
+    let obj = parseUrl(url)
+    let arr = obj.pageName.split('/')
+    return arr[0];
+}
+
+interface ValidateDataField {
+    validateRules?: Rule[]
+}
 
 interface State {
     dataItem: any,

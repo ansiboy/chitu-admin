@@ -27,9 +27,9 @@ export let services = {
 }
 
 
-export interface ValidateDataField {
-    validateRules?: Rule[]
-}
+// export interface ValidateDataField {
+//     validateRules?: Rule[]
+// }
 
 export interface NameValue {
     name: string,

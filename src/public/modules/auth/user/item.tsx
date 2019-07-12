@@ -1,5 +1,6 @@
 import React = require("react");
-import { InputField, createItemDialog, RadioField } from "data-component/index";
+import { InputField, RadioField } from "assert/index";
+import { createItemDialog } from "assert/index";
 import { rules } from "maishu-dilu";
 import { dataSources } from "assert/dataSources";
 import { User, Role } from "entities";

@@ -2,9 +2,9 @@ import React = require("react");
 import { DataSource, DataControlField } from "maishu-wuzhui";
 import { PermissionService } from 'assert/services/index'
 import { translateToMenuItems } from "assert/dataSources";
-import { ListView } from "../assert/controls/list-view";
+import { ListView } from "../controls/list-view";
 import { PageProps } from "assert/components/index";
-import { constants } from "./common";
+import { constants } from "./constants";
 
 interface State {
     buttons?: JSX.Element[],

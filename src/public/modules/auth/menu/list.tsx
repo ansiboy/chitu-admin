@@ -1,6 +1,7 @@
 import React = require("react");
 import { boundField, customField } from 'maishu-wuzhui-helper'
-import { operationField, dateTimeField, ListPageProps, ListPage } from "data-component/index";
+import { operationField, dateTimeField } from "assert/index";
+import { ListPage } from "assert/components/index";
 import { GridViewDataCell, GridView } from "maishu-wuzhui";
 import { PermissionService } from "assert/services/index";
 import { dataSources, translateToMenuItems } from "assert/dataSources";

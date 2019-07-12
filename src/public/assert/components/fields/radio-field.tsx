@@ -1,22 +1,19 @@
 import React = require("react");
-import { errors } from "../errors";
-import { ItemPageContext } from "../item-page";
-import { radioList, checkboxList } from "maishu-wuzhui-helper";
+import { radioList } from "maishu-wuzhui-helper";
 import { DataSource } from "maishu-wuzhui";
-import { ValidateDataField } from "data-component/common";
-import { Role } from "entities";
+import { ItemPageContext, ValidateDataField } from "assert/index";
 
-interface CheckboxListFieldProps<T> {
-    dataField: keyof T, label: string,
+interface RadioFieldProps<T, S> {
+    dataField: Extract<keyof T, string>, label: string,
     dataType: 'string' | 'number',
     defaultValue?: string | number,
-    dataSource: DataSource<T>,
-    nameField: keyof T,
-    valueField: keyof T,
+    dataSource: DataSource<S>,
+    nameField: Extract<keyof S, string>,
+    valueField: Extract<keyof S, string>,
 }
 
-export class CheckboxListField<T> extends React.Component<CheckboxListFieldProps<T> & ValidateDataField, { value?: string }>{
-    constructor(props: CheckboxListField<T>['props']) {
+export class RadioListField<T, S> extends React.Component<RadioFieldProps<T, S> & ValidateDataField, { value?: string }>{
+    constructor(props: RadioListField<T, S>['props']) {
         super(props)
         this.state = {}
     }
@@ -26,15 +23,15 @@ export class CheckboxListField<T> extends React.Component<CheckboxListFieldProps
             {args => {
                 let dataItem = args.dataItem || {}
                 dataItem[dataField] = dataItem[dataField] || this.props.defaultValue
-                return <div className="item">
+                return <div className="input-control">
                     <label>{label}</label>
                     <span>
                         <div ref={e => {
                             if (!e) return;
-                            checkboxList<T>({
+                            radioList<S>({
                                 element: e,
                                 dataSource: dataSource,
-                                dataField: dataField,
+                                dataField: dataField as string,
                                 nameField: nameField,
                                 valueField: valueField,
                                 dataItem: dataItem

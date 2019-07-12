@@ -1,14 +1,15 @@
 import React = require("react");
-import { ControlArguments } from "data-component/index";
-import { createItemDialog, DropdownField } from "data-component/index";
+import { ControlArguments } from "assert/index";
+import { DropdownField } from "assert/index";
 import { dataSources } from "assert/dataSources";
-import { InputField } from "data-component/index";
+import { InputField } from "assert/index";
 import { rules } from "maishu-dilu";
 import { Resource } from "entities";
-import { Buttons } from "data-component/index";
+import { Buttons } from "assert/index";
 import { errors } from "assert/errors";
 import * as ui from "maishu-ui-toolkit";
 import ReactDOM = require("react-dom");
+import { createItemDialog } from "assert/components/index";
 
 let menuItemDialog = createItemDialog(dataSources.resource, "菜单",
     <>

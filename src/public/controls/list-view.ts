@@ -2,8 +2,6 @@ import { DataSource, DataControlField } from "maishu-wuzhui";
 import { MenuItem } from "assert/masters/main-master-page";
 import { createGridView } from "maishu-wuzhui-helper";
 import { GridView } from "maishu-wuzhui"
-import { loadControlModule } from "./common";
-import { Resource } from "entities";
 import { PageView, PageViewArguments } from "./page-view";
 
 type ListViewArguments<T> = {
@@ -50,7 +48,7 @@ export class ListView<T> extends PageView {
         let tableElement = document.createElement("table");
 
         let tableIsFixed = args.pageSize == null;
-        let { dataSource, columns, pageSize } = args;
+        let { dataSource, columns } = args;
         let _gridView = createGridView<T>({
             element: tableElement,
             dataSource: dataSource,
@@ -87,7 +85,7 @@ export class ListView<T> extends PageView {
             div.appendChild(tableElement);
 
             let tableHeader = element.querySelector("tr");
-            columns.map((col, i) => {
+            columns.map((col) => {
                 let th = document.createElement("th");
                 console.assert(col != null, "col is null");
 

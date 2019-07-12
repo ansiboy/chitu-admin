@@ -24,5 +24,17 @@ export let errors = {
     contextMemberIsNotFunction(memberName: string) {
         let msg = `Context member '${memberName}' is not a function.`;
         return new Error(msg);
-    }
+    },
+    moduleIsNull(path) {
+        let msg = `Module ${path} is null.`
+        return new Error(msg);
+    },
+    moduleHasNoneDefaultExports(path: string) {
+        let msg = `Module ${path} has none default exports.`
+        return new Error(msg);
+    },
+    moduleHasDefaultExportIsNotFunction(path: string) {
+        let msg = `Default export of module ${path} is not a function.`
+        return new Error(msg);
+    },
 }

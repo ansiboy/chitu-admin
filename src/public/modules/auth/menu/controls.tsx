@@ -1,5 +1,5 @@
 import React = require("react");
-import { ControlArguments } from "data-component/common";
+import { ControlArguments } from "data-component/index";
 import { createItemDialog, DropdownField } from "data-component/index";
 import { dataSources } from "assert/dataSources";
 import { InputField } from "data-component/index";

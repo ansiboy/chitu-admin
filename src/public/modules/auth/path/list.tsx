@@ -1,22 +1,18 @@
-import { ListPageProps, renderOperationButtons, dateTimeField, operationField, customDataField } from "data-component/index";
+import { operationField, customDataField } from "data-component/index";
 import React = require("react");
 import { dataSources, MyDataSource, translateToMenuItems } from "assert/dataSources";
 import { Path, Resource } from "entities";
 import { PermissionService } from "assert/services/index";
 import { MenuItem } from "assert/masters/main-master-page";
-import { createGridView, boundField, customField } from "maishu-wuzhui-helper";
+import { createGridView, customField } from "maishu-wuzhui-helper";
 import { GridViewDataCell } from "maishu-wuzhui";
 import ReactDOM = require("react-dom");
 import { ValueStore } from "maishu-chitu";
 import { PageProps } from "assert/components/index";
 
-let sortFieldWidth = 80
 let nameFieldWidth = 280
 let operationFieldWidth = 200
-let createDateTimeFieldWidth = 160
-let hideFieldWidth = 90
 
-let typeFieldWidth = 140
 
 interface State {
 
@@ -25,7 +21,6 @@ interface State {
 
 
 export default class PathListPage extends React.Component<PageProps, State>{
-    private dataSource: MyDataSource<Path>;
     private ps: PermissionService;
     gridView: import("d:/projects/chitu-admin/node_modules/maishu-wuzhui/out/GridView").GridView<Resource>;
     dataTable: HTMLTableElement;
@@ -43,7 +38,7 @@ export default class PathListPage extends React.Component<PageProps, State>{
     }
 
     async componentDidMount() {
-        let [resources] = await Promise.all([this.ps.resource.list()]);
+        let [] = await Promise.all([this.ps.resource.list()]);
         this.gridView = createGridView({
             dataSource: dataSources.resource,
             element: this.dataTable,
@@ -138,7 +133,6 @@ export default class PathListPage extends React.Component<PageProps, State>{
 
     render() {
         let { } = this.state;
-        let num = 0;
         return <>
             <table className="table table-striped table-bordered table-hover" style={{ margin: 0 }}>
                 <thead>

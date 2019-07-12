@@ -1,5 +1,5 @@
 import { Path, Role, Resource } from "entities";
-import { ControlArguments } from "data-component/common";
+import { ControlArguments } from "data-component/index";
 import { createItemDialog, InputField, Buttons } from "data-component/index";
 import { dataSources } from "assert/dataSources";
 import React = require("react");

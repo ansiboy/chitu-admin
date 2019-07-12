@@ -1,22 +1,16 @@
-import { PermissionService } from 'assert/services/index'
-import { loadControlModule as loadControlModule } from "../common";
-import ReactDOM = require("react-dom");
-import React = require("react");
+import { PermissionService } from "assert/services/index";
+import { ValueStore } from "maishu-chitu";
+import { MenuItem } from "assert/masters/main-master-page";
+import { translateToMenuItems } from "assert/dataSources";
 import { customField } from "maishu-wuzhui-helper";
-import { GridViewCell, DataControlField } from "maishu-wuzhui";
-import { MenuItem } from 'assert/masters/main-master-page';
-import { ValueStore } from 'maishu-chitu';
-import { translateToMenuItems } from 'assert/dataSources';
-
+import { GridViewCell } from "maishu-wuzhui";
+import { loadControlModule } from "./page-view";
 
 export function operationField<T extends Entity>
     (resourceId: string, permissionService: PermissionService, pageView: object, width?: string) {
 
-    // return function <P extends ListPageProps>(listPage: React.Component<P>): DataControlField<T> {
     width = width || '120px'
-    // let resourceId = listPage.props.data.resourceId;
     let menuItemStorage = new ValueStore<MenuItem>();
-    // let permissionService = listPage.props.createService(PermissionService);
     permissionService.resource.list().then(resources => {
         let menuItems = translateToMenuItems(resources);
         let currentMenuItem = menuItems.filter(o => o.id == resourceId)[0];
@@ -60,10 +54,5 @@ export async function renderOperationButtons<T>
     controlElements.forEach(child => {
         element.appendChild(child)
     })
-    // ReactDOM.render(<React.Fragment>
-    //     {controlElements.map((o, i) =>
-    //         <React.Fragment key={i}>{o}</React.Fragment>
-    //     )}
-    // </React.Fragment>, element)
 }
 

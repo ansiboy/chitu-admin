@@ -1,6 +1,6 @@
 import { Page } from "maishu-chitu-react";
 import { dataSources, translateToMenuItems } from "assert/dataSources";
-import { PageView } from "data-component/page-view";
+import { PageView } from "../../../controls/page-view";
 import ReactDOM = require("react-dom");
 import React = require("react");
 import { FormValidator, rules } from "maishu-dilu";

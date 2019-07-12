@@ -1,11 +1,5 @@
-import { Page } from "maishu-chitu";
-import { PageView } from "data-component/page-view";
-import { dataSources, translateToMenuItems } from "assert/dataSources";
-import ReactDOM = require("react-dom");
 import React = require("react");
-import { FormValidator, rules } from "maishu-dilu";
 import { PageProps } from "assert/components/index";
-import { ItemPage, InputField } from "data-component/index";
 import { PermissionService } from "assert/services/index";
 
 const NEW_MOBILE = "new_mobile";

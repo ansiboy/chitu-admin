@@ -1,4 +1,4 @@
-import { PageView, PageViewArguments } from "./page-view";
+import { PageView, PageViewArguments } from "../controls/page-view";
 import { DataSource } from "maishu-wuzhui";
 
 type ItemViewArguments<T> = {

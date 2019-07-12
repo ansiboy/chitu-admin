@@ -53,39 +53,3 @@ export function toDataSource<T>(source: Promise<T[]>): DataSource<T> {
 }
 
 
-export interface ControlArguments<T> {
-    resource: Resource;
-    dataItem: T;
-    context: object
-}
-
-export function loadControlModule<T>(path: string): Promise<(args: ControlArguments<T>) => HTMLElement> {
-    if (path.endsWith(".js"))
-        path = path.substr(0, path.length - 3)
-
-    return new Promise((resolve, reject) => {
-        requirejs([path],
-            function (mod) {
-                if (mod == null)
-                    throw errors.moduleIsNull(path);
-
-                let defaultExport = mod["default"];
-                if (!defaultExport)
-                    throw errors.moduleHasNoneDefaultExports(path);
-
-                if (typeof defaultExport != 'function')
-                    throw errors.moduleHasDefaultExportIsNotFunction(path);
-
-                // defaultExport(args);
-                resolve(defaultExport);
-            },
-            function (err) {
-                let msg = `Load module ${path} fail.`
-                let error = new Error(msg);
-                error["innerError"] = err;
-                reject(error);
-                console.log(error);
-            }
-        )
-    })
-}

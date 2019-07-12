@@ -1,6 +1,6 @@
 import { Path, Role, Resource } from "entities";
 import { ControlArguments } from "assert/index";
-import { InputField, Buttons } from "assert/index";
+import { TextInput as InputField, Buttons } from "assert/index";
 import { createItemDialog, } from "assert/index";
 import { dataSources } from "assert/dataSources";
 import React = require("react");

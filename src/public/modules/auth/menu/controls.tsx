@@ -2,7 +2,7 @@ import React = require("react");
 import { ControlArguments } from "assert/index";
 import { DropdownField } from "assert/index";
 import { dataSources, translateToMenuItems } from "assert/dataSources";
-import { InputField } from "assert/index";
+import { TextInput as InputField } from "assert/index";
 import { rules } from "maishu-dilu";
 import { Resource } from "entities";
 import { Buttons } from "assert/index";

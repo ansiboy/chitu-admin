@@ -1,5 +1,5 @@
 import React = require("react");
-import { createItemDialog, ControlArguments, Buttons, InputField } from "assert/index";
+import { createItemDialog, ControlArguments, Buttons, TextInput as InputField } from "assert/index";
 import { rules } from "maishu-dilu";
 import { Role } from "entities";
 import { errors } from "assert/errors";

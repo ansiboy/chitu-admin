@@ -12,8 +12,8 @@ interface RadioFieldProps<T, S> {
     valueField: Extract<keyof S, string>,
 }
 
-export class RadioListField<T, S> extends React.Component<RadioFieldProps<T, S> & ValidateDataField, { value?: string }>{
-    constructor(props: RadioListField<T, S>['props']) {
+export class RadioListInput<T, S> extends React.Component<RadioFieldProps<T, S> & ValidateDataField, { value?: string }>{
+    constructor(props: RadioListInput<T, S>['props']) {
         super(props)
         this.state = {}
     }

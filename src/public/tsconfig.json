@@ -36,7 +36,7 @@
                 "../../node_modules/csstype/index.d.ts"
             ],
             "entities": [
-                "../../../shop-auth/out/server/entities"
+                "../../../shop_auth/out/server/entities.d.ts"
             ]
         }
     }

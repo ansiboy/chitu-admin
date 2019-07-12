@@ -1,5 +1,5 @@
 import React = require("react");
-import { dateTimeField, sortNumberField, customDataField, operationField, InputField, RadioField } from "assert/index";
+import { dateTimeField, sortNumberField, customDataField, operationField, TextInput as InputField, RadioListInput  as RadioField} from "assert/index";
 import { createItemDialog, ListPage } from "assert/index";
 import { boundField } from "maishu-wuzhui-helper";
 import { DataSourceSelectArguments } from "maishu-wuzhui";

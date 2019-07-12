@@ -5,7 +5,7 @@ import { Path, Resource } from "entities";
 import { PermissionService } from "assert/services/index";
 import { MenuItem } from "assert/masters/main-master-page";
 import { createGridView, customField } from "maishu-wuzhui-helper";
-import { GridViewDataCell } from "maishu-wuzhui";
+import { GridViewDataCell, GridView } from "maishu-wuzhui";
 import ReactDOM = require("react-dom");
 import { ValueStore } from "maishu-chitu";
 import { PageProps } from "assert/index";
@@ -22,7 +22,7 @@ interface State {
 
 export default class PathListPage extends React.Component<PageProps, State>{
     private ps: PermissionService;
-    gridView: import("d:/projects/chitu-admin/node_modules/maishu-wuzhui/out/GridView").GridView<Resource>;
+    gridView: GridView<Resource>;
     dataTable: HTMLTableElement;
     allPaths: any;
     private pathsStorage = new ValueStore<Path[]>();

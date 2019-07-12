@@ -13,8 +13,8 @@ interface CheckboxListFieldProps<T> {
     valueField: keyof T,
 }
 
-export class CheckboxListField<T> extends React.Component<CheckboxListFieldProps<T> & ValidateDataField, { value?: string }>{
-    constructor(props: CheckboxListField<T>['props']) {
+export class CheckboxListInput<T> extends React.Component<CheckboxListFieldProps<T> & ValidateDataField, { value?: string }>{
+    constructor(props: CheckboxListInput<T>['props']) {
         super(props)
         this.state = {}
     }

@@ -7,7 +7,7 @@ interface InputFieldProps<T> {
     placeholder?: string, type?: 'text' | 'password',
 }
 
-export class TextField<T> extends React.Component<InputFieldProps<T> & ValidateDataField> {
+export class TextInput<T> extends React.Component<InputFieldProps<T> & ValidateDataField> {
     input: HTMLInputElement;
     constructor(props) {
         super(props)

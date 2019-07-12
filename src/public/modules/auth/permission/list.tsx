@@ -2,12 +2,12 @@ import { sortNumberField, dateTimeField, PageSpiner, PageSpinerContext, customDa
 import { ListPage, } from "assert/index";
 import React = require("react");
 import { Resource } from "entities";
-import { dataSources, translateToMenuItems } from "assert/index";
 import { boundField } from "maishu-wuzhui-helper";
 import { MenuItem } from "assert/masters/main-master-page";
 import ReactDOM = require("react-dom");
 import { PermissionService } from "assert/services/index";
 import { PageProps } from "maishu-chitu-react";
+import { translateToMenuItems, dataSources } from "assert/dataSources";
 
 let nameFieldWidth = 280
 let remarkWidth = 240

@@ -1,11 +1,12 @@
 import React = require("react");
-import { createItemDialog, ControlArguments, Buttons, dataSources, InputField } from "assert/index";
+import { createItemDialog, ControlArguments, Buttons, InputField } from "assert/index";
 import { rules } from "maishu-dilu";
 import { Role } from "entities";
 import { errors } from "assert/errors";
 import { app } from "assert/application";
 import * as ui from "maishu-ui-toolkit";
 import { Props as PermissionListPageProps } from "../permission/list"
+import { dataSources } from "assert/dataSources";
 
 let itemDialog = createItemDialog(dataSources.role, "角色", <>
     <div className="form-group clearfix">

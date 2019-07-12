@@ -81,7 +81,7 @@ export default class ResourceListPage extends React.Component<PageProps, State> 
     }
 
     render() {
-        return <ListPage<Resource> {...this.props} parent={this} dataSource={dataSources.resource}
+        return <ListPage<Resource> {...this.props} context={this} dataSource={dataSources.resource}
             pageSize={null}
             transform={(items) => {
                 items = items.filter(o => o.type == "menu" || o.type == "control");

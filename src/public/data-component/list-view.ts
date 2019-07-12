@@ -134,7 +134,7 @@ export class ListView<T> extends PageView {
                     </tr>
                 </thead>
             </table>
-            <div style="height: calc(100% - 160px); width: calc(100% - 290px); position: absolute; overflow-y: scroll; overflow-x: hidden">
+            <div style="height: calc(100% - 160px); width: calc(100% - 300px); position: absolute; overflow-y: scroll; overflow-x: hidden">
             </div>
             `;
 

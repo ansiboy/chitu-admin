@@ -8,7 +8,6 @@ import { errors } from "assert/errors";
 import { app } from "assert/application";
 import * as ui from "maishu-ui-toolkit";
 import { Props as PermissionListPageProps } from "../permission/list"
-import ReactDOM = require("react-dom");
 
 let itemDialog = createItemDialog(dataSources.role, "角色", <>
     <div className="form-group clearfix">
@@ -56,7 +55,7 @@ export default function (args: ControlArguments<Role>) {
             control.className = "btn btn-minier btn-default";
             control.innerHTML = "<span>权限设置</span>";
             control.onclick = () => {
-                let data: PermissionListPageProps["data"] = { resourceId: args.resource.id, roleId: args.dataItem.id };
+                let data: PermissionListPageProps["data"] = { resourceId: args.resource.id, dataItemId: args.dataItem.id };
                 app.redirect("auth/permission/list", data);
             }
 

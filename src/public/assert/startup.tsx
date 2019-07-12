@@ -38,11 +38,11 @@ export default function startup() {
 function loadStyle() {
     let str: string = require('text!../content/admin_style_default.less')
     if (config.firstPanelWidth) {
-        str = str + `\r\n@firstPanelWidth: ${config.firstPanelWidth};`
+        str = str + `\r\n@firstPanelWidth: ${config.firstPanelWidth}px;`
     }
 
     if (config.secondPanelWidth) {
-        str = str + `\r\n@secondPanelWidth: ${config.secondPanelWidth};`
+        str = str + `\r\n@secondPanelWidth: ${config.secondPanelWidth}px;`
     }
 
     let less = (window as any)['less']

@@ -1,12 +1,13 @@
 import React = require("react");
-import { ListPage, ListPageProps, dateTimeField, sortNumberField, customDataField, operationField } from "data-component/index";
+import { ListPage, dateTimeField, sortNumberField, customDataField, operationField, createItemDialog, InputField, RadioField } from "data-component/index";
 import { boundField } from "maishu-wuzhui-helper";
 import { DataSourceSelectArguments } from "maishu-wuzhui";
 import * as ui from 'maishu-ui-toolkit'
 import { dataSources } from "assert/dataSources";
-import { User } from "entities";
+import { User, Role } from "entities";
 import { PageProps } from "assert/components/index";
 import { PermissionService } from "assert/services/index";
+import { rules } from "maishu-dilu";
 
 interface State {
     person?: any,
@@ -41,12 +42,26 @@ export default class UserListPage extends React.Component<PageProps, State> {
         args.filter = `mobile like '%${value}%'`
         await this.listPage.dataSource.select(args)
     }
+    showItem(dataItem: User) {
+        itemDialog.show(dataItem);
+    }
+    deleteItem(dataItem: User) {
+        ui.confirm({
+            title: "请确认",
+            message: `确定删除手机号为'${dataItem.mobile}'的用户吗`,
+            confirm: async () => {
+                return dataSources.user.delete(dataItem);
+            }
+        })
+    }
     render() {
         let { person } = this.state
         return <>
-            <ListPage<User> parent={this}
-                {...this.props}
-                ref={e => this.listPage = e || this.listPage}
+            <ListPage<User>  {...this.props} ref={e => this.listPage = e || this.listPage}
+                context={{
+                    showItem: (dataItem: User) => this.showItem(dataItem),
+                    deleteItem: (dataItem: User) => this.deleteItem(dataItem)
+                }}
                 dataSource={dataSources.user}
                 columns={[
                     sortNumberField(),
@@ -75,3 +90,32 @@ export default class UserListPage extends React.Component<PageProps, State> {
         </>
     }
 }
+
+const itemDialog = createItemDialog(dataSources.user, "用户", <>
+    <div className="form-group clearfix">
+        <InputField<User> dataField="mobile" label="手机号码*" placeholder="请输入手机号码"
+            validateRules={[
+                rules.required("请输入手机号码")
+            ]} />
+    </div>
+    <div className="form-group clearfix">
+        <InputField<User> dataField="user_name" label="用户名" placeholder="请输入用户名" />
+    </div>
+    <div className="form-group clearfix">
+        <InputField<User> dataField="email" label="电子邮箱" placeholder="请输入电子邮箱" />
+    </div>
+    <div className="form-group clearfix">
+        <InputField<User> dataField="password" label="密码*" placeholder="请输入登录密码"
+            validateRules={[
+                rules.required("请输入登录密码")
+            ]} />
+    </div>
+    <div className="form-group clearfix">
+        <RadioField<User, Role> dataSource={dataSources.role} nameField="name" valueField="id"
+            label="角色" dataField="role_id" dataType="string"
+            validateRules={[
+                rules.required("请选择用户角色")
+            ]}
+        />
+    </div>
+</>)

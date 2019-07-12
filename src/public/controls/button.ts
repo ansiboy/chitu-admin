@@ -1,7 +1,7 @@
-import { Buttons, ControlArguments } from "data-component/index";
+import { ControlArguments } from "data-component/index";
 import { errors } from "./errors";
-import { loadControlModule } from "data-component/common";
 import { buttonOnClick } from "maishu-ui-toolkit";
+import { app } from "assert/application";
 
 export default function (args: ControlArguments<any>): HTMLButtonElement {
     //TODO: 检查参数
@@ -17,14 +17,11 @@ export default function (args: ControlArguments<any>): HTMLButtonElement {
     if (args.resource.icon) {
         html = html + `<i class="${args.resource.icon}"></i>`;
     }
-    if (buttonInfo.text) {
-        html = html + `<span>${buttonInfo.text}</span>`;
+    if (buttonInfo.showButtonText) {
+        html = html + `<span>${args.resource.name}</span>`;
     }
 
     button.innerHTML = html;
-    // button.onclick = () => {
-
-    // }
 
     buttonOnClick(button, async () => {
         let execute_path = buttonInfo.execute_path;
@@ -45,42 +42,17 @@ export default function (args: ControlArguments<any>): HTMLButtonElement {
 
             await args.context[methodName](args.dataItem);
         }
-    })
+        else if (execute_path.startsWith("#")) {
+            let data = { resourceId: args.resource.id };
+            if (args.dataItem.id)
+                data["dataItemId"] = args.dataItem.id;
+
+            app.redirect(execute_path.substring(1), data);
+        }
+
+    }, { toast: buttonInfo.toast })
 
     return button;
 
-    // let control: HTMLElement;
-    // switch (args.resource.data.code) {
-    //     case Buttons.codes.add:
-    //         control = Buttons.createPageAddButton(async () => {
-    //             if (!args.resource.data.button)
-    //                 throw errors.resourceDataFieldMissing(args.resource, "button");
-
-    //             let func = await loadControlModule(args.resource.data.button.execute_path);
-    //             func(args);
-    //         });
-    //         break;
-    //     case Buttons.codes.edit:
-    //         control = Buttons.createListEditButton(async () => {
-    //             if (!args.resource.data.button)
-    //                 throw errors.resourceDataFieldMissing(args.resource, "button");
-
-    //             let func = await loadControlModule(args.resource.data.button.execute_path);
-    //             func(args);
-    //         })
-    //         break;
-    //     case Buttons.codes.remove:
-    //         control = Buttons.createListEditButton(async () => {
-    //             if (!args.resource.data.button)
-    //                 throw errors.resourceDataFieldMissing(args.resource, "button");
-
-    //             let func = await loadControlModule(args.resource.data.button.execute_path);
-    //             func(args);
-    //         })
-    //         break;
-    //     default:
-    //         throw errors.unknonwResourceName(args.resource.data.code);
-    // }
-
-    // return control;
+   
 }

@@ -133,6 +133,11 @@ export class PermissionService extends Service {
             return r
         },
 
+        remove: async (id: string) => {
+            let url = this.url('user/remove');
+            return this.postByJson(url, { id })
+        },
+
         /**
          * 获取用户个人信息
          */

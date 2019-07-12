@@ -17,7 +17,6 @@ let itemDialog = createItemDialog(dataSources.path, "路径", <>
     <div className="form-group clearfix">
         <InputField<Resource> dataField="remark" label="备注" placeholder="请输入备注" />
     </div>
-    {/* <RadioField<Path, Role> dataSource={dataSources.role(args.resource.id)} dataField={"role_ids"} valueField={"id"} nameField={"name"} dataType="string" label="角色" /> */}
 </>);
 
 export default function (args: ControlArguments<Path>) {
@@ -53,7 +52,4 @@ export default function (args: ControlArguments<Path>) {
     }
 
     return control;
-
-    // console.assert(itemDialog.resourceId == args.resource.id);
-    // itemDialog.show(args.dataItem);
 }

@@ -34,7 +34,7 @@ export default class RoleListPage extends React.Component<PageProps, State> {
             </div>
         }
 
-        return <ListPage {...this.props} parent={this} dataSource={dataSources.role}
+        return <ListPage {...this.props} context={this} dataSource={dataSources.role}
             columns={[
                 boundField({ dataField: 'id', headerText: '编号', headerStyle: { width: '300px' }, itemStyle: { textAlign: 'center' } }),
                 boundField({ dataField: 'name', headerText: '名称' }),

@@ -91,9 +91,6 @@ export function createUserDataSource() {
             let r = await permissionService.user.list(args);
             r.dataItems.forEach(o => {
                 o.data = o.data || {};
-                // let userRoles = o["roles"] as Role[];
-                // o["roleNames"] = userRoles.map(o => o.name).join(",");
-                // o["roleIds"] = userRoles.map(o => o.id).join(",");
             });
 
             return r;
@@ -105,10 +102,10 @@ export function createUserDataSource() {
         insert: async (item) => {
             let roleIds: string[];
             let r = await permissionService.user.add(item, roleIds);
-            // if (r.roles) {
-            //     r["roleNames"] = r.roles.map(o => o.name).join(",");
-            // }
             return r;
+        },
+        delete: async (item) => {
+            return permissionService.user.remove(item.id);
         }
 
     })

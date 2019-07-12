@@ -13,7 +13,7 @@ export default class TokenListPage extends React.Component<PageProps> {
 
     render() {
         return <>
-            <ListPage<Token> {...this.props} parent={this} dataSource={dataSources.token}
+            <ListPage<Token> {...this.props} context={this} dataSource={dataSources.token}
                 columns={[
                     boundField<Token>({ dataField: "id", headerText: "编号", headerStyle: { width: "300px" } }),
                     boundField<Token>({ dataField: "content", headerText: "内容" }),

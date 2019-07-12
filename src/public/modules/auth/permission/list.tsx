@@ -18,7 +18,7 @@ type LoadDataResult = {
 
 export interface Props extends PageProps {
     data: {
-        roleId: string,
+        dataItemId: string,
         resourceId: string,
     }
 }
@@ -36,7 +36,7 @@ export default class PermissionPage extends React.Component<Props>{
 
     save() {
         let checkedResourceIds: string[] = this.checkboxs.filter(o => o.checked).map(o => o.value);
-        return this.ps.role.resource.set(this.props.data.roleId, checkedResourceIds);
+        return this.ps.role.resource.set(this.props.data.dataItemId, checkedResourceIds);
     }
 
     componentDidMount() {
@@ -64,7 +64,7 @@ export default class PermissionPage extends React.Component<Props>{
 
 
     async loadData(): Promise<LoadDataResult> {
-        this.resourceIds = await this.ps.role.resource.ids(this.props.data.roleId);
+        this.resourceIds = await this.ps.role.resource.ids(this.props.data.dataItemId);
         return { resourceIds: this.resourceIds };
     }
 
@@ -72,7 +72,7 @@ export default class PermissionPage extends React.Component<Props>{
         return <PageSpiner load={() => this.loadData()}>
             <PageSpinerContext.Consumer>
                 {args => {
-                    return <ListPage<Resource> {...this.props} parent={this} dataSource={dataSources.resource}
+                    return <ListPage<Resource> {...this.props} context={this} dataSource={dataSources.resource}
                         pageSize={null}
                         transform={(items) => {
                             items = items.filter(o => o.type == "menu" || o.type == "control");

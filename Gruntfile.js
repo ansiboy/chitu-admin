@@ -1,99 +1,62 @@
-var dest_root = 'www';
-var src_root = 'src';
-var ts_options = {
-    module: 'amd',
-    target: 'es5',
-    removeComments: true,
-    references: [
-        src_root + "/js/typings/*.d.ts"
-    ],
-    sourceMap: false,
-};
+const webpackES6Config = require('./webpack.config.js');
+let webpackES5Config = Object.assign({}, webpackES6Config)
+webpackES5Config.entry = __dirname + "/out-es5/public/index.js" //已多次提及的唯一入口文件
+webpackES5Config.output = Object.assign({}, webpackES5Config.output)
+webpackES5Config.output.filename = "index.es5.js"
+
 module.exports = function (grunt) {
 
     require('load-grunt-tasks')(grunt);
 
-    let pkg = grunt.file.readJSON('package.json');
-
-    let license = `
-/*!
- * CHITU-ADMIN v${pkg.version}
- * https://github.com/ansiboy/chitu-admin
- *
- * Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
- * Licensed under the MIT License.
- *
- */`;
-
-    let build_dir = 'out';
-    let release_dir = 'dist';
-    let lib_name = 'chitu_admin'
-    let lib_js_banner = license;
-
     grunt.initConfig({
-        babel: {
-            source: {
-                options: {
-                    sourceMap: false,
-                    presets: ["es2015"],
-                },
-                files: [{
-                    src: [`${release_dir}/${lib_name}.js`],
-                    dest: `${release_dir}/${lib_name}.es5.js`
-                }]
-            }
-        },
-        browserify: {
-            dist: {
-                files: (function () {
-                    let obj = {};
-                    let filePath = `${build_dir}/${lib_name}.js`;
-                    obj[filePath] = [`${build_dir}/index.js`];
-
-                    return obj
-                })(),
-                options: {
-                    transform: ['brfs'],
-                    browserifyOptions: {
-                        standalone: 'chitu_admin',
+        copy: {
+            out: {
+                files: [
+                    // includes files within path
+                    // { expand: true, cwd: 'src', src: ['content/*'], dest: 'out' },
+                    // { expand: true, cwd: 'src', src: ['content/*'], dest: 'out-es5' },
+                    {
+                        expand: true, cwd: 'src/public', dest: 'out/public',
+                        src: ['**/*.html', '**/*.css', '**/*.less', 'assert/lib/**']
                     },
-                    external: ['react', 'react-dom', 'maishu-chitu', 'maishu-chitu-react']
-                }
+                ],
             }
-        },
-        concat: {
-            lib_es6: {
-                options: {
-                    banner: lib_js_banner,
-                },
-                src: [`${build_dir}/${lib_name}.js`],
-                dest: `${release_dir}/${lib_name}.js`
-            },
-            declare: {
-                options: {
-                    banner:`/// <reference path="../../../node_modules/maishu-chitu/dist/chitu.d.ts"/>\r\n`
-                },
-                src: ['src/declare.d.ts'],
-                dest: `${release_dir}/${lib_name}.d.ts`
-            },
         },
         shell: {
             src: {
-                command: `tsc -p src`
-            }
+                command: `tsc -p src/server`
+            },
+            client: {
+                command: `tsc -p src/public`
+            },
         },
-        uglify: {
-            out: {
-                options: {
-                    mangle: false
-                },
+        webpack: {
+            es6: webpackES6Config,
+            es5: webpackES5Config,
+        },
+        babel: {
+            options: {
+                sourceMap: false,
+                presets: [
+                    ['@babel/preset-env', {
+                        targets: {
+                            "chrome": "58",
+                            "ie": "11"
+                        }
+                    }]
+                ]
+            },
+            dist: {
                 files: [{
-                    src: `${release_dir}/${lib_name}.es5.js`,
-                    dest: `${release_dir}/${lib_name}.min.js`
+                    expand: true,
+                    cwd: 'out/public',
+                    src: ['**/*.js'],
+                    dest: 'out-es5/public'
                 }]
             }
         },
+
     });
 
-    grunt.registerTask('default', ['shell', 'browserify', 'concat', 'babel', 'uglify']);
+    grunt.registerTask('default', ['shell', 'copy', 'babel']);
 }

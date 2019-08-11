@@ -1,6 +1,6 @@
 import React = require("react");
 import * as ui from 'maishu-ui-toolkit'
-import { dataSources, MyDataSource } from "assert/dataSources";
+// import { dataSources, MyDataSource } from "assert/dataSources";
 import { FormValidator, ValidateField, Rule } from 'maishu-dilu'
 import { Page, Application } from "maishu-chitu-react";
 import { parseUrl } from "maishu-chitu";
@@ -44,7 +44,7 @@ export interface ItemPageProps<T> {
 
 
 export class ItemPage<T> extends React.Component<ItemPageProps<T>, State> {
-    dataSource: MyDataSource<any>;
+    // dataSource: MyDataSource<any>;
     fieldsConatiner: HTMLDivElement;
     validator: FormValidator;
     beforeSaves: BeforeSave[];
@@ -58,7 +58,7 @@ export class ItemPage<T> extends React.Component<ItemPageProps<T>, State> {
         }
 
         let objectType = getObjectType(this.props.source.url);
-        this.dataSource = dataSources[objectType];
+        // this.dataSource = dataSources[objectType];
         if (this.props.data.id || this.props.data.sourceId) {
             this.loadDataItem(this.props.data.id || this.props.data.sourceId)
         }
@@ -68,16 +68,16 @@ export class ItemPage<T> extends React.Component<ItemPageProps<T>, State> {
         }
     }
     loadDataItem(itemId: string) {
-        let objectType = getObjectType(this.props.source.url);
-        this.dataSource = dataSources[objectType];
-        this.dataSource.getItem(itemId).then(item => {
-            console.assert(item != null)
-            let originalDataItem = JSON.parse(JSON.stringify(item))
-            this.setState({ dataItem: item, originalDataItem })
-            if (this.props.afterGetItem) {
-                this.props.afterGetItem(item)
-            }
-        })
+        // let objectType = getObjectType(this.props.source.url);
+        // this.dataSource = dataSources[objectType];
+        // this.dataSource.getItem(itemId).then(item => {
+        //     console.assert(item != null)
+        //     let originalDataItem = JSON.parse(JSON.stringify(item))
+        //     this.setState({ dataItem: item, originalDataItem })
+        //     if (this.props.afterGetItem) {
+        //         this.props.afterGetItem(item)
+        //     }
+        // })
     }
     async save() {
         this.validator.clearErrors()
@@ -103,23 +103,23 @@ export class ItemPage<T> extends React.Component<ItemPageProps<T>, State> {
             return
         }
 
-        if (dataItem.id) {
-            if (!this.props.data.sourceId) {
-                changedData.id = dataItem.id;
-                let r = await this.dataSource.update(changedData)
-                Object.assign(dataItem, r || {})
-            }
-            else {
-                let obj = Object.assign({}, dataItem, changedData)
-                delete obj.id
-                let r = await this.dataSource.insert(obj)
-                Object.assign(dataItem, r || {})
-            }
-        }
-        else {
-            let r = await this.dataSource.insert(changedData)
-            Object.assign(dataItem, r || {})
-        }
+        // if (dataItem.id) {
+        //     if (!this.props.data.sourceId) {
+        //         changedData.id = dataItem.id;
+        //         let r = await this.dataSource.update(changedData)
+        //         Object.assign(dataItem, r || {})
+        //     }
+        //     else {
+        //         let obj = Object.assign({}, dataItem, changedData)
+        //         delete obj.id
+        //         let r = await this.dataSource.insert(obj)
+        //         Object.assign(dataItem, r || {})
+        //     }
+        // }
+        // else {
+        //     let r = await this.dataSource.insert(changedData)
+        //     Object.assign(dataItem, r || {})
+        // }
 
         originalDataItem = JSON.parse(JSON.stringify(dataItem))
         this.setState({ originalDataItem, dataItem })

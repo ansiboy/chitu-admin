@@ -1,7 +1,7 @@
 import React = require("react");
 import { DataSource, DataControlField, GridView } from "maishu-wuzhui";
-import { PermissionService } from 'assert/services/index'
-import { translateToMenuItems } from "assert/dataSources";
+// import { PermissionService } from 'assert/services/index'
+import { translateToMenuItems } from "../dataSources";
 import { ListView } from "../controls/list-view";
 import { constants } from "./constants";
 import errorHandle from "error-handle";
@@ -25,12 +25,12 @@ export interface ListPageProps<T> {
 export let ListPageContext = React.createContext<{ dataSource: DataSource<any> }>(null)
 
 export class ListPage<T> extends React.Component<ListPageProps<T>, State> {
-    ps: PermissionService;
+    // ps: PermissionService;
     listView: ListView<T>;
     constructor(props: ListPage<T>['props']) {
         super(props);
 
-        this.ps = new PermissionService((err) => errorHandle(err)); //this.props.createService(PermissionService);
+        // this.ps = new PermissionService((err) => errorHandle(err)); //this.props.createService(PermissionService);
     }
 
     get dataSource() {
@@ -45,8 +45,8 @@ export class ListPage<T> extends React.Component<ListPageProps<T>, State> {
         return <div ref={async e => {
             if (!e) return;
 
-            let resources = await this.ps.resource.list();
-            let menuItems = translateToMenuItems(resources);
+            // let resources = await this.ps.resource.list();
+            let menuItems = [];// translateToMenuItems(resources);
             this.listView = new ListView<T>({
                 element: e,
                 dataSource: this.props.dataSource,

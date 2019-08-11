@@ -1,5 +1,4 @@
 import { MenuItem } from "assert/masters/main-master-page";
-import { Resource } from "entities";
 import { errors } from "./errors";
 
 export type PageViewArguments = {

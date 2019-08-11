@@ -2,11 +2,11 @@ import React = require('react');
 import { Application } from '../application';
 import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
-import { Resource } from 'entities';
-import { PermissionService, Service } from 'assert/services/index';
-import { translateToMenuItems } from 'assert/dataSources';
-import { LoginInfo } from 'assert/services/service';
+import { Service } from 'assert/services/index';
+import { translateToMenuItems } from "../dataSources";
 import { ValueStore } from 'maishu-chitu';
+
+
 
 export type MenuItem = Resource & {
     icon?: string, parent: MenuItem, children: MenuItem[],
@@ -30,17 +30,17 @@ export class MainMasterPage extends MasterPage<State> {
     pageContainer: HTMLElement;
     element: HTMLElement;
     private app: Application;
-    ps: PermissionService;
+    // ps: PermissionService;
     menuResources = new ValueStore<Resource[]>([]);
 
     constructor(props: MasterPageProps) {
         super(props);
 
-        let username = Service.loginInfo.value ? Service.loginInfo.value.username : "";
-        this.state = { menus: [], username: username }
+        // let username = Service.loginInfo.value ? Service.loginInfo.value.username : "";
+        this.state = { menus: [], username: "" }
 
         this.app = props.app;
-        this.ps = this.app.createService(PermissionService);
+        // this.ps = this.app.createService(PermissionService);
         this.menuResources.add((value) => {
             let menuItems = translateToMenuItems(value).filter(o => o.parent == null);
             this.setState({ menus: menuItems })
@@ -122,29 +122,29 @@ export class MainMasterPage extends MasterPage<State> {
     }
 
     logout() {
-        let s = this.app.createService(PermissionService)
-        s.user.logout()
-        location.href = `?${Date.now()}#login`
+        // let s = this.app.createService(PermissionService)
+        // s.user.logout()
+        // location.href = `?${Date.now()}#login`
     }
 
     /**
      * 加载用户登录后所要显示的数据
      */
-    async loadUserData(loginInfo: LoginInfo) {
-        this.ps.resource.list().then(resources => {
-            this.menuResources.value = resources;
-        })
+    async loadUserData() {
+        // this.ps.resource.list().then(resources => {
+        //     this.menuResources.value = resources;
+        // })
 
-        this.setState({
-            username: loginInfo.username,
-        });
+        // this.setState({
+        //     username: loginInfo.username,
+        // });
 
-        if (loginInfo.roleId) {
-            let role = await this.ps.role.item(loginInfo.roleId);
-            if (role) {
-                this.setState({ roleName: role.name });
-            }
-        }
+        // if (loginInfo.roleId) {
+        //     let role = await this.ps.role.item(loginInfo.roleId);
+        //     if (role) {
+        //         this.setState({ roleName: role.name });
+        //     }
+        // }
     }
 
     clearUserData() {
@@ -163,14 +163,14 @@ export class MainMasterPage extends MasterPage<State> {
             })
         })
 
-        Service.loginInfo.attach((value) => {
-            if (value) {
-                this.loadUserData(value);
-            }
-            else {
-                this.clearUserData();
-            }
-        });
+        // Service.loginInfo.attach((value) => {
+        //     if (value) {
+        //         this.loadUserData(value);
+        //     }
+        //     else {
+        //         this.clearUserData();
+        //     }
+        // });
     }
 
     render() {

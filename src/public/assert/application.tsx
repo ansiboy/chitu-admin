@@ -3,13 +3,13 @@ import * as chitu_react from 'maishu-chitu-react';
 import 'text!../content/admin_style_default.less'
 import { PageData, Page, ValueStore } from "maishu-chitu"
 import errorHandle from 'error-handle';
-import { PermissionService } from './services/index';
-import { LoginInfo } from './services/service';
+// import { PermissionService } from './services/index';
+// import { LoginInfo } from './services/service';
 import UrlPattern = require("url-pattern");
 
 export class Application extends chitu_react.Application {
 
-    loginInfo: ValueStore<LoginInfo> = PermissionService.loginInfo;
+    // loginInfo: ValueStore<LoginInfo> = PermissionService.loginInfo;
 
     private modulePathPatterns: { source: UrlPattern, target: UrlPattern }[] = [];
 

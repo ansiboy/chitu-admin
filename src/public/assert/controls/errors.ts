@@ -1,4 +1,3 @@
-import { Resource } from "entities";
 
 export let errors = {
     unknonwResourceName(resourceName: string) {

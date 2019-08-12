@@ -2,7 +2,6 @@ import React = require('react');
 import { Application } from '../application';
 import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
-import { Service } from 'assert/services/index';
 import { translateToMenuItems } from "../dataSources";
 import { ValueStore } from 'maishu-chitu';
 

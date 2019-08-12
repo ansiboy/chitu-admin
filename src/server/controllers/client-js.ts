@@ -1,11 +1,10 @@
 import { controller, action, Controller } from "maishu-node-mvc";
-// import { settings } from "../settings";
 import path = require("path");
 import fs = require("fs");
 import { errors } from "../errors";
 import { Settings, settings } from "../settings";
 
-@controller()
+@controller("/")
 export class ClientJSController extends Controller {
     @action("/clientjs_init.js")
     initjs(@settings settings: Settings) {
@@ -16,10 +15,6 @@ export class ClientJSController extends Controller {
                 }
             }
         })`;
-
-        // let settingsHeader = req.headers["settings"] as string;
-        // console.assert(settingsHeader != null);
-        // let settings = JSON.parse(settingsHeader) as Settings;
 
         if (settings.clientStaticRoot) {
             let initJSPath = path.join(settings.clientStaticRoot, "init.js");
@@ -65,4 +60,6 @@ export class ClientJSController extends Controller {
                     return settings;
                 });`
     }
+
+
 }

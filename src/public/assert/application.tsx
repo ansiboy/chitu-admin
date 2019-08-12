@@ -3,15 +3,15 @@ import * as chitu_react from 'maishu-chitu-react';
 import 'text!../content/admin_style_default.less'
 import { PageData, Page, ValueStore } from "maishu-chitu"
 import errorHandle from 'error-handle';
-// import { PermissionService } from './services/index';
-// import { LoginInfo } from './services/service';
 import UrlPattern = require("url-pattern");
+import { Service } from './services/service';
 
 export class Application extends chitu_react.Application {
 
     // loginInfo: ValueStore<LoginInfo> = PermissionService.loginInfo;
 
     private modulePathPatterns: { source: UrlPattern, target: UrlPattern }[] = [];
+    private service: Service;
 
     constructor(simpleContainer: HTMLElement, mainContainer: HTMLElement, blankContainer: HTMLElement) {
         super({
@@ -23,6 +23,7 @@ export class Application extends chitu_react.Application {
             modulesPath: ""
         })
 
+        this.service = this.createService(Service);
         this.error.add((sender, error, page) => errorHandle(error, sender, page as chitu_react.Page))
     }
 
@@ -49,16 +50,19 @@ export class Application extends chitu_react.Application {
             path = "modules/" + path;
         }
 
+        this.service.files().then(files => {
+            if (files.indexOf(`${path}.less`) >= 0) {
+                requirejs([`less!${path}.less`]);
+            }
+        })
+
         return super.loadjs(path);
     }
 
-    // createPageElement(pageName: string, containerName: string) {
-    //     let element = super.createPageElement(pageName, containerName);
-    //     let container = this.containers[containerName];
-    //     console.assert(container != null);
-    //     container.appendChild(element);
-    //     return element;
-    // }
+    createPageElement(pageName: string, containerName: string) {
+        let element = super.createPageElement(pageName, containerName);
+        return element;
+    }
 
     showPage(pageUrl: string, args?: PageData, forceRender?: boolean): Page {
         args = args || {}

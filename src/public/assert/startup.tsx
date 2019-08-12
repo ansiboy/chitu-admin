@@ -4,9 +4,7 @@ import { SimpleMasterPage } from "./masters/simple-master-page";
 import { MainMasterPage } from "./masters/main-master-page";
 import React = require("react");
 import { MasterPage } from "./masters/master-page";
-import settings = require('auth/settings');
 import { config } from "../config";
-import { errors } from "./errors";
 
 export default function startup() {
     async function createMasterPages(app: Application) {

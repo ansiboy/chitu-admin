@@ -7,3 +7,4 @@ export { InitArguments } from "./startup";
 export { MainMasterPage } from "./masters/main-master-page";
 export { SimpleMasterPage } from "./masters/simple-master-page";
 export { Application } from "./application";
+

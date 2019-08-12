@@ -4,8 +4,7 @@ import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
 import { translateToMenuItems } from "../dataSources";
 import { ValueStore } from 'maishu-chitu';
-
-
+import { Resource } from 'assert/models';
 
 export type MenuItem = Resource & {
     icon?: string, parent: MenuItem, children: MenuItem[],
@@ -30,7 +29,7 @@ export class MainMasterPage extends MasterPage<State> {
     element: HTMLElement;
     private app: Application;
     // ps: PermissionService;
-    menuResources = new ValueStore<Resource[]>([]);
+    private menuResources = new ValueStore<Resource[]>([]);
 
     constructor(props: MasterPageProps) {
         super(props);
@@ -72,15 +71,6 @@ export class MainMasterPage extends MasterPage<State> {
         this.app.redirect("outer-page", { target: pagePath, resourceId: node.id });
     }
 
-    formatString(s: string, args: string[]) {
-        // var s = arguments[0];
-        for (var i = 0; i < args.length - 1; i++) {
-            var reg = new RegExp("\\{" + i + "\\}", "gm");
-            s = s.replace(reg, args[i]);
-        }
-        return s;
-    }
-
     private findMenuItemByResourceId(menuItems: MenuItem[], resourceId: string) {
         let stack = new Array<MenuItem>()
         stack.push(...menuItems)
@@ -120,39 +110,28 @@ export class MainMasterPage extends MasterPage<State> {
         return null
     }
 
-    logout() {
-        // let s = this.app.createService(PermissionService)
-        // s.user.logout()
-        // location.href = `?${Date.now()}#login`
+    private textToGuid(name: string) {
+        const storageName = "nameToGuid";
+        let nameToGuid = localStorage.getItem(storageName) || "{}";
+        let data = JSON.parse(nameToGuid);
+        let id = data[name];
+        if (!id) {
+            id = guid();
+            data[name] = id;
+            localStorage.setItem(storageName, JSON.stringify(data));
+        }
+
+        return id;
     }
 
-    /**
-     * 加载用户登录后所要显示的数据
-     */
-    async loadUserData() {
-        // this.ps.resource.list().then(resources => {
-        //     this.menuResources.value = resources;
-        // })
+    setMenu(...menuItems: { name: string, path: string }[]) {
 
-        // this.setState({
-        //     username: loginInfo.username,
-        // });
+        let items: Resource[] = menuItems.map(o => ({
+            id: this.textToGuid(o.name), name: o.name, page_path: o.path, type: "menu"
+        } as Resource))
 
-        // if (loginInfo.roleId) {
-        //     let role = await this.ps.role.item(loginInfo.roleId);
-        //     if (role) {
-        //         this.setState({ roleName: role.name });
-        //     }
-        // }
+        this.menuResources.value = items;
     }
-
-    clearUserData() {
-        this.setState({ menus: [], username: null, roleName: null })
-    }
-
-    // get menuItems(): MenuItem[] {
-    //     return this.state.menus;
-    // }
 
     componentDidMount() {
         this.app.pageCreated.add((sender, page) => {
@@ -161,15 +140,6 @@ export class MainMasterPage extends MasterPage<State> {
                 this.setState({ resourceId: (page.data.resourceId || page.data.resource_id) as string })
             })
         })
-
-        // Service.loginInfo.attach((value) => {
-        //     if (value) {
-        //         this.loadUserData(value);
-        //     }
-        //     else {
-        //         this.clearUserData();
-        //     }
-        // });
     }
 
     render() {
@@ -186,7 +156,6 @@ export class MainMasterPage extends MasterPage<State> {
         }
         let firstLevelNode: MenuItem | null = null;
         let secondLevelNode: MenuItem;
-
 
         if (currentNode != null) {
             if (currentNode.parent == null) {
@@ -239,16 +208,7 @@ export class MainMasterPage extends MasterPage<State> {
                 </div>
                 <div className="main">
                     <nav className="navbar navbar-default">
-                        <ul className="toolbar">
-                            {this.state.toolbar}
-                            <li className="light-blue pull-right" onClick={() => this.logout()}>
-                                <i className="icon-off"></i>
-                                <span style={{ paddingLeft: 4, cursor: "pointer" }}>退出</span>
-                            </li>
-                            <li className="light-blue pull-right" style={{ marginRight: 10 }}>
-                                {username || ""}{roleName ? `  (${roleName})` : ""}
-                            </li>
-                        </ul>
+                        {this.state.toolbar}
                     </nav>
                     <div className={`page-container page-placeholder`}
                         ref={(e: HTMLElement) => this.pageContainer = e || this.pageContainer}>
@@ -262,3 +222,9 @@ export class MainMasterPage extends MasterPage<State> {
 
 
 
+function guid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}

@@ -122,10 +122,11 @@ export class MainMasterPage extends MasterPage<State> {
         return id;
     }
 
-    setMenu(...menuItems: { name: string, path: string }[]) {
+    setMenu(...menuItems: { name: string, path: string, icon?: string }[]) {
 
         let items: Resource[] = menuItems.map(o => ({
-            id: this.textToGuid(o.name), name: o.name, page_path: o.path, type: "menu"
+            id: this.textToGuid(o.name), name: o.name, page_path: o.path, type: "menu",
+            icon: o.icon
         } as Resource))
 
         this.menuResources.value = items;

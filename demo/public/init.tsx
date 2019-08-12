@@ -3,7 +3,7 @@ import React = require("react");
 
 export default function (args: InitArguments) {
     args.mainMaster.setMenu(
-        { name: "Temp", path: "#temp" }
+        { name: "Temp", path: "#temp", icon: "icon-dashboard" }
     )
     args.mainMaster.setToolbar(
         <ul className="toolbar">

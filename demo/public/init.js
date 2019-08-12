@@ -2,7 +2,7 @@ define(["require", "exports", "react"], function (require, exports, React) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function default_1(args) {
-        args.mainMaster.setMenu({ name: "Temp", path: "#temp" });
+        args.mainMaster.setMenu({ name: "Temp", path: "#temp", icon: "icon-dashboard" });
         args.mainMaster.setToolbar(React.createElement("ul", { className: "toolbar" },
             React.createElement("li", { className: "light-blue pull-right", onClick: () => this.logout() },
                 React.createElement("i", { className: "icon-off" }),

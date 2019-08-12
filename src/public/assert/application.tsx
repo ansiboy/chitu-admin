@@ -54,6 +54,9 @@ export class Application extends chitu_react.Application {
             if (files.indexOf(`${path}.less`) >= 0) {
                 requirejs([`less!${path}.less`]);
             }
+            if (files.indexOf(`${path}.css`) >= 0) {
+                requirejs([`css!${path}.css`]);
+            }
         })
 
         return super.loadjs(path);

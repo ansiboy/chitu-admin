@@ -2,7 +2,7 @@ import React = require("react");
 
 export default class TempPage extends React.Component {
     render() {
-        return <div>
+        return <div className="">
             Temp Page
         </div>
     }

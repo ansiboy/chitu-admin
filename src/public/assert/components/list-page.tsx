@@ -1,7 +1,5 @@
 import React = require("react");
 import { DataSource, DataControlField, GridView } from "maishu-wuzhui";
-// import { PermissionService } from 'assert/services/index'
-import { translateToMenuItems } from "../dataSources";
 import { ListView } from "../controls/list-view";
 import { constants } from "./constants";
 import errorHandle from "error-handle";

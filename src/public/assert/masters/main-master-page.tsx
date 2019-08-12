@@ -2,7 +2,6 @@ import React = require('react');
 import { Application } from '../application';
 import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
-import { translateToMenuItems } from "../dataSources";
 import { ValueStore } from 'maishu-chitu';
 import { Resource } from 'assert/models';
 
@@ -13,7 +12,7 @@ export type MenuItem = Resource & {
 interface State {
     currentPageName?: string,
     toolbar?: JSX.Element,
-    menus: MenuItem[],
+    menuItems: MenuItem[],
     resourceId?: string,
     /** 不显示菜单的页面 */
     hideMenuPages?: string[],
@@ -28,20 +27,19 @@ export class MainMasterPage extends MasterPage<State> {
     pageContainer: HTMLElement;
     element: HTMLElement;
     private app: Application;
-    // ps: PermissionService;
     private menuResources = new ValueStore<Resource[]>([]);
 
     constructor(props: MasterPageProps) {
         super(props);
 
         // let username = Service.loginInfo.value ? Service.loginInfo.value.username : "";
-        this.state = { menus: [], username: "" }
+        this.state = { menuItems: [], username: "" }
 
         this.app = props.app;
         // this.ps = this.app.createService(PermissionService);
         this.menuResources.add((value) => {
             let menuItems = translateToMenuItems(value).filter(o => o.parent == null);
-            this.setState({ menus: menuItems })
+            this.setState({ menuItems: menuItems })
         })
     }
 
@@ -133,6 +131,14 @@ export class MainMasterPage extends MasterPage<State> {
         this.menuResources.value = items;
     }
 
+    setToolbar(value: JSX.Element) {
+        this.setState({ toolbar: value })
+    }
+
+    get menuItems(): MenuItem[] {
+        return this.state.menuItems || [];
+    }
+
     componentDidMount() {
         this.app.pageCreated.add((sender, page) => {
             page.shown.add(() => {
@@ -143,7 +149,7 @@ export class MainMasterPage extends MasterPage<State> {
     }
 
     render() {
-        let { menus: menuData, username, roleName } = this.state;
+        let { menuItems: menuData, username, roleName } = this.state;
         let currentPageName: string = this.state.currentPageName || '';
 
         let firstLevelNodes = menuData.filter(o => o.type == "menu");
@@ -227,4 +233,32 @@ function guid() {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
+}
+
+function translateToMenuItems(resources: Resource[]): MenuItem[] {
+    let arr = new Array<MenuItem>();
+    let stack: MenuItem[] = [...resources.filter(o => o.parent_id == null).reverse() as MenuItem[]];
+    while (stack.length > 0) {
+        let item = stack.pop();
+        item.children = resources.filter(o => o.parent_id == item.id) as MenuItem[];
+        if (item.parent_id) {
+            item.parent = resources.filter(o => o.id == item.parent_id)[0] as MenuItem;
+        }
+
+        stack.push(...item.children.reverse());
+
+        arr.push(item);
+    }
+
+    let ids = arr.map(o => o.id);
+    for (let i = 0; i < ids.length; i++) {
+        let item = arr.filter(o => o.id == ids[i])[0];
+        console.assert(item != null);
+
+        if (item.children.length > 1) {
+            item.children.sort((a, b) => a.sort_number < b.sort_number ? -1 : 1);
+        }
+    }
+
+    return arr;
 }

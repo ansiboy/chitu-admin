@@ -1,5 +1,6 @@
 import { MenuItem } from "assert/masters/main-master-page";
 import { errors } from "./errors";
+import { Resource } from "assert/models";
 
 export type PageViewArguments = {
     element: HTMLElement,

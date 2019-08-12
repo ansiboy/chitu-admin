@@ -1,7 +1,5 @@
 import React = require("react");
 import { PageView as BasePageView } from "../controls/index";
-import errorHandle from "error-handle";
-import { translateToMenuItems } from "assert/dataSources";
 
 // let ps = new PermissionService((err) => errorHandle(err));
 export class Page extends React.Component<{ data: { resourceId: string } } & { context?: object }> {

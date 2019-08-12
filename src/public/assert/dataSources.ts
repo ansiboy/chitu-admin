@@ -3,6 +3,7 @@ import { DataSource, DataSourceSelectArguments, DataSourceSelectResult, DataSour
 import { MenuItem } from "./masters/main-master-page";
 // import { User, Role, Path, Resource } from "entities";
 import errorHandle from "error-handle";
+import { Resource } from "./models";
 
 // let permissionService: PermissionService = new PermissionService((error) => errorHandle(error));
 
@@ -55,33 +56,7 @@ import errorHandle from "error-handle";
 //     return roleDataSource;
 // }
 
-export function translateToMenuItems(resources: Resource[]): MenuItem[] {
-    let arr = new Array<MenuItem>();
-    let stack: MenuItem[] = [...resources.filter(o => o.parent_id == null).reverse() as MenuItem[]];
-    while (stack.length > 0) {
-        let item = stack.pop();
-        item.children = resources.filter(o => o.parent_id == item.id) as MenuItem[];
-        if (item.parent_id) {
-            item.parent = resources.filter(o => o.id == item.parent_id)[0] as MenuItem;
-        }
 
-        stack.push(...item.children.reverse());
-
-        arr.push(item);
-    }
-
-    let ids = arr.map(o => o.id);
-    for (let i = 0; i < ids.length; i++) {
-        let item = arr.filter(o => o.id == ids[i])[0];
-        console.assert(item != null);
-
-        if (item.children.length > 1) {
-            item.children.sort((a, b) => a.sort_number < b.sort_number ? -1 : 1);
-        }
-    }
-
-    return arr;
-}
 
 // export function createUserDataSource() {
 //     let userDataSource = new MyDataSource<User>({

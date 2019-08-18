@@ -7,7 +7,7 @@ import { Settings, SettingsHeaderName } from './settings';
 
 interface Config {
     port: number,
-    gateway: string,
+    // gateway: string,
     controllerPath?: string,
     staticRootDirectory: string,
     proxy?: import("maishu-node-mvc").Config["proxy"],
@@ -61,7 +61,7 @@ export function start(config: Config) {
             (req, res) => {
                 let settings: Settings = {
                     clientStaticRoot: config.staticRootDirectory,
-                    gateway: config.gateway,
+                    // gateway: config.gateway,
                     innerStaticRoot: innerStaticRootDirectory,
                 }
                 req.headers[SettingsHeaderName] = JSON.stringify(settings);

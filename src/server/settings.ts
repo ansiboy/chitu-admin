@@ -3,7 +3,7 @@ import { createParameterDecorator } from "maishu-node-mvc";
 export interface Settings {
     innerStaticRoot: string;
     // roleId: string;
-    gateway: string;
+    // gateway: string;
     clientStaticRoot: string;
 }
 

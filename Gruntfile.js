@@ -17,7 +17,7 @@ module.exports = function (grunt) {
                     // { expand: true, cwd: 'src', src: ['content/*'], dest: 'out-es5' },
                     {
                         expand: true, cwd: 'src/public', dest: 'out/public',
-                        src: ['**/*.html', '**/*.css', '**/*.less', 'assert/lib/**']
+                        src: ['**/*.html', '**/*.css', '**/*.less', 'assert/lib/**', "content/**"]
                     },
                 ],
             }

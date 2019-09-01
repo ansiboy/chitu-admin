@@ -72,6 +72,8 @@ export function start(config: Config) {
     });
 }
 
+export { settings, Settings } from "./settings";
+
 function createVirtulaPaths(rootAbsolutePath: string, clientRootAbsolutePath: string) {
     let virtualPaths: { [path: string]: string } = {}
     let virtualPahtStack: string[] = [""];

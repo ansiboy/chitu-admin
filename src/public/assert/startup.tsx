@@ -1,4 +1,4 @@
-import { Application, app } from "./application";
+import { Application } from "./application";
 import ReactDOM = require("react-dom");
 import { SimpleMasterPage } from "./masters/simple-master-page";
 import { MainMasterPage } from "./masters/main-master-page";
@@ -22,6 +22,12 @@ export default function startup() {
         default: null as MainMasterPage
     }
 
+    let app = new Application(
+        document.getElementById('simple-master'),
+        document.getElementById('main-master'),
+        document.getElementById('blank-master')
+    )
+
     createMasterPages(app);
     loadStyle();
 
@@ -30,8 +36,15 @@ export default function startup() {
     requirejs(["clientjs_init.js"], function (initModule) {
         console.assert(masterPages.default != null);
         if (initModule && typeof initModule.default == 'function') {
-            let args: InitArguments = { app, mainMaster: masterPages.default }
-            initModule.default(args)
+            let args: InitArguments = { app, mainMaster: masterPages.default };
+            let result = initModule.default(args) as Promise<any>;
+            if (result != null && result.then != null) {
+                result.then(() => {
+                    app.run();
+                })
+
+                return;
+            }
         }
 
         app.run();

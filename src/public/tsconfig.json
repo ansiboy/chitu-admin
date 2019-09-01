@@ -38,9 +38,6 @@
             "entities": [
                 "../../../node-auth-server/out/entities.d.ts"
             ],
-            "error-handle":[
-                "./_error-handle.ts"
-            ],
             "url-pattern":[
                 "../../node_modules/url-pattern/index.d.ts"
             ]

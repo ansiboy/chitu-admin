@@ -79,11 +79,7 @@ export class Application extends chitu_react.Application {
 }
 
 
-export let app = new Application(
-    document.getElementById('simple-master'),
-    document.getElementById('main-master'),
-    document.getElementById('blank-master')
-)
+
 
 
 

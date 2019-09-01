@@ -9,6 +9,11 @@ export type MenuItem = Resource & {
     icon?: string, parent: MenuItem, children: MenuItem[],
 }
 
+export type SimpleMenuItem = {
+    name: string, path?: string, icon?: string,
+    children?: SimpleMenuItem[]
+}
+
 interface State {
     currentPageName?: string,
     toolbar?: JSX.Element,
@@ -122,14 +127,31 @@ export class MainMasterPage extends MasterPage<State> {
         return id;
     }
 
-    setMenu(...menuItems: { name: string, path: string, icon?: string }[]) {
+    private translateToResource(o: SimpleMenuItem): Resource {
+        return {
+            id: this.textToGuid(o.name + o.path || ""), name: o.name, page_path: o.path, type: "menu",
+            icon: o.icon, parent_id: o["parent_id"]
+        } as Resource
+    }
 
-        let items: Resource[] = menuItems.map(o => ({
-            id: this.textToGuid(o.name), name: o.name, page_path: o.path, type: "menu",
-            icon: o.icon
-        } as Resource))
+    setMenu(...menuItems: SimpleMenuItem[]) {
 
-        this.menuResources.value = items;
+        let resources: Resource[] = [];
+
+        let stack = new Array<SimpleMenuItem>();
+        stack.push(...menuItems);
+        while (stack.length > 0) {
+            let item = stack.shift();
+
+            let resource = this.translateToResource(item);
+            resources.push(resource);
+
+            item.children = item.children || [];
+            item.children.forEach(c => c["parent_id"] = resource.id);
+            stack.push(...(item.children || []));
+        }
+
+        this.menuResources.value = resources;
     }
 
     setToolbar(value: JSX.Element) {
@@ -150,7 +172,7 @@ export class MainMasterPage extends MasterPage<State> {
     }
 
     render() {
-        let { menuItems: menuData, username, roleName } = this.state;
+        let { menuItems: menuData } = this.state;
         let currentPageName: string = this.state.currentPageName || '';
 
         let firstLevelNodes = menuData.filter(o => o.type == "menu");
@@ -187,42 +209,41 @@ export class MainMasterPage extends MasterPage<State> {
             nodeClassName = 'hideSecond';
         }
 
-        return (
-            <div className={`${nodeClassName}`} ref={e => this.element = e || this.element}>
-                <div className="first">
-                    <ul className="list-group">
-                        {firstLevelNodes.map((o, i) =>
-                            <li key={i} className={o == firstLevelNode ? "list-group-item active" : "list-group-item"}
-                                style={{ cursor: 'pointer', display: o.type != "menu" ? "none" : '' }}
-                                onClick={() => this.showPageByNode(o)}>
-                                <i className={o.icon}></i>
-                                <span>{o.name}</span>
-                            </li>
-                        )}
-                    </ul>
+        return <div className={`${nodeClassName}`} ref={e => this.element = e || this.element}>
+            <div className="first">
+                <ul className="list-group">
+                    {firstLevelNodes.map((o, i) =>
+                        <li key={i} className={o == firstLevelNode ? "list-group-item active" : "list-group-item"}
+                            style={{ cursor: 'pointer', display: o.type != "menu" ? "none" : '' }}
+                            onClick={() => this.showPageByNode(o)}>
+                            <i className={o.icon}></i>
+                            <span>{o.name}</span>
+                        </li>
+                    )}
+                </ul>
+            </div>
+            <div className="second">
+                <ul className="list-group">
+                    {(firstLevelNode ? (firstLevelNode.children || []) : []).filter(o => o.type == "menu").map((o, i) =>
+                        <li key={i} className={o == secondLevelNode ? "list-group-item active" : "list-group-item"}
+                            style={{ cursor: 'pointer', display: o.type != "menu" ? "none" : '' }}
+                            onClick={() => this.showPageByNode(o)}>
+                            <i className={o.icon}></i>
+                            <span>{o.name}</span>
+                        </li>
+                    )}
+                </ul>
+            </div>
+            <div className="main">
+                <nav className="navbar navbar-default">
+                    {this.state.toolbar}
+                </nav>
+                <div className={`page-container page-placeholder`}
+                    ref={(e: HTMLElement) => this.pageContainer = e || this.pageContainer}>
                 </div>
-                <div className="second">
-                    <ul className="list-group">
-                        {(firstLevelNode ? (firstLevelNode.children || []) : []).filter(o => o.type == "menu").map((o, i) =>
-                            <li key={i} className={o == secondLevelNode ? "list-group-item active" : "list-group-item"}
-                                style={{ cursor: 'pointer', display: o.type != "menu" ? "none" : '' }}
-                                onClick={() => this.showPageByNode(o)}>
-                                <i className={o.icon}></i>
-                                <span>{o.name}</span>
-                            </li>
-                        )}
-                    </ul>
-                </div>
-                <div className="main">
-                    <nav className="navbar navbar-default">
-                        {this.state.toolbar}
-                    </nav>
-                    <div className={`page-container page-placeholder`}
-                        ref={(e: HTMLElement) => this.pageContainer = e || this.pageContainer}>
-                    </div>
-                </div>
-            </div >
-        );
+            </div>
+        </div >
+
     }
 }
 

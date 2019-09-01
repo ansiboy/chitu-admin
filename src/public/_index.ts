@@ -36,7 +36,6 @@ requirejs.config({
         "xml2js": `${node_modules}/xml2js/lib/xml2js`,
         "polyfill": `${node_modules}/@babel/polyfill/dist/polyfill`,
         "url-pattern": `${node_modules}/url-pattern/lib/url-pattern`,
-        "error-handle": `_error-handle`,
     }
 })
 

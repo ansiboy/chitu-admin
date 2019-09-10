@@ -37,11 +37,9 @@ export class MainMasterPage extends MasterPage<State> {
     constructor(props: MasterPageProps) {
         super(props);
 
-        // let username = Service.loginInfo.value ? Service.loginInfo.value.username : "";
         this.state = { menuItems: [], username: "" }
 
         this.app = props.app;
-        // this.ps = this.app.createService(PermissionService);
         this.menuResources.add((value) => {
             let menuItems = translateToMenuItems(value).filter(o => o.parent == null);
             this.setState({ menuItems: menuItems })
@@ -78,7 +76,7 @@ export class MainMasterPage extends MasterPage<State> {
         let stack = new Array<MenuItem>()
         stack.push(...menuItems)
         while (stack.length > 0) {
-            let item = stack.pop()
+            let item = stack.shift()
             if (item == null)
                 return
 
@@ -96,7 +94,7 @@ export class MainMasterPage extends MasterPage<State> {
         let stack = new Array<MenuItem>()
         stack.push(...menuItems)
         while (stack.length > 0) {
-            let item = stack.pop()
+            let item = stack.shift()
             if (item == null)
                 throw new Error("item is null")
 
@@ -259,15 +257,15 @@ function guid() {
 
 function translateToMenuItems(resources: Resource[]): MenuItem[] {
     let arr = new Array<MenuItem>();
-    let stack: MenuItem[] = [...resources.filter(o => o.parent_id == null).reverse() as MenuItem[]];
+    let stack: MenuItem[] = [...resources.filter(o => o.parent_id == null) as MenuItem[]];
     while (stack.length > 0) {
-        let item = stack.pop();
+        let item = stack.shift();
         item.children = resources.filter(o => o.parent_id == item.id) as MenuItem[];
         if (item.parent_id) {
             item.parent = resources.filter(o => o.id == item.parent_id)[0] as MenuItem;
         }
 
-        stack.push(...item.children.reverse());
+        stack.push(...item.children);
 
         arr.push(item);
     }

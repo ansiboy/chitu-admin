@@ -1,10 +1,7 @@
 import { controller, action } from "maishu-node-mvc";
-import http = require("http");
-import cookie = require("cookie");
 import path = require("path");
 import fs = require("fs");
 import os = require("os");
-import { request } from "maishu-node-mvc/decorators";
 import { settings, Settings } from "../settings";
 
 @controller("/")
@@ -14,11 +11,11 @@ export class HomeController {
         return 'Hello World'
     }
 
-    @action()
-    loginInfo(@request req: http.IncomingMessage) {
-        let cookies = cookie.parse(req.headers.cookie);
-        return cookies["app-login-info"];
-    }
+    // @action()
+    // loginInfo(@request req: http.IncomingMessage) {
+    //     let cookies = cookie.parse(req.headers.cookie);
+    //     return cookies["app-login-info"];
+    // }
 
     @action()
     clientFiles(@settings settings: Settings): string[] {

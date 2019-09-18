@@ -2,6 +2,6 @@ import { Service as ChiTuSerivce, AjaxOptions, ValueStore } from 'maishu-chitu-s
 
 export class Service extends ChiTuSerivce {
     files() {
-        return this.get<string[]>("clientFiles");
+        return this.get<string[]>("./clientFiles");
     }
 }

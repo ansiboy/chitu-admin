@@ -1,10 +1,10 @@
 const webpackES6Config = require('./webpack.config.js');
 let webpackES5Config = Object.assign({}, webpackES6Config)
-webpackES5Config.entry = __dirname + "/out-es5/public/index.js" //已多次提及的唯一入口文件
+webpackES5Config.entry = __dirname + "/out-es5/static/index.js" //已多次提及的唯一入口文件
 webpackES5Config.output = Object.assign({}, webpackES5Config.output)
 webpackES5Config.output.filename = "index.es5.js"
 
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
     require('load-grunt-tasks')(grunt);
 
@@ -16,7 +16,9 @@ module.exports = function (grunt) {
                     // { expand: true, cwd: 'src', src: ['content/*'], dest: 'out' },
                     // { expand: true, cwd: 'src', src: ['content/*'], dest: 'out-es5' },
                     {
-                        expand: true, cwd: 'src/public', dest: 'out/public',
+                        expand: true,
+                        cwd: 'src/static',
+                        dest: 'out/static',
                         src: ['**/*.html', '**/*.css', '**/*.less', 'assert/lib/**', "content/**"]
                     },
                 ],
@@ -24,10 +26,10 @@ module.exports = function (grunt) {
         },
         shell: {
             src: {
-                command: `tsc -p src/server`
+                command: `tsc -p src`
             },
             client: {
-                command: `tsc -p src/public`
+                command: `tsc -p src/static`
             },
         },
         webpack: {
@@ -49,9 +51,9 @@ module.exports = function (grunt) {
             dist: {
                 files: [{
                     expand: true,
-                    cwd: 'out/public',
+                    cwd: 'out/static',
                     src: ['**/*.js'],
-                    dest: 'out-es5/public'
+                    dest: 'out-es5/static'
                 }]
             }
         },

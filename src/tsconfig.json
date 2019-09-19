@@ -4,11 +4,14 @@
         "emitDecoratorMetadata": true,
         "module": "commonjs",
         "target": "es6",
-        "outDir": "../../out/server",
+        "outDir": "../out",
         "declaration": true,
         "jsx": "react",
         "baseUrl": "./",
         "paths": {
         }
-    }
+    },
+    "exclude": [
+        "static"
+    ]
 }

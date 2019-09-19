@@ -37,7 +37,7 @@ export function start(config: Config) {
     // }
 
 
-    let innerStaticRootDirectory = path.join(__dirname, "../public");
+    let innerStaticRootDirectory = path.join(__dirname, "static");
     let virtualPaths = createVirtulaPaths(innerStaticRootDirectory, config.staticRootDirectory);
     virtualPaths["assert"] = path.join(innerStaticRootDirectory, "assert");
     // virtualPaths["lib"] = path.join(__dirname, '../../lib');

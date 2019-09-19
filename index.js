@@ -1,4 +1,4 @@
-const { start } = require("./out/server/index");
+const { start } = require("./out/index");
 const path = require("path");
 
 start({
@@ -9,4 +9,3 @@ start({
         "node_modules": path.join(__dirname, "node_modules")
     }
 });
-

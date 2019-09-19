@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "experimentalDecorators": true,
-        "outDir": "../../out/public",
+        "outDir": "../../out/static",
         "jsx": "react",
         "baseUrl": "./",
         "declaration": true,

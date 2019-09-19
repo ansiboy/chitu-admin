@@ -1,4 +1,4 @@
-import { InitArguments } from "../../out/public/index";
+import { InitArguments } from "../../out/static/index";
 import React = require("react");
 
 export default function (args: InitArguments) {

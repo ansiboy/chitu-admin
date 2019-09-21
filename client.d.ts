@@ -1,1 +1,0 @@
-export { InitArguments } from "./out/public/index"

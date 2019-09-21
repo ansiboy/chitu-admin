@@ -1,4 +1,4 @@
-import { startServer } from 'maishu-node-mvc'
+import { startServer, Config as NodeMVCConfig } from 'maishu-node-mvc'
 // import { settings } from './settings';
 import { errors } from './errors';
 import path = require('path')
@@ -7,12 +7,12 @@ import { Settings, SettingsHeaderName } from './settings';
 
 interface Config {
     port: number,
-    // gateway: string,
     controllerPath?: string,
     staticRootDirectory: string,
-    proxy?: import("maishu-node-mvc").Config["proxy"],
+    proxy?: NodeMVCConfig["proxy"],
     bindIP?: string,
     virtualPaths?: { [path: string]: string },
+    headers?: NodeMVCConfig["headers"]
 }
 
 
@@ -30,38 +30,25 @@ export function start(config: Config) {
     if (!stat.isDirectory())
         throw errors.pathIsNotDirectory(config.staticRootDirectory);
 
-    // var node_modules_path = path.join(__dirname, "../../node_modules")
-    // if (!fs.existsSync(node_modules_path)) {
-    //     var appDir = path.dirname(require.main.filename);
-    //     node_modules_path = path.join(appDir, 'node_modules');
-    // }
-
 
     let innerStaticRootDirectory = path.join(__dirname, "static");
     let virtualPaths = createVirtulaPaths(innerStaticRootDirectory, config.staticRootDirectory);
     virtualPaths["assert"] = path.join(innerStaticRootDirectory, "assert");
-    // virtualPaths["lib"] = path.join(__dirname, '../../lib');
-    // console.assert(fs.existsSync(virtualPaths["lib"]));
-    // virtualPaths["node_modules"] = node_modules_path;
 
     virtualPaths = Object.assign(config.virtualPaths || {}, virtualPaths);
 
-    // settings.gateway = config.gateway;
-    // settings.clientStaticRoot = config.staticRootDirectory;
-    // settings.innerStaticRoot = innerStaticRootDirectory;
-
-    startServer({
+    return startServer({
         port: config.port,
         staticRootDirectory: config.staticRootDirectory,
         controllerDirectory: config.controllerPath ? [path.join(__dirname, './controllers'), config.controllerPath] : [path.join(__dirname, './controllers')],
         virtualPaths,
         proxy: config.proxy,
         bindIP: config.bindIP,
+        headers: config.headers,
         actionFilters: [
             (req, res) => {
                 let settings: Settings = {
                     clientStaticRoot: config.staticRootDirectory,
-                    // gateway: config.gateway,
                     innerStaticRoot: innerStaticRootDirectory,
                 }
                 req.headers[SettingsHeaderName] = JSON.stringify(settings);

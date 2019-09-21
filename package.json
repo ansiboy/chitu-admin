@@ -1,8 +1,8 @@
 {
     "name": "maishu-chitu-admin",
-    "version": "2.26.0",
-    "main": "out/server/index.js",
-    "types": "out/server/index.d.ts",
+    "version": "2.28.0",
+    "main": "out/index.js",
+    "types": "out/index.d.ts",
     "scripts": {
         "build": "grunt"
     },

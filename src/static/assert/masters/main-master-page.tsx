@@ -3,14 +3,14 @@ import { Application } from '../application';
 import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
 import { ValueStore } from 'maishu-chitu';
-import { Resource } from 'assert/models';
+import { Resource } from '../models';
 
 export type MenuItem = Resource & {
     icon?: string, parent: MenuItem, children: MenuItem[],
 }
 
 export type SimpleMenuItem = {
-    name: string, path?: string, icon?: string,
+    name: string, path?: string | (() => string), icon?: string,
     children?: SimpleMenuItem[]
 }
 
@@ -126,8 +126,9 @@ export class MainMasterPage extends MasterPage<State> {
     }
 
     private translateToResource(o: SimpleMenuItem): Resource {
+        let path = typeof o.path == "function" ? o.path() : o.path;
         return {
-            id: this.textToGuid(o.name + o.path || ""), name: o.name, page_path: o.path, type: "menu",
+            id: this.textToGuid(o.name + path || ""), name: o.name, page_path: path, type: "menu",
             icon: o.icon, parent_id: o["parent_id"]
         } as Resource
     }

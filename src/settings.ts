@@ -1,19 +1,19 @@
 import { createParameterDecorator } from "maishu-node-mvc";
+import { ServerContext } from "maishu-node-mvc/dist/server-context";
+
+export interface MyServierContext extends ServerContext {
+    settings: Settings
+}
+
 
 export interface Settings {
     innerStaticRoot: string;
-    // roleId: string;
-    // gateway: string;
     clientStaticRoot: string;
 }
 
-export let SettingsHeaderName = "settings";
 
-export let settings = createParameterDecorator(async (req) => {
-    let settingsHeader = req.headers[SettingsHeaderName] as string;
-    console.assert(settingsHeader != null);
-    let settings = JSON.parse(settingsHeader) as Settings;
-    return settings;
+export let settings = createParameterDecorator(async (req, res, context: MyServierContext) => {
+    return context.settings;
 })
 
 // export let settings: Settings = global['settings'] = global['settings'] || {}

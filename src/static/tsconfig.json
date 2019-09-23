@@ -42,5 +42,8 @@
                 "../../node_modules/url-pattern/index.d.ts"
             ]
         }
-    }
+    },
+    "exclude": [
+        "node_modules/**/node_modules/**"
+    ]
 }

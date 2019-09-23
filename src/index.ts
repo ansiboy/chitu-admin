@@ -3,7 +3,8 @@ import { startServer, Config as NodeMVCConfig } from 'maishu-node-mvc'
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
-import { Settings, SettingsHeaderName } from './settings';
+import { Settings, MyServierContext } from './settings';
+import { ServerContext } from 'maishu-node-mvc/dist/server-context';
 
 interface Config {
     port: number,
@@ -14,6 +15,7 @@ interface Config {
     virtualPaths?: { [path: string]: string },
     headers?: NodeMVCConfig["headers"]
 }
+
 
 
 export function start(config: Config) {
@@ -46,13 +48,13 @@ export function start(config: Config) {
         bindIP: config.bindIP,
         headers: config.headers,
         actionFilters: [
-            (req, res) => {
+            (req, res, context: MyServierContext) => {
                 let settings: Settings = {
                     clientStaticRoot: config.staticRootDirectory,
                     innerStaticRoot: innerStaticRootDirectory,
                 }
-                req.headers[SettingsHeaderName] = JSON.stringify(settings);
 
+                context.settings = settings;
                 return null;
             }
         ]

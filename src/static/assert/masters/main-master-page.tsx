@@ -4,15 +4,13 @@ import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
 import { ValueStore } from 'maishu-chitu';
 import { Resource } from '../models';
+import { SimpleMenuItem } from '../config';
 
 export type MenuItem = Resource & {
     icon?: string, parent: MenuItem, children: MenuItem[],
 }
 
-export type SimpleMenuItem = {
-    name: string, path?: string | (() => string), icon?: string,
-    children?: SimpleMenuItem[]
-}
+export { SimpleMenuItem } from "../config";
 
 interface State {
     currentPageName?: string,

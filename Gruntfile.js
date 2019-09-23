@@ -60,5 +60,5 @@ module.exports = function(grunt) {
 
     });
 
-    grunt.registerTask('default', ['shell', 'copy', 'babel']);
+    grunt.registerTask('default', ['shell', 'copy', 'babel', 'webpack']);
 }

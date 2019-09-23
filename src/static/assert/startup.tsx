@@ -4,23 +4,25 @@ import { SimpleMasterPage } from "./masters/simple-master-page";
 import { MainMasterPage } from "./masters/main-master-page";
 import React = require("react");
 import { MasterPage } from "./masters/master-page";
-import { config } from "../config";
+// import { config } from "../assert/config";
+import { Service } from "./services/service";
+import { WebSiteConfig } from "./config";
 
-export default function startup() {
+export default async function startup() {
     async function createMasterPages(app: Application) {
-        return new Promise<{ simple: HTMLElement, main: HTMLElement }>((resolve, reject) => {
-            let container = document.createElement('div')
+        let mainProps: MainMasterPage["props"] = { app };
+        let simplePorps: SimpleMasterPage["props"] = { app };
+        let r = await Promise.all([
+            renderElement(SimpleMasterPage, simplePorps, document.getElementById('simple-master')),
+            renderElement(MainMasterPage, mainProps, document.getElementById('main-master')),
+        ]);
 
-            ReactDOM.render(<SimpleMasterPage app={app} ref={e => masterPages.simple = e || masterPages.simple} />, document.getElementById('simple-master'))
-            ReactDOM.render(<MainMasterPage app={app} ref={e => masterPages.default = e || masterPages.default} />, document.getElementById('main-master'))
-            document.body.appendChild(container)
-        })
+        return {
+            simple: r[0] as MasterPage<any>,
+            default: r[1] as MainMasterPage
+        }
     }
 
-    let masterPages = {
-        simple: null as MasterPage<any>,
-        default: null as MainMasterPage
-    }
 
     let app = new Application(
         document.getElementById('simple-master'),
@@ -28,10 +30,14 @@ export default function startup() {
         document.getElementById('blank-master')
     )
 
-    createMasterPages(app);
-    loadStyle();
 
-    // app.masterPages = masterPages;
+    let service = app.createService(Service);
+    let config = await service.config();
+    loadStyle(config);
+    console.assert(config.menuItems != null);
+
+    let masterPages = await createMasterPages(app);
+    masterPages.default.setMenu(...config.menuItems);
 
     requirejs(["clientjs_init.js"], function (initModule) {
         console.assert(masterPages.default != null);
@@ -49,10 +55,25 @@ export default function startup() {
 
         app.run();
     })
+
+
+}
+
+function renderElement(componentClass: React.ComponentClass, props: any, container: HTMLElement) {
+    return new Promise((resolve, reject) => {
+        props.ref = function (e) {
+            if (!e) return;
+            resolve(e);
+        }
+
+        let element = React.createElement(componentClass, props);
+        ReactDOM.render(element, container)
+    })
 }
 
 /** 加载样式文件 */
-function loadStyle() {
+function loadStyle(config: WebSiteConfig) {
+
     let str: string = require('text!../content/admin_style_default.less')
     if (config.firstPanelWidth) {
         str = str + `\r\n@firstPanelWidth: ${config.firstPanelWidth}px;`

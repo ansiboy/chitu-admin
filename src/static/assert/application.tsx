@@ -1,7 +1,6 @@
 
 import * as chitu_react from 'maishu-chitu-react';
 import 'text!../content/admin_style_default.less'
-import { PageData, Page } from "maishu-chitu"
 import errorHandle from 'error-handle';
 import UrlPattern = require("url-pattern");
 import { Service } from './services/service';
@@ -62,20 +61,7 @@ export class Application extends chitu_react.Application {
         return super.loadjs(path);
     }
 
-    // createPageElement(pageName: string, containerName: string) {
-    //     let element = super.createPageElement(pageName, containerName);
-    //     return element;
-    // }
 
-    // showPage(pageUrl: string, args?: PageData, forceRender?: boolean): Page {
-    //     args = args || {}
-    //     let d = this.parseUrl(pageUrl)
-    //     let names = ['login', 'forget-password', 'register']
-    //     if (names.indexOf(d.pageName) >= 0) {
-    //         args.container = 'simple'
-    //     }
-    //     return super.showPage(pageUrl, args, forceRender)
-    // }
 }
 
 

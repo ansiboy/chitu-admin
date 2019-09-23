@@ -1,18 +1,20 @@
-// export interface Config {
-//     firstPanelWidth: string,
-//     secondPanelWidth: string,
-//     loginRedirectURL: string,
-//     logoutRedirectURL: string,
-//     registerRedirectURL: string,
-//     login: {
-//         title?: string,
-//         showForgetPassword: boolean,
-//         showRegister: boolean,
-//         indexPageName?: string,
-//     }
-// }
 
-// export let config: Config = (window as any)['maishu-chitu-admin-config'] = (window as any)['maishu-chitu-admin-config'] || {}
+export type SimpleMenuItem = {
+    name: string;
+    path?: string | (() => string);
+    icon?: string;
+    children?: SimpleMenuItem[];
+};
 
+export let config = {
+    firstPanelWidth: 130,
+    secondPanelWidth: 130,
+    loginRedirectURL: "",
+    logoutRedirectURL: "",
+    registerRedirectURL: "",
+    menuItems: [] as SimpleMenuItem[]
+}
 
+export default config;
 
+export type WebSiteConfig = typeof config;

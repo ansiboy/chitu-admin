@@ -11,7 +11,7 @@ module.exports = {
     output: {
         path: __dirname + "/dist", //打包后的文件存放的地方
         filename: "index.js", //打包后输出文件的文件名
-        libraryTarget: 'umd'
+        libraryTarget: 'amd'
     },
     mode: 'development',
     devtool: 'source-map',

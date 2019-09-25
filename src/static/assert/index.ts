@@ -23,7 +23,7 @@ requirejs.config({
         "react-dom": `${node_modules}/react-dom/umd/react-dom.development`,
         "maishu-chitu": `${node_modules}/maishu-chitu/dist/index`,
         "maishu-chitu-admin": `${node_modules}/maishu-chitu-admin/dist/chitu_admin`,
-        "maishu-chitu-admin/static": `${node_modules}/maishu-chitu-admin/dist/index`,
+        "maishu-chitu-admin/static": `${node_modules}/maishu-chitu-admin/out/static/index`,
         "maishu-chitu-react": `${node_modules}/maishu-chitu-react/dist/index`,
         "maishu-chitu-service": `${node_modules}/maishu-chitu-service/dist/index`,
         "maishu-dilu": `${node_modules}/maishu-dilu/dist/index`,

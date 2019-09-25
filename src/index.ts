@@ -4,7 +4,6 @@ import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
 import { Settings, MyServierContext } from './settings';
-import { ServerContext } from 'maishu-node-mvc/dist/server-context';
 
 interface Config {
     port: number,

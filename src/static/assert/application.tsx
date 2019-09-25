@@ -1,7 +1,7 @@
 
 import * as chitu_react from 'maishu-chitu-react';
 import 'text!../content/admin_style_default.less'
-import errorHandle from 'error-handle';
+import errorHandle from './error-handle';
 import UrlPattern = require("url-pattern");
 import { Service } from './services/service';
 

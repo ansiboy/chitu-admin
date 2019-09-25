@@ -2,9 +2,7 @@ import { controller, action, Controller } from "maishu-node-mvc";
 import path = require("path");
 import fs = require("fs");
 import os = require("os");
-import { settings, Settings, MyServierContext } from "../settings";
-import defaultConfig from "../static/assert/config";
-import { context } from "maishu-node-mvc";
+import { settings, Settings } from "../settings";
 import { errors } from "../errors";
 
 @controller("/")

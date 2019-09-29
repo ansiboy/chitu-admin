@@ -1,4 +1,5 @@
 
+
 export type SimpleMenuItem = {
     name: string;
     path?: string | (() => string);
@@ -6,15 +7,9 @@ export type SimpleMenuItem = {
     children?: SimpleMenuItem[];
 };
 
-export let config = {
-    firstPanelWidth: 130,
-    secondPanelWidth: 130,
-    loginRedirectURL: "",
-    logoutRedirectURL: "",
-    registerRedirectURL: "",
-    menuItems: [] as SimpleMenuItem[]
+export interface WebSiteConfig {
+    requirejs: RequireConfig,
+    firstPanelWidth: number,
+    secondPanelWidth: number,
+    menuItems: SimpleMenuItem[],
 }
-
-export default config;
-
-export type WebSiteConfig = typeof config;

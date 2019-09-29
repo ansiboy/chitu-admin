@@ -1,5 +1,6 @@
 import { Service as ChiTuSerivce, AjaxOptions, ValueStore } from 'maishu-chitu-service'
-import defaultConfig from 'assert/config';
+// import defaultConfig from 'assert/config';
+import { WebSiteConfig } from "assert/config"
 
 let clientFiles: string[];
 export class Service extends ChiTuSerivce {
@@ -11,16 +12,8 @@ export class Service extends ChiTuSerivce {
         return clientFiles;
     }
 
-    async config(): Promise<typeof defaultConfig> {
-        let clientFiles = await this.files();
-        let configFile = clientFiles.filter(o => o == "config.js")[0];
-        if (configFile) {
-            let mod = await import(configFile)
-            if (mod != null) {
-                return Object.assign(defaultConfig, mod.default || {});
-            }
-        }
-        return defaultConfig;
-
+    async config(): Promise<WebSiteConfig> {
+        let r = await this.get<WebSiteConfig>("./config");
+        return r;
     }
 }

@@ -5,43 +5,56 @@ import path = require('path')
 import fs = require("fs");
 import { Settings, MyServierContext } from './settings';
 
+import { WebSiteConfig as WebSiteConfig1 } from "../out/static/assert/config";
+export {SimpleMenuItem} from "../out/static/assert/config";
+
+export type WebSiteConfig = { [P in keyof WebSiteConfig1]?: WebSiteConfig1[P] };
+
 interface Config {
     port: number,
-    controllerPath?: string,
-    staticRootDirectory: string,
+    rootDirectory: string,
     proxy?: NodeMVCConfig["proxy"],
     bindIP?: string,
     virtualPaths?: { [path: string]: string },
     headers?: NodeMVCConfig["headers"]
 }
 
-
-
 export function start(config: Config) {
-    if (!config.staticRootDirectory)
-        throw errors.settingItemNull("clientRootDirectory");
 
-    if (!path.isAbsolute(config.staticRootDirectory))
-        throw errors.notAbsolutePath(config.staticRootDirectory);
+    if (!config.rootDirectory)
+        throw errors.settingItemNull<Config>("rootDirectory");
 
-    if (!fs.existsSync(config.staticRootDirectory))
-        throw errors.directoryNotExists(config.staticRootDirectory);
+    // if (!config.staticRootDirectory)
+    //     throw errors.settingItemNull("clientRootDirectory");
 
-    let stat = fs.statSync(config.staticRootDirectory);
-    if (!stat.isDirectory())
-        throw errors.pathIsNotDirectory(config.staticRootDirectory);
+    if (!path.isAbsolute(config.rootDirectory))
+        throw errors.notAbsolutePath(config.rootDirectory);
 
+    if (!fs.existsSync(config.rootDirectory))
+        throw errors.directoryNotExists(config.rootDirectory);
+
+    // let stat = fs.statSync(config.staticRootDirectory);
+    // if (!stat.isDirectory())
+    //     throw errors.pathIsNotDirectory(config.staticRootDirectory);
+
+    let staticRootDirectory = path.join(config.rootDirectory, "static")
+    if (!fs.existsSync(staticRootDirectory))
+        throw errors.directoryNotExists(staticRootDirectory);
+
+    let controllerPath: string;
+    if (fs.existsSync(path.join(config.rootDirectory, "controllers")))
+        controllerPath = path.join(config.rootDirectory, "controllers");
 
     let innerStaticRootDirectory = path.join(__dirname, "static");
-    let virtualPaths = createVirtulaPaths(innerStaticRootDirectory, config.staticRootDirectory);
+    let virtualPaths = createVirtulaPaths(innerStaticRootDirectory, staticRootDirectory);
     virtualPaths["assert"] = path.join(innerStaticRootDirectory, "assert");
 
     virtualPaths = Object.assign(config.virtualPaths || {}, virtualPaths);
 
     return startServer({
         port: config.port,
-        staticRootDirectory: config.staticRootDirectory,
-        controllerDirectory: config.controllerPath ? [path.join(__dirname, './controllers'), config.controllerPath] : [path.join(__dirname, './controllers')],
+        staticRootDirectory: staticRootDirectory,
+        controllerDirectory: controllerPath ? [path.join(__dirname, './controllers'), controllerPath] : [path.join(__dirname, './controllers')],
         virtualPaths,
         proxy: config.proxy,
         bindIP: config.bindIP,
@@ -49,8 +62,9 @@ export function start(config: Config) {
         actionFilters: [
             (req, res, context: MyServierContext) => {
                 let settings: Settings = {
-                    clientStaticRoot: config.staticRootDirectory,
+                    clientStaticRoot: staticRootDirectory,
                     innerStaticRoot: innerStaticRootDirectory,
+                    root: config.rootDirectory,
                 }
 
                 context.settings = settings;

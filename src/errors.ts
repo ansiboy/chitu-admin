@@ -1,5 +1,5 @@
 export let errors = {
-    settingItemNull(name: string) {
+    settingItemNull<T>(name: keyof T) {
         let msg = `Setting item '${name}' is null.`;
         return new Error(msg);
     },

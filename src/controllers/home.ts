@@ -4,6 +4,8 @@ import fs = require("fs");
 import os = require("os");
 import { settings, Settings } from "../settings";
 import { errors } from "../errors";
+import { WebSiteConfig } from "../../out/static/assert/config";
+import { default as defaultConfig } from "../config";
 
 @controller("/")
 export class HomeController extends Controller {
@@ -92,19 +94,19 @@ export class HomeController extends Controller {
         return paths;
     }
 
-    // @action()
-    // config(@context context: MyServierContext) {
-    //     if (context.settings.clientStaticRoot) {
-    //         let p = path.join(context.settings.clientStaticRoot, "config.js");
-    //         if (fs.existsSync(p)) {
-    //             let mod = require(p);
-    //             if (mod != null) {
-    //                 let config = Object.assign(defaultConfig, mod["default"] || {});
-    //                 return config;
-    //             }
-    //         }
-    //     }
+    @action()
+    config(@settings settings: Settings): WebSiteConfig {
+        let config = {} as WebSiteConfig;
+        let configPath = path.join(settings.root, "config.js");
+        if (fs.existsSync(configPath)) {
+            let mod = require(configPath);
+            config = mod["default"] || {};
+        }
 
-    //     return defaultConfig;
-    // }
+        // console.log(configPath);
+        // console.log(`config path exist ${fs.existsSync(configPath)}`);
+
+        let r = Object.assign({}, defaultConfig, config)
+        return r;
+    }
 }

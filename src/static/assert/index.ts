@@ -1,9 +1,11 @@
+
+
 let node_modules = 'node_modules'
 let lib = 'assert/lib'
 
-
-requirejs.config({
+let requirejsConfig: RequireConfig = {
     baseUrl: './',
+    shim: {},
     paths: {
         css: `${lib}/css`,
         less: `${lib}/require-less-0.1.5/less`,
@@ -38,11 +40,21 @@ requirejs.config({
         "polyfill": `${node_modules}/@babel/polyfill/dist/polyfill`,
         "url-pattern": `${node_modules}/url-pattern/lib/url-pattern`,
     }
+}
+
+fetch("./config").then(async response => {
+    let r: WebSiteConfig = await response.json();
+
+    Object.assign(requirejsConfig.paths, r.requirejs.paths || {});
+    Object.assign(requirejsConfig.shim, r.requirejs.shim || {});
+    requirejs.config(requirejsConfig);
+    
+    requirejs(["assert/startup"], function (startupModule) {
+
+        console.assert(startupModule != null && typeof startupModule["default"] == "function");
+        startupModule["default"]();
+
+    })
+
 })
 
-requirejs(["assert/startup"], function (startupModule) {
-
-    console.assert(startupModule != null && typeof startupModule["default"] == "function");
-    startupModule["default"]();
-
-})

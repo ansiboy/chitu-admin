@@ -1,0 +1,8 @@
+{
+    "out": "../docs",
+    "json": "../docs/api.json",
+    "excludeExternals": true,
+    "excludeNotExported": true,
+    "excludePrivate": true,
+    "excludeProtected": true
+}

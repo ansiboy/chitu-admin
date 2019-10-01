@@ -5,13 +5,23 @@ import os = require("os");
 import { settings, Settings } from "../settings";
 import { errors } from "../errors";
 
+/** 
+ * Home 控制器 
+ */
 @controller("/")
 export class HomeController extends Controller {
+    /** 
+     * Index 页面，用于测试 
+     */
     @action()
     index() {
         return 'Hello World'
     }
 
+    /** 
+     * 客户端初始化脚本 
+     * @param settings 设置，由系统注入。
+     */
     @action("/clientjs_init.js")
     initjs(@settings settings: Settings) {
         let initJS = `define([],function(){
@@ -32,6 +42,10 @@ export class HomeController extends Controller {
         return initJS;
     }
 
+    /**
+     * 首页 HTML 文件
+     * @param settings 设置，由系统注入。   
+     */
     @action("/")
     indexHtml(@settings settings: Settings) {
         let html: string = null;
@@ -55,6 +69,10 @@ export class HomeController extends Controller {
         return this.content(html, "text/html");
     }
 
+    /**
+     * 获取客户端文件
+     * @param settings 设置，由系统注入。   
+     */
     @action()
     clientFiles(@settings settings: Settings): string[] {
         console.assert(settings.clientStaticRoot != null);
@@ -91,20 +109,4 @@ export class HomeController extends Controller {
 
         return paths;
     }
-
-    // @action()
-    // config(@context context: MyServierContext) {
-    //     if (context.settings.clientStaticRoot) {
-    //         let p = path.join(context.settings.clientStaticRoot, "config.js");
-    //         if (fs.existsSync(p)) {
-    //             let mod = require(p);
-    //             if (mod != null) {
-    //                 let config = Object.assign(defaultConfig, mod["default"] || {});
-    //                 return config;
-    //             }
-    //         }
-    //     }
-
-    //     return defaultConfig;
-    // }
 }

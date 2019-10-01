@@ -1,5 +1,5 @@
 import { createParameterDecorator } from "maishu-node-mvc";
-import { ServerContext } from "maishu-node-mvc/dist/server-context";
+import { ServerContext } from "maishu-node-mvc";
 
 export interface MyServierContext extends ServerContext {
     settings: Settings

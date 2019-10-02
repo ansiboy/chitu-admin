@@ -1,4 +1,4 @@
-import { Application } from "assert/application";
+import { Application } from "./application";
 import { Page } from "maishu-chitu-react";
 import * as ui from "maishu-ui-toolkit";
 

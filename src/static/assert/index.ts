@@ -3,6 +3,9 @@
 let node_modules = 'node_modules'
 let lib = 'assert/lib'
 
+type RequireConfig = import("./config").RequireConfig;
+type WebSiteConfig = import("./config").WebSiteConfig;
+
 let requirejsConfig: RequireConfig = {
     baseUrl: './',
     shim: {},

@@ -1,4 +1,6 @@
-/// <reference path="static/declare.d.ts"/>
+// import { WebSiteConfig } from "../out/static/assert/config";
+
+export type WebSiteConfig = import("../out/static/index").WebSiteConfig;
 
 let config: WebSiteConfig = {
     requirejs: {},

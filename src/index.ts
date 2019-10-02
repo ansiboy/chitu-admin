@@ -1,14 +1,12 @@
 import { startServer, Config as NodeMVCConfig } from 'maishu-node-mvc'
-// import { settings } from './settings';
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
 import { Settings, MyServierContext } from './settings';
 
-import { WebSiteConfig as WebSiteConfig1 } from "../out/static/assert/config";
-export {SimpleMenuItem} from "../out/static/assert/config";
+export { WebSiteConfig } from "./config";
+export { settings, Settings } from "./settings";
 
-export type WebSiteConfig = { [P in keyof WebSiteConfig1]?: WebSiteConfig1[P] };
 
 interface Config {
     port: number,
@@ -74,7 +72,6 @@ export function start(config: Config) {
     });
 }
 
-export { settings, Settings } from "./settings";
 
 function createVirtulaPaths(rootAbsolutePath: string, clientRootAbsolutePath: string) {
     let virtualPaths: { [path: string]: string } = {}

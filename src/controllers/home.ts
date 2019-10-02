@@ -7,13 +7,23 @@ import { errors } from "../errors";
 import { WebSiteConfig } from "../../out/static/assert/config";
 import { default as defaultConfig } from "../config";
 
+/** 
+ * Home 控制器 
+ */
 @controller("/")
 export class HomeController extends Controller {
+    /** 
+     * Index 页面，用于测试 
+     */
     @action()
     index() {
         return 'Hello World'
     }
 
+    /** 
+     * 客户端初始化脚本 
+     * @param settings 设置，由系统注入。
+     */
     @action("/clientjs_init.js")
     initjs(@settings settings: Settings) {
         let initJS = `define([],function(){
@@ -34,6 +44,10 @@ export class HomeController extends Controller {
         return initJS;
     }
 
+    /**
+     * 首页 HTML 文件
+     * @param settings 设置，由系统注入。   
+     */
     @action("/")
     indexHtml(@settings settings: Settings) {
         let html: string = null;
@@ -57,6 +71,10 @@ export class HomeController extends Controller {
         return this.content(html, "text/html");
     }
 
+    /**
+     * 获取客户端文件
+     * @param settings 设置，由系统注入。   
+     */
     @action()
     clientFiles(@settings settings: Settings): string[] {
         console.assert(settings.clientStaticRoot != null);

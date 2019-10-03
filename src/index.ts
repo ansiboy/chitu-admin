@@ -48,21 +48,28 @@ export function start(config: Config) {
     if (fs.existsSync(tsconfigPath) == false)
         throw errors.pathNotExists(tsconfigPath);
 
-    let docsPath = path.join(__dirname, "docs");
+    let tsconfig = require(tsconfigPath) as { compilerOptions: { outDir: string } };
+    console.assert(tsconfig != null);
+    console.assert(tsconfig.compilerOptions != null);
+    // console.assert(tsconfig.compilerOptions.outDir != null);
+    let outDir = tsconfig.compilerOptions.outDir || "./";
+    console.assert(path.isAbsolute(outDir) == false);
+
+    let docsPath = path.join(config.sourceDirectory, outDir, "docs");
     new CliApplication({
         "out": docsPath,
         "json": path.join(__dirname, "docs/api.json"),
-        "excludeExternals": true,
-        "excludeNotExported": true,
+        // "excludeExternals": true,
+        // "excludeNotExported": true,
         "excludePrivate": true,
         "excludeProtected": true,
-        "tsconfig": path.join(__dirname, tsconfigPath)
+        "tsconfig": tsconfigPath
     });
 
     let innerStaticRootDirectory = path.join(__dirname, "static");
     let virtualPaths = createVirtulaPaths(innerStaticRootDirectory, staticRootDirectory);
     virtualPaths["assert"] = path.join(innerStaticRootDirectory, "assert");
-    virtualPaths["docs"] = docsPath;
+    virtualPaths["docs"] = docsPath;//path.join(config.sourceDirectory, docsPath);
 
     virtualPaths = Object.assign(config.virtualPaths || {}, virtualPaths);
 

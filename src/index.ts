@@ -3,6 +3,7 @@ import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
 import { Settings, MyServierContext } from './settings';
+import { CliApplication } from "typedoc";
 
 export { WebSiteConfig } from "./config";
 export { settings, Settings } from "./settings";
@@ -11,6 +12,7 @@ export { settings, Settings } from "./settings";
 interface Config {
     port: number,
     rootDirectory: string,
+    sourceDirectory: string,
     proxy?: NodeMVCConfig["proxy"],
     bindIP?: string,
     virtualPaths?: { [path: string]: string },
@@ -22,30 +24,45 @@ export function start(config: Config) {
     if (!config.rootDirectory)
         throw errors.settingItemNull<Config>("rootDirectory");
 
-    // if (!config.staticRootDirectory)
-    //     throw errors.settingItemNull("clientRootDirectory");
-
     if (!path.isAbsolute(config.rootDirectory))
         throw errors.notAbsolutePath(config.rootDirectory);
 
     if (!fs.existsSync(config.rootDirectory))
-        throw errors.directoryNotExists(config.rootDirectory);
-
-    // let stat = fs.statSync(config.staticRootDirectory);
-    // if (!stat.isDirectory())
-    //     throw errors.pathIsNotDirectory(config.staticRootDirectory);
+        throw errors.pathNotExists(config.rootDirectory);
 
     let staticRootDirectory = path.join(config.rootDirectory, "static")
     if (!fs.existsSync(staticRootDirectory))
-        throw errors.directoryNotExists(staticRootDirectory);
+        throw errors.pathNotExists(staticRootDirectory);
 
     let controllerPath: string;
     if (fs.existsSync(path.join(config.rootDirectory, "controllers")))
         controllerPath = path.join(config.rootDirectory, "controllers");
 
+    if (!config.sourceDirectory)
+        throw errors.settingItemNull<Config>("sourceDirectory");
+
+    if (!path.isAbsolute(config.sourceDirectory))
+        throw errors.notAbsolutePath(config.sourceDirectory);
+
+    let tsconfigPath = path.join(config.sourceDirectory, "tsconfig.json");
+    if (fs.existsSync(tsconfigPath) == false)
+        throw errors.pathNotExists(tsconfigPath);
+
+    let docsPath = path.join(__dirname, "docs");
+    new CliApplication({
+        "out": docsPath,
+        "json": path.join(__dirname, "docs/api.json"),
+        "excludeExternals": true,
+        "excludeNotExported": true,
+        "excludePrivate": true,
+        "excludeProtected": true,
+        "tsconfig": path.join(__dirname, tsconfigPath)
+    });
+
     let innerStaticRootDirectory = path.join(__dirname, "static");
     let virtualPaths = createVirtulaPaths(innerStaticRootDirectory, staticRootDirectory);
     virtualPaths["assert"] = path.join(innerStaticRootDirectory, "assert");
+    virtualPaths["docs"] = docsPath;
 
     virtualPaths = Object.assign(config.virtualPaths || {}, virtualPaths);
 

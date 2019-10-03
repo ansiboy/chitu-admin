@@ -10,7 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const maishu_node_mvc_1 = require("maishu-node-mvc");
+/**
+ * Temp 控制器
+ */
 let TempController = class TempController {
+    /** Index 页面 */
     index() {
         return "Demo Index";
     }

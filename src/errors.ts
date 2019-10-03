@@ -7,8 +7,8 @@ export let errors = {
         let msg = `Path "${path}" is not a absolute path.`;
         return new Error(msg);
     },
-    directoryNotExists(path: string) {
-        let msg = `Directory "${path}" is not exists.`;
+    pathNotExists(path: string) {
+        let msg = `Path "${path}" is not exists.`;
         return new Error(msg);
     },
     fileNotExists(path: string) {

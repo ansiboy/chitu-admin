@@ -50,14 +50,36 @@ fetch("./config").then(async response => {
 
     Object.assign(requirejsConfig.paths, r.requirejs.paths || {});
     Object.assign(requirejsConfig.shim, r.requirejs.shim || {});
-    requirejs.config(requirejsConfig);
-    
-    requirejs(["assert/startup"], function (startupModule) {
+    requirejsConfig.context = r.requirejs.context;
+
+    let req = requirejs.config(requirejsConfig);
+    req(["assert/startup"], function (startupModule) {
 
         console.assert(startupModule != null && typeof startupModule["default"] == "function");
-        startupModule["default"]();
-
+        startupModule["default"](req);
     })
+});
 
-})
+(function () {
+    let _define = define;
+    window['define'] = function (name, deps, callback) {
+        return _define.apply(window, [name, deps, callback]);
+    };
+    window['define'].amd = (_define as any).amd;
+})();
+
+let load: Function = requirejs.load;
+requirejs.load = function (context, id, url: string) {
+    if (url.endsWith(".js") == false) {
+        url = url + ".js";
+    }
+
+    if (context.config.baseUrl != null && !url.startsWith(context.config.baseUrl)) {
+        url = context.config.baseUrl + url
+    }
+
+    load.apply(this, [context, id, url]);
+}
+
+
 

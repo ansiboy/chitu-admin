@@ -1,14 +1,13 @@
-import { Application } from "./application";
+import { Application, RequireJS } from "./application";
 import ReactDOM = require("react-dom");
 import { SimpleMasterPage } from "./masters/simple-master-page";
 import { MainMasterPage } from "./masters/main-master-page";
 import React = require("react");
 import { MasterPage } from "./masters/master-page";
-// import { config } from "../assert/config";
 import { Service } from "./services/service";
 import { WebSiteConfig } from "./config";
 
-export default async function startup() {
+export default async function startup(requirejs: RequireJS) {
     async function createMasterPages(app: Application) {
         let mainProps: MainMasterPage["props"] = { app };
         let simplePorps: SimpleMasterPage["props"] = { app };
@@ -23,13 +22,12 @@ export default async function startup() {
         }
     }
 
-
     let app = new Application(
+        requirejs,
         document.getElementById('simple-master'),
         document.getElementById('main-master'),
         document.getElementById('blank-master')
     )
-
 
     let service = app.createService(Service);
     let config = await service.config();
@@ -42,7 +40,9 @@ export default async function startup() {
     requirejs(["clientjs_init.js"], function (initModule) {
         console.assert(masterPages.default != null);
         if (initModule && typeof initModule.default == 'function') {
-            let args: InitArguments = { app, mainMaster: masterPages.default };
+            let args: InitArguments = {
+                app, mainMaster: masterPages.default, requirejs
+            };
             let result = initModule.default(args) as Promise<any>;
             if (result != null && result.then != null) {
                 result.then(() => {
@@ -55,8 +55,6 @@ export default async function startup() {
 
         app.run();
     })
-
-
 }
 
 function renderElement(componentClass: React.ComponentClass, props: any, container: HTMLElement) {
@@ -99,6 +97,7 @@ function loadStyle(config: WebSiteConfig) {
 export type InitArguments = {
     app: Application,
     mainMaster: MainMasterPage,
+    requirejs: RequireJS
 }
 
 

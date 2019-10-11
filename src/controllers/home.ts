@@ -115,14 +115,13 @@ export class HomeController extends Controller {
     @action()
     config(@settings settings: Settings): WebSiteConfig {
         let config = {} as WebSiteConfig;
-        let configPath = path.join(settings.root, "config.js");
-        if (fs.existsSync(configPath)) {
-            let mod = require(configPath);
+        let staticConfigPath = path.join(settings.root, "static/config.js");
+        console.log(staticConfigPath)
+        if (fs.existsSync(staticConfigPath)) {
+            let mod = require(staticConfigPath);
+            console.log(mod);
             config = mod["default"] || {};
         }
-
-        // console.log(configPath);
-        // console.log(`config path exist ${fs.existsSync(configPath)}`);
 
         let r = Object.assign({}, defaultConfig, config)
         return r;

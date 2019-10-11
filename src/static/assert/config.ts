@@ -1,17 +1,15 @@
-
-
 export type SimpleMenuItem = {
-    name: string;
-    path?: string | (() => string);
-    icon?: string;
-    children?: SimpleMenuItem[];
+	name: string;
+	path?: string | (() => string);
+	icon?: string;
+	children?: SimpleMenuItem[];
 };
 
 export interface WebSiteConfig {
-    requirejs: RequireConfig,
-    firstPanelWidth: number,
-    secondPanelWidth: number,
-    menuItems: SimpleMenuItem[],
+	requirejs: RequireConfig,
+	firstPanelWidth: number,
+	secondPanelWidth: number,
+	menuItems: SimpleMenuItem[],
 }
 
 export interface RequireConfig {
@@ -19,20 +17,20 @@ export interface RequireConfig {
 	/**
 	* The root path to use for all module lookups.
 	*/
-    baseUrl?: string;
+	baseUrl?: string;
 
 	/**
 	* Path mappings for module names not found directly under
 	* baseUrl.
 	*/
-    paths?: { [key: string]: any; };
+	paths?: { [key: string]: any; };
 
 
 	/**
 	* Dictionary of Shim's.
 	* Can be of type RequireShim or string[] of dependencies
 	*/
-    shim?: { [key: string]: RequireShim | string[]; };
+	shim?: { [key: string]: RequireShim | string[]; };
 
 	/**
 	* For the given module prefix, instead of loading the
@@ -51,11 +49,11 @@ export interface RequireConfig {
 	*	}
 	* });
 	**/
-    map?: {
-        [id: string]: {
-            [id: string]: string;
-        };
-    };
+	map?: {
+		[id: string]: {
+			[id: string]: string;
+		};
+	};
 
 	/**
 	* Allows pointing multiple module IDs to a module ID that contains a bundle of modules.
@@ -68,56 +66,56 @@ export interface RequireConfig {
 	*	}
 	* });
 	**/
-    bundles?: { [key: string]: string[]; };
+	bundles?: { [key: string]: string[]; };
 
 	/**
 	* AMD configurations, use module.config() to access in
 	* define() functions
 	**/
-    config?: { [id: string]: {}; };
+	config?: { [id: string]: {}; };
 
 	/**
 	* Configures loading modules from CommonJS packages.
 	**/
-    packages?: {};
+	packages?: {};
 
 	/**
 	* The number of seconds to wait before giving up on loading
 	* a script.  The default is 7 seconds.
 	**/
-    waitSeconds?: number;
+	waitSeconds?: number;
 
 	/**
 	* A name to give to a loading context.  This allows require.js
 	* to load multiple versions of modules in a page, as long as
 	* each top-level require call specifies a unique context string.
 	**/
-    context?: string;
+	context?: string;
 
 	/**
 	* An array of dependencies to load.
 	**/
-    deps?: string[];
+	deps?: string[];
 
 	/**
 	* A function to pass to require that should be require after
 	* deps have been loaded.
 	* @param modules
 	**/
-    callback?: (...modules: any[]) => void;
+	callback?: (...modules: any[]) => void;
 
 	/**
 	* If set to true, an error will be thrown if a script loads
 	* that does not call define() or have shim exports string
 	* value that can be checked.
 	**/
-    enforceDefine?: boolean;
+	enforceDefine?: boolean;
 
 	/**
 	* If set to true, document.createElementNS() will be used
 	* to create script elements.
 	**/
-    xhtml?: boolean;
+	xhtml?: boolean;
 
 	/**
 	* Extra query string arguments appended to URLs that RequireJS
@@ -147,7 +145,7 @@ export interface RequireConfig {
 	* 	}
 	* });
 	**/
-    urlArgs?: string | ((id: string, url: string) => string);
+	urlArgs?: string | ((id: string, url: string) => string);
 
 	/**
 	* Specify the value for the type="" attribute used for script
@@ -155,7 +153,7 @@ export interface RequireConfig {
 	* "text/javascript".  To use Firefox's JavasScript 1.8
 	* features, use "text/javascript;version=1.8".
 	**/
-    scriptType?: string;
+	scriptType?: string;
 
 	/**
 	* If set to true, skips the data-main attribute scanning done
@@ -164,13 +162,13 @@ export interface RequireConfig {
 	* library on the page, and the embedded version should not do
 	* data-main loading.
 	**/
-    skipDataMain?: boolean;
+	skipDataMain?: boolean;
 
 	/**
 	* Allow extending requirejs to support Subresource Integrity
 	* (SRI).
 	**/
-    onNodeCreated?: (node: HTMLScriptElement, config: RequireConfig, moduleName: string, url: string) => void;
+	onNodeCreated?: (node: HTMLScriptElement, config: RequireConfig, moduleName: string, url: string) => void;
 }
 
 interface RequireShim {
@@ -178,12 +176,12 @@ interface RequireShim {
 	/**
 	* List of dependencies.
 	**/
-    deps?: string[];
+	deps?: string[];
 
 	/**
 	* Name the module will be exported as.
 	**/
-    exports?: string;
+	exports?: string;
 
 	/**
 	* Initialize function with all dependcies passed in,
@@ -193,5 +191,5 @@ interface RequireShim {
 	* @param dependencies
 	* @return
 	**/
-    init?: (...dependencies: any[]) => any;
+	init?: (...dependencies: any[]) => any;
 }

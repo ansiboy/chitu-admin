@@ -4,7 +4,7 @@ webpackES5Config.entry = __dirname + "/out-es5/static/index.js" //已多次提�
 webpackES5Config.output = Object.assign({}, webpackES5Config.output)
 webpackES5Config.output.filename = "index.es5.js"
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
     require('load-grunt-tasks')(grunt);
 
@@ -60,5 +60,5 @@ module.exports = function(grunt) {
 
     });
 
-    grunt.registerTask('default', ['shell', 'copy', 'babel', 'webpack']);
+    grunt.registerTask('default', ['shell', 'copy', 'babel']);
 }

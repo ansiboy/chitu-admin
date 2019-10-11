@@ -67,6 +67,11 @@ export class MainMasterPage extends MasterPage<State> {
             return;
         }
 
+        if (pagePath.startsWith("http")) {
+            location.href = pagePath;
+            return;
+        }
+
         this.app.redirect("outer-page", { target: pagePath, resourceId: node.id });
     }
 

@@ -5,6 +5,8 @@ declare module 'fs' {
 
 declare let requirejs: any;
 
+declare let define: Function;
+
 declare module "js-md5" {
     let md5: {
         (text: string): string;
@@ -16,4 +18,5 @@ declare module "auth/settings" {
     let settings: { gateway: string };
     export = settings;
 }
+
 

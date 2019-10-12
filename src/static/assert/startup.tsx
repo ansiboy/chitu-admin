@@ -4,7 +4,7 @@ import { SimpleMasterPage } from "./masters/simple-master-page";
 import { MainMasterPage } from "./masters/main-master-page";
 import React = require("react");
 import { MasterPage } from "./masters/master-page";
-import { Service } from "./services/service";
+import { MyService } from "./services/service";
 import { WebSiteConfig } from "./config";
 
 export default async function startup(requirejs: RequireJS) {
@@ -29,7 +29,7 @@ export default async function startup(requirejs: RequireJS) {
         document.getElementById('blank-master')
     )
 
-    let service = app.createService(Service);
+    let service = app.createService(MyService);
     let config = await service.config();
     loadStyle(config);
     console.assert(config.menuItems != null);

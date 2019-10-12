@@ -5,9 +5,7 @@ import fs = require("fs");
 import { Settings, MyServierContext } from './settings';
 import { CliApplication } from "typedoc";
 
-export { WebSiteConfig } from "./config";
 export { settings, Settings } from "./settings";
-
 
 interface Config {
     port: number,

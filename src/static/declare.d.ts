@@ -3,7 +3,20 @@ declare module 'fs' {
     function readFileSync(path: string): any
 }
 
-declare let requirejs: any;
+declare type RequireFunction = (modules: string[], callback?: Function, err?: Function) => void;
+
+declare let requirejs: {
+    (config: RequireConfig, modules: string[], callback?: Function, err?: Function);
+    (config: RequireConfig): RequireFunction;
+    config: Function;
+    exec(name: string);
+    load(context: RequireContext, id: string, url: string);
+};
+
+type RequireContext = {
+    config: RequireConfig
+}
+
 
 declare let define: Function;
 

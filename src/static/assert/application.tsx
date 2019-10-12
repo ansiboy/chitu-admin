@@ -1,8 +1,9 @@
 import * as chitu_react from 'maishu-chitu-react';
 import 'text!../content/admin_style_default.less'
 import errorHandle from './error-handle';
-import { Service } from './services/service';
+import { MyService } from './services/service';
 import { InitArguments } from 'index';
+import { errors } from './errors';
 
 export interface RequireJS {
     (modules: string[], success?: (arg0: any, arg1: any) => void, err?: (err) => void);
@@ -12,7 +13,7 @@ export interface RequireJS {
 
 export class Application extends chitu_react.Application {
 
-    private service: Service;
+    private service: MyService;
     private requirejs: RequireJS;
     private contextRequireJSs: { [name: string]: RequireJS } = {};
 
@@ -26,7 +27,7 @@ export class Application extends chitu_react.Application {
             modulesPath: ""
         })
 
-        this.service = this.createService(Service);
+        this.service = this.createService(MyService);
         this.error.add((sender, error, page) => errorHandle(error, sender, page as chitu_react.Page));
         this.requirejs = requirejs;
     }
@@ -61,31 +62,46 @@ export class Application extends chitu_react.Application {
         });
     }
 
-    async setSites(names: string[]) {
+    async setSites(...paths: string[]) {
+        if (paths == null)
+            throw errors.argumentNull("paths");
+
+        for (let i = 0; i < paths.length; i++) {
+            console.assert(paths[i] != null, `paths[${i}] is null`);
+            if (paths[i][0] != "/") {
+                paths[i] = "/" + paths[i];
+            }
+
+            if (paths[i][paths[i].length - 1] != "/") {
+                paths[i] = paths[i] + "/";
+            }
+        }
+
         let app = this;
-        let responses = await Promise.all(names.map(name => fetch(`/${name}/config`)))
+        let responses = await Promise.all(paths.map(path => fetch(`${path}config`)))
         let configs: WebSiteConfig[] = await Promise.all(responses.map(r => r.json()));
-        for (let i = 0; i < names.length; i++) {
+        for (let i = 0; i < paths.length; i++) {
             let config = configs[i];
 
             config.requirejs = config.requirejs || {} as RequireConfig;
-            config.requirejs.context = names[i];
-            config.requirejs.baseUrl = `/${names[i]}`;
+            console.assert(config.requirejs.context != null);
+            config.requirejs.baseUrl = paths[i];
             config.requirejs.paths = config.requirejs.paths || {};
 
             config.requirejs.paths = Object.assign({}, defaultPaths, config.requirejs.paths);
-            this.contextRequireJSs[names[i]] = requirejs.config(config.requirejs);
+            this.contextRequireJSs[paths[i]] = requirejs.config(config.requirejs);
         }
 
-
-        await Promise.all(names.map(name =>
+        await Promise.all(paths.map((path, i) =>
             new Promise((resolve, reject) => {
-                requirejs({ context: name }, [`/${name}/clientjs_init`],
+                let contextName = configs[i].requirejs.context;
+                console.assert(contextName != null, `Context of site '${path}' requirejs config is null`);
+                requirejs({ context: path }, [`${path}clientjs_init`],
                     (initModule) => {
                         if (initModule && typeof initModule.default == 'function') {
                             let args: InitArguments = {
                                 app, mainMaster: null,
-                                requirejs: this.contextRequireJSs[name]
+                                requirejs: this.contextRequireJSs[path]
                             };
 
                             let result = initModule.default(args) as Promise<any>;

@@ -5,7 +5,6 @@ import os = require("os");
 import { settings, Settings } from "../settings";
 import { errors } from "../errors";
 import { WebSiteConfig } from "../../out/static/assert/config";
-import { default as defaultConfig } from "../config";
 
 /** 
  * Home 控制器 
@@ -127,3 +126,11 @@ export class HomeController extends Controller {
         return r;
     }
 }
+
+let defaultConfig: WebSiteConfig = {
+    requirejs: {},
+    firstPanelWidth: 130,
+    secondPanelWidth: 130,
+    menuItems: []
+}
+

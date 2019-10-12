@@ -3,7 +3,7 @@ import { Service as ChiTuSerivce, AjaxOptions, ValueStore } from 'maishu-chitu-s
 import { WebSiteConfig } from "assert/config"
 
 let clientFiles: string[];
-export class Service extends ChiTuSerivce {
+export class MyService extends ChiTuSerivce {
     async files() {
         if (clientFiles) {
             return clientFiles;

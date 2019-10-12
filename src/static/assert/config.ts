@@ -7,9 +7,9 @@ export type SimpleMenuItem = {
 
 export interface WebSiteConfig {
 	requirejs: RequireConfig,
-	firstPanelWidth: number,
-	secondPanelWidth: number,
-	menuItems: SimpleMenuItem[],
+	firstPanelWidth?: number,
+	secondPanelWidth?: number,
+	menuItems?: SimpleMenuItem[],
 }
 
 export interface RequireConfig {

@@ -1,7 +1,7 @@
 import { createParameterDecorator } from "maishu-node-mvc";
 import { ServerContext } from "maishu-node-mvc";
 
-export interface MyServierContext extends ServerContext {
+export interface MyServerContext extends ServerContext {
     settings: Settings
 }
 
@@ -13,7 +13,7 @@ export interface Settings {
 }
 
 
-export let settings = createParameterDecorator(async (req, res, context: MyServierContext) => {
+export let settings = createParameterDecorator(async (req, res, context: MyServerContext) => {
     return context.settings;
 })
 

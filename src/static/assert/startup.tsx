@@ -4,7 +4,7 @@ import { SimpleMasterPage } from "./masters/simple-master-page";
 import { MainMasterPage } from "./masters/main-master-page";
 import React = require("react");
 import { MasterPage } from "./masters/master-page";
-import { MyService } from "./services/service";
+import { MyService } from "./services/my-service";
 import { WebSiteConfig } from "./config";
 
 export default async function startup(requirejs: RequireJS) {

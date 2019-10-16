@@ -1,9 +1,10 @@
 import * as chitu_react from 'maishu-chitu-react';
 import 'text!../content/admin_style_default.less'
 import errorHandle from './error-handle';
-import { MyService } from './services/service';
+import { MyService } from './services/my-service';
 import { InitArguments } from 'index';
 import { errors } from './errors';
+import { WebSiteConfig } from './config';
 
 export interface RequireJS {
     (modules: string[], success?: (arg0: any, arg1: any) => void, err?: (err) => void);
@@ -62,7 +63,7 @@ export class Application extends chitu_react.Application {
         });
     }
 
-    async setSites(...paths: string[]) {
+    async initStations(...paths: string[]): Promise<{ [path: string]: WebSiteConfig }> {
         if (paths == null)
             throw errors.argumentNull("paths");
 
@@ -77,6 +78,7 @@ export class Application extends chitu_react.Application {
             }
         }
 
+        let result: { [path: string]: WebSiteConfig } = {};
         let app = this;
         let responses = await Promise.all(paths.map(path => fetch(`${path}config`)))
         let configs: WebSiteConfig[] = await Promise.all(responses.map(r => r.json()));
@@ -90,13 +92,14 @@ export class Application extends chitu_react.Application {
 
             config.requirejs.paths = Object.assign({}, defaultPaths, config.requirejs.paths);
             this.contextRequireJSs[paths[i]] = requirejs.config(config.requirejs);
+            result[paths[i]] = config;
         }
 
         await Promise.all(paths.map((path, i) =>
             new Promise((resolve, reject) => {
                 let contextName = configs[i].requirejs.context;
                 console.assert(contextName != null, `Context of site '${path}' requirejs config is null`);
-                requirejs({ context: path }, [`${path}clientjs_init`],
+                requirejs({ context: contextName }, [`${path}clientjs_init`],
                     (initModule) => {
                         if (initModule && typeof initModule.default == 'function') {
                             let args: InitArguments = {
@@ -128,6 +131,7 @@ export class Application extends chitu_react.Application {
             })
         ));
 
+        return result;
     }
 }
 

@@ -2,19 +2,20 @@ import { startServer, Config as NodeMVCConfig } from 'maishu-node-mvc'
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
-import { Settings, MyServierContext } from './settings';
+import { Settings, MyServerContext } from './settings';
 import { CliApplication } from "typedoc";
 
 export { settings, Settings } from "./settings";
 
-interface Config {
+export interface Config {
     port: number,
     rootDirectory: string,
     sourceDirectory?: string,
     proxy?: NodeMVCConfig["proxy"],
     bindIP?: string,
     virtualPaths?: { [path: string]: string },
-    headers?: NodeMVCConfig["headers"]
+    headers?: NodeMVCConfig["headers"],
+    actionFilters?: NodeMVCConfig["actionFilters"]
 }
 
 export function start(config: Config) {
@@ -36,39 +37,32 @@ export function start(config: Config) {
     if (fs.existsSync(path.join(config.rootDirectory, "controllers")))
         controllerPath = path.join(config.rootDirectory, "controllers");
 
-    // if (!config.sourceDirectory)
-    //     throw errors.settingItemNull<Config>("sourceDirectory");
     let innerStaticRootDirectory = path.join(__dirname, "static");
     let virtualPaths = createVirtulaPaths(innerStaticRootDirectory, staticRootDirectory);
     virtualPaths["assert"] = path.join(innerStaticRootDirectory, "assert");
 
+    //======================================================================================
+    // 生成文档
     if (config.sourceDirectory) {
         if (!path.isAbsolute(config.sourceDirectory))
             throw errors.notAbsolutePath(config.sourceDirectory);
 
         let tsconfigPath = path.join(config.sourceDirectory, "tsconfig.json");
-        if (fs.existsSync(tsconfigPath) == false)
-            throw errors.pathNotExists(tsconfigPath);
+        if (fs.existsSync(tsconfigPath)) {
+            // let docsPath = path.join(sourceDirectory, outDir, "docs");
+            let docsPath = generateDocuments(config.sourceDirectory, tsconfigPath);
+            virtualPaths["docs"] = docsPath;
+        }
 
-        let tsconfig = require(tsconfigPath) as { compilerOptions: { outDir: string } };
-        console.assert(tsconfig != null);
-        console.assert(tsconfig.compilerOptions != null);
-        // console.assert(tsconfig.compilerOptions.outDir != null);
-        let outDir = tsconfig.compilerOptions.outDir || "./";
-        console.assert(path.isAbsolute(outDir) == false);
-
-        let docsPath = path.join(config.sourceDirectory, outDir, "docs");
-        new CliApplication({
-            "out": docsPath,
-            "json": path.join(__dirname, "docs/api.json"),
-            // "excludeExternals": true,
-            // "excludeNotExported": true,
-            "excludePrivate": true,
-            "excludeProtected": true,
-            "tsconfig": tsconfigPath
-        });
-        virtualPaths["docs"] = docsPath;//path.join(config.sourceDirectory, docsPath);
+        // let staticSourcePath = path.join(config.sourceDirectory, "static");
+        // let staticTsconfigPath = path.join(staticSourcePath, "tsconfig.json");
+        // if (fs.existsSync(staticTsconfigPath)) {
+        //     let docsPath = generateDocuments(staticSourcePath, staticTsconfigPath);
+        //     console.log(`static document path is ${docsPath}`);
+        //     virtualPaths["docs/static"] = docsPath;
+        // }
     }
+    //======================================================================================
 
 
     virtualPaths = Object.assign(config.virtualPaths || {}, virtualPaths);
@@ -82,7 +76,7 @@ export function start(config: Config) {
         bindIP: config.bindIP,
         headers: config.headers,
         actionFilters: [
-            (req, res, context: MyServierContext) => {
+            (req, res, context: MyServerContext) => {
                 let settings: Settings = {
                     clientStaticRoot: staticRootDirectory,
                     innerStaticRoot: innerStaticRootDirectory,
@@ -91,9 +85,30 @@ export function start(config: Config) {
 
                 context.settings = settings;
                 return null;
-            }
+            },
+            ...(config.actionFilters || [])
         ]
     });
+}
+
+function generateDocuments(sourceDirectory: string, tsconfigPath: string) {
+    let tsconfig = require(tsconfigPath) as { compilerOptions: { outDir: string } };
+    console.assert(tsconfig != null);
+    console.assert(tsconfig.compilerOptions != null);
+    let outDir = tsconfig.compilerOptions.outDir || "./";
+    console.assert(path.isAbsolute(outDir) == false);
+
+    let docsPath = path.join(sourceDirectory, outDir, "docs");
+    let jsonPath = path.join(docsPath, "api.json");
+    new CliApplication({
+        "out": docsPath,
+        "json": jsonPath,
+        "excludePrivate": true,
+        "excludeProtected": true,
+        "tsconfig": tsconfigPath
+    });
+    // virtualPaths["docs"] = docsPath;
+    return docsPath;
 }
 
 

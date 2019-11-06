@@ -1,8 +1,8 @@
-import { Service as ChiTuSerivce } from 'maishu-chitu-service'
-import { WebSiteConfig } from "assert/config"
+import { Service } from './service'
+import { StationConfig } from "../../types";
 
 let clientFiles: string[];
-export class MyService extends ChiTuSerivce {
+export class MyService extends Service {
     async files() {
         if (clientFiles) {
             return clientFiles;
@@ -11,8 +11,8 @@ export class MyService extends ChiTuSerivce {
         return clientFiles;
     }
 
-    async config(): Promise<WebSiteConfig> {
-        let r = await this.get<WebSiteConfig>("./config");
+    async config(): Promise<StationConfig> {
+        let r = await this.get<StationConfig>("./stationConfig");
         return r;
     }
 }

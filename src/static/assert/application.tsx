@@ -4,7 +4,7 @@ import errorHandle from './error-handle';
 import { MyService } from './services/my-service';
 import { InitArguments } from 'index';
 import { errors } from './errors';
-import { WebSiteConfig } from './config';
+import { StationConfig as WebSiteConfig } from '../types';
 
 export interface RequireJS {
     (modules: string[], success?: (arg0: any, arg1: any) => void, err?: (err) => void);

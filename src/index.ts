@@ -1,41 +1,35 @@
-import { startServer, Config as NodeMVCConfig } from 'maishu-node-mvc'
+import { startServer } from 'maishu-node-mvc'
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
 import { Settings, MyServerContext } from './settings';
 import { CliApplication } from "typedoc";
+import { g, registerStation } from './global';
 
 export { settings, Settings } from "./settings";
+export { StationConfig, PermissionConfig, PermissionConfigItem } from "./static/types";
+export { StationInfo } from "./global";
 
-export interface Config {
-    port: number,
-    rootDirectory: string,
-    sourceDirectory?: string,
-    proxy?: NodeMVCConfig["proxy"],
-    bindIP?: string,
-    virtualPaths?: { [path: string]: string },
-    headers?: NodeMVCConfig["headers"],
-    actionFilters?: NodeMVCConfig["actionFilters"]
-}
+export function start(settings: Settings): ReturnType<typeof startServer> {
 
-export function start(config: Config) {
+    if (!settings.rootDirectory)
+        throw errors.settingItemNull<Settings>("rootDirectory");
 
-    if (!config.rootDirectory)
-        throw errors.settingItemNull<Config>("rootDirectory");
+    if (!path.isAbsolute(settings.rootDirectory))
+        throw errors.notAbsolutePath(settings.rootDirectory);
 
-    if (!path.isAbsolute(config.rootDirectory))
-        throw errors.notAbsolutePath(config.rootDirectory);
+    if (!fs.existsSync(settings.rootDirectory))
+        throw errors.pathNotExists(settings.rootDirectory);
 
-    if (!fs.existsSync(config.rootDirectory))
-        throw errors.pathNotExists(config.rootDirectory);
-
-    let staticRootDirectory = path.join(config.rootDirectory, "static")
+    let staticRootDirectory = path.join(settings.rootDirectory, "static")
     if (!fs.existsSync(staticRootDirectory))
         throw errors.pathNotExists(staticRootDirectory);
 
+    g.settings = settings;
+
     let controllerPath: string;
-    if (fs.existsSync(path.join(config.rootDirectory, "controllers")))
-        controllerPath = path.join(config.rootDirectory, "controllers");
+    if (fs.existsSync(path.join(settings.rootDirectory, "controllers")))
+        controllerPath = path.join(settings.rootDirectory, "controllers");
 
     let innerStaticRootDirectory = path.join(__dirname, "static");
     let virtualPaths = createVirtulaPaths(innerStaticRootDirectory, staticRootDirectory);
@@ -43,52 +37,53 @@ export function start(config: Config) {
 
     //======================================================================================
     // 生成文档
-    if (config.sourceDirectory) {
-        if (!path.isAbsolute(config.sourceDirectory))
-            throw errors.notAbsolutePath(config.sourceDirectory);
+    if (settings.sourceDirectory) {
+        if (!path.isAbsolute(settings.sourceDirectory))
+            throw errors.notAbsolutePath(settings.sourceDirectory);
 
-        let tsconfigPath = path.join(config.sourceDirectory, "tsconfig.json");
+        let tsconfigPath = path.join(settings.sourceDirectory, "tsconfig.json");
         if (fs.existsSync(tsconfigPath)) {
-            // let docsPath = path.join(sourceDirectory, outDir, "docs");
-            let docsPath = generateDocuments(config.sourceDirectory, tsconfigPath);
+            let docsPath = generateDocuments(settings.sourceDirectory, tsconfigPath);
             virtualPaths["docs"] = docsPath;
         }
-
-        // let staticSourcePath = path.join(config.sourceDirectory, "static");
-        // let staticTsconfigPath = path.join(staticSourcePath, "tsconfig.json");
-        // if (fs.existsSync(staticTsconfigPath)) {
-        //     let docsPath = generateDocuments(staticSourcePath, staticTsconfigPath);
-        //     console.log(`static document path is ${docsPath}`);
-        //     virtualPaths["docs/static"] = docsPath;
-        // }
     }
     //======================================================================================
 
+    virtualPaths = Object.assign(settings.virtualPaths || {}, virtualPaths);
 
-    virtualPaths = Object.assign(config.virtualPaths || {}, virtualPaths);
-
-    return startServer({
-        port: config.port,
+    let r = startServer({
+        port: settings.port,
         staticRootDirectory: staticRootDirectory,
         controllerDirectory: controllerPath ? [path.join(__dirname, './controllers'), controllerPath] : [path.join(__dirname, './controllers')],
         virtualPaths,
-        proxy: config.proxy,
-        bindIP: config.bindIP,
-        headers: config.headers,
+        proxy: settings.proxy,
+        bindIP: settings.bindIP,
+        headers: settings.headers,
         actionFilters: [
             (req, res, context: MyServerContext) => {
-                let settings: Settings = {
-                    clientStaticRoot: staticRootDirectory,
+                context.settings = Object.assign(settings, {
                     innerStaticRoot: innerStaticRootDirectory,
-                    root: config.rootDirectory,
-                }
-
-                context.settings = settings;
+                    clientStaticRoot: staticRootDirectory
+                });
                 return null;
             },
-            ...(config.actionFilters || [])
+            ...(settings.actionFilters || [])
         ]
     });
+
+    if (settings.station != null) {
+
+        registerStation(settings);
+        //====================================
+        // 防止网关重启，注册站点信息丢失
+        setInterval(() => {
+            registerStation(settings);
+        }, 1000 * 60)
+        //====================================
+    }
+
+
+    return r;
 }
 
 function generateDocuments(sourceDirectory: string, tsconfigPath: string) {
@@ -107,7 +102,6 @@ function generateDocuments(sourceDirectory: string, tsconfigPath: string) {
         "excludeProtected": true,
         "tsconfig": tsconfigPath
     });
-    // virtualPaths["docs"] = docsPath;
     return docsPath;
 }
 

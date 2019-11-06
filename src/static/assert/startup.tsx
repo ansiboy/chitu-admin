@@ -5,7 +5,7 @@ import { MainMasterPage } from "./masters/main-master-page";
 import React = require("react");
 import { MasterPage } from "./masters/master-page";
 import { MyService } from "./services/my-service";
-import { WebSiteConfig } from "./config";
+import { StationConfig as WebSiteConfig } from "../types";
 
 export default async function startup(requirejs: RequireJS) {
     async function createMasterPages(app: Application) {

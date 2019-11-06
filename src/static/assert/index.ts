@@ -3,8 +3,8 @@
 let node_modules = 'node_modules'
 let lib = 'assert/lib'
 
-type RequireConfig = import("./config").RequireConfig;
-type WebSiteConfig = import("./config").WebSiteConfig;
+// type RequireConfig = import("./config").RequireConfig;
+// type WebSiteConfig = import("./config").WebSiteConfig;
 
 let requirejsConfig: RequireConfig = {
     baseUrl: './',
@@ -15,6 +15,7 @@ let requirejsConfig: RequireConfig = {
         lessc: `${lib}/require-less-0.1.5/lessc`,
         normalize: `${lib}/require-less-0.1.5/normalize`,
         text: `${lib}/text`,
+        json: `${lib}/requirejs-plugins/src/json`,
 
         jquery: `${lib}/jquery-2.1.3`,
         "jquery.event.drag": `${lib}/jquery.event.drag-2.2/jquery.event.drag-2.2`,
@@ -45,16 +46,19 @@ let requirejsConfig: RequireConfig = {
     }
 }
 
-fetch("./config").then(async response => {
-    let r: WebSiteConfig = await response.json();
+let urlParams = (location.search || "").length > 1 ? pareeUrlQuery(location.search.substr(1)) : {};
+let configUrl = urlParams["token"] ? `./stationConfig?token=${urlParams["token"]}` : "./stationConfig";
+fetch(configUrl).then(async response => {
+    let r: import("../types").StationConfig = await response.json();
+
+    requirejs.config(requirejsConfig);
 
     Object.assign(requirejsConfig.paths, r.requirejs.paths || {});
     Object.assign(requirejsConfig.shim, r.requirejs.shim || {});
     requirejsConfig.context = r.requirejs.context;
 
-    let req = requirejs.config(requirejsConfig);
+    let req = requirejs.config(requirejsConfig); 
     req(["assert/startup"], function (startupModule) {
-
         console.assert(startupModule != null && typeof startupModule["default"] == "function");
         startupModule["default"](req);
     })
@@ -79,6 +83,21 @@ requirejs.load = function (context, id, url: string) {
     }
 
     load.apply(this, [context, id, url]);
+}
+
+function pareeUrlQuery(query: string): { [key: string]: string } {
+    let match,
+        pl = /\+/g,  // Regex for replacing addition symbol with a space
+        search = /([^&=]+)=?([^&]*)/g,
+        decode = function (s: string) {
+            return decodeURIComponent(s.replace(pl, " "));
+        };
+
+    let urlParams: { [key: string]: string } = {};
+    while (match = search.exec(query))
+        urlParams[decode(match[1])] = decode(match[2]);
+
+    return urlParams;
 }
 
 

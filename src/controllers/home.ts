@@ -2,9 +2,9 @@ import { controller, action, Controller } from "maishu-node-mvc";
 import path = require("path");
 import fs = require("fs");
 import os = require("os");
-import { settings, Settings } from "../settings";
+import { settings, Settings, MyServerContext } from "../settings";
 import { errors } from "../errors";
-import { WebSiteConfig } from "../../out/static/assert/config";
+import { StationConfig } from "../static/types";
 
 /** 
  * Home 控制器 
@@ -24,7 +24,7 @@ export class HomeController extends Controller {
      * @param settings 设置，由系统注入。
      */
     @action("/clientjs_init.js")
-    initjs(@settings settings: Settings) {
+    initjs(@settings settings: MyServerContext["settings"]) {
         let initJS = `define([],function(){
             return {
                 default: function(){
@@ -48,7 +48,7 @@ export class HomeController extends Controller {
      * @param settings 设置，由系统注入。   
      */
     @action("/")
-    indexHtml(@settings settings: Settings) {
+    indexHtml(@settings settings: MyServerContext["settings"]) {
         let html: string = null;
         if (settings.clientStaticRoot) {
             let indexHtmlPath = path.join(settings.clientStaticRoot, "index.html");
@@ -75,7 +75,7 @@ export class HomeController extends Controller {
      * @param settings 设置，由系统注入。   
      */
     @action()
-    clientFiles(@settings settings: Settings): string[] {
+    clientFiles(@settings settings: MyServerContext["settings"]): string[] {
         console.assert(settings.clientStaticRoot != null);
         if (!fs.existsSync(settings.clientStaticRoot))
             return null;
@@ -111,10 +111,14 @@ export class HomeController extends Controller {
         return paths;
     }
 
+    /**
+     * 获取站点配置
+     * @param settings 设置，由系统注入。   
+     */
     @action()
-    config(@settings settings: Settings): WebSiteConfig {
-        let config = {} as WebSiteConfig;
-        let staticConfigPath = path.join(settings.root, "static/config.js");
+    stationConfig(@settings settings: Settings): StationConfig {
+        let config = {} as StationConfig;
+        let staticConfigPath = path.join(settings.rootDirectory, "station-config.js");
         console.log(staticConfigPath)
         if (fs.existsSync(staticConfigPath)) {
             let mod = require(staticConfigPath);
@@ -125,9 +129,18 @@ export class HomeController extends Controller {
         let r = Object.assign({}, defaultConfig, config)
         return r;
     }
+
+    /**
+     * 获取站点设置
+     * @param settings 设置，由系统注入。   
+     */
+    @action()
+    settings(@settings settings: Settings) {
+        return settings;
+    }
 }
 
-let defaultConfig: WebSiteConfig = {
+let defaultConfig: StationConfig = {
     requirejs: {},
     firstPanelWidth: 130,
     secondPanelWidth: 130,

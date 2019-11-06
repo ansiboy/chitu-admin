@@ -1,17 +1,3 @@
-export type SimpleMenuItem = {
-	name: string;
-	path?: string | (() => string);
-	icon?: string;
-	children?: SimpleMenuItem[];
-};
-
-export interface WebSiteConfig {
-	requirejs: RequireConfig,
-	firstPanelWidth?: number,
-	secondPanelWidth?: number,
-	menuItems?: SimpleMenuItem[],
-}
-
 export interface RequireConfig {
 
 	/**
@@ -171,7 +157,8 @@ export interface RequireConfig {
 	onNodeCreated?: (node: HTMLScriptElement, config: RequireConfig, moduleName: string, url: string) => void;
 }
 
-interface RequireShim {
+
+export interface RequireShim {
 
 	/**
 	* List of dependencies.
@@ -192,4 +179,30 @@ interface RequireShim {
 	* @return
 	**/
 	init?: (...dependencies: any[]) => any;
+}
+
+
+
+export type SimpleMenuItem = {
+	name: string;
+	path?: string | (() => string);
+	icon?: string;
+	children?: SimpleMenuItem[];
+};
+
+export interface PermissionConfigItem {
+    roleIds: string[]
+}
+
+export interface PermissionConfig {
+    [path: string]: PermissionConfigItem
+}
+
+export declare type StationConfig = {
+	requirejs: RequireConfig,
+	firstPanelWidth?: number,
+	secondPanelWidth?: number,
+	menuItems?: SimpleMenuItem[],
+	permissions?: PermissionConfig
+
 }

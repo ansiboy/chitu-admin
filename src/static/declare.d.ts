@@ -224,8 +224,8 @@ declare module "auth/settings" {
     export = settings;
 }
 
-declare module "json!stationConfig" {
-    let a: import("./types").StationConfig;
+declare module "json!websiteConfig" {
+    let a: import("./types").WebsiteConfig;
     export = a;
 }
 

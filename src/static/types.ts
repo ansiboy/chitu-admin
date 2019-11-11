@@ -185,7 +185,7 @@ export interface RequireShim {
 
 export type SimpleMenuItem = {
 	name: string;
-	path?: string | (() => string);
+	path?: string;
 	icon?: string;
 	children?: SimpleMenuItem[];
 };
@@ -198,11 +198,10 @@ export interface PermissionConfig {
     [path: string]: PermissionConfigItem
 }
 
-export declare type StationConfig = {
+export declare type WebsiteConfig = {
 	requirejs: RequireConfig,
 	firstPanelWidth?: number,
 	secondPanelWidth?: number,
 	menuItems?: SimpleMenuItem[],
-	permissions?: PermissionConfig
-
+	permissions?: PermissionConfig,
 }

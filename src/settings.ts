@@ -1,6 +1,7 @@
-import { createParameterDecorator } from "maishu-node-mvc";
+import { createParameterDecorator, LogLevel } from "maishu-node-mvc";
 import { ServerContext } from "maishu-node-mvc";
-import { startServer, Config as NodeMVCConfig } from 'maishu-node-mvc'
+import { startServer, Settings as NodeMVCConfig } from 'maishu-node-mvc'
+import { PermissionConfig } from "./static/types";
 
 export interface MyServerContext extends ServerContext {
     settings: Settings & {
@@ -8,13 +9,6 @@ export interface MyServerContext extends ServerContext {
         clientStaticRoot: string;
     }
 }
-
-
-// export interface Settings {
-//     innerStaticRoot: string;
-//     clientStaticRoot: string;
-//     root: string
-// }
 
 export interface Settings {
     port: number,
@@ -25,12 +19,13 @@ export interface Settings {
     virtualPaths?: { [path: string]: string },
     headers?: NodeMVCConfig["headers"],
     actionFilters?: NodeMVCConfig["actionFilters"],
-    logLevel?: "trace" | "debug" | "info" | "warn" | "error" | "fatal",
+    logLevel?: LogLevel,
     station?: {
         // 网关地址
         gateway: string,
         // 站点的路径
         path: string,
+        permissions?: PermissionConfig
     }
     // gateway: string,
 }

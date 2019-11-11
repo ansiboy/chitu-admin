@@ -1,10 +1,11 @@
-import { controller, action, Controller } from "maishu-node-mvc";
+import { controller, action, Controller, getLogger } from "maishu-node-mvc";
 import path = require("path");
 import fs = require("fs");
 import os = require("os");
 import { settings, Settings, MyServerContext } from "../settings";
 import { errors } from "../errors";
-import { StationConfig } from "../static/types";
+import { WebsiteConfig } from "../static/types";
+import { PROJECT_NAME } from "../global";
 
 /** 
  * Home 控制器 
@@ -116,13 +117,14 @@ export class HomeController extends Controller {
      * @param settings 设置，由系统注入。   
      */
     @action()
-    stationConfig(@settings settings: Settings): StationConfig {
-        let config = {} as StationConfig;
-        let staticConfigPath = path.join(settings.rootDirectory, "station-config.js");
-        console.log(staticConfigPath)
+    websiteConfig(@settings settings: Settings): WebsiteConfig {
+        let config = {} as WebsiteConfig;
+        let staticConfigPath = path.join(settings.rootDirectory, "website-config.js");
+        let logger = getLogger(PROJECT_NAME);
+        logger.info(`Website config file path is ${staticConfigPath}.`)
         if (fs.existsSync(staticConfigPath)) {
             let mod = require(staticConfigPath);
-            console.log(mod);
+            // logger.info(`Website config is ${JSON.stringify(mod)}`);
             config = mod["default"] || {};
         }
 
@@ -140,7 +142,7 @@ export class HomeController extends Controller {
     }
 }
 
-let defaultConfig: StationConfig = {
+let defaultConfig: WebsiteConfig = {
     requirejs: {},
     firstPanelWidth: 130,
     secondPanelWidth: 130,

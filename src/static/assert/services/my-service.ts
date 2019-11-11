@@ -1,5 +1,5 @@
 import { Service } from './service'
-import { StationConfig } from "../../types";
+import { WebsiteConfig } from "../../types";
 
 let clientFiles: string[];
 export class MyService extends Service {
@@ -11,8 +11,8 @@ export class MyService extends Service {
         return clientFiles;
     }
 
-    async config(): Promise<StationConfig> {
-        let r = await this.get<StationConfig>("./stationConfig");
+    async config(): Promise<WebsiteConfig> {
+        let r = await this.get<WebsiteConfig>("./websiteConfig");
         return r;
     }
 }

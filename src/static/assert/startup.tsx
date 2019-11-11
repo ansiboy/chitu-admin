@@ -5,7 +5,7 @@ import { MainMasterPage } from "./masters/main-master-page";
 import React = require("react");
 import { MasterPage } from "./masters/master-page";
 import { MyService } from "./services/my-service";
-import { StationConfig as WebSiteConfig } from "../types";
+import { WebsiteConfig } from "../types";
 
 export default async function startup(requirejs: RequireJS) {
     async function createMasterPages(app: Application) {
@@ -70,7 +70,7 @@ function renderElement(componentClass: React.ComponentClass, props: any, contain
 }
 
 /** 加载样式文件 */
-function loadStyle(config: WebSiteConfig) {
+function loadStyle(config: WebsiteConfig) {
 
     let str: string = require('text!../content/admin_style_default.less')
     if (config.firstPanelWidth) {

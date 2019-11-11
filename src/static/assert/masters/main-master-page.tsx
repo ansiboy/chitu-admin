@@ -129,7 +129,7 @@ export class MainMasterPage extends MasterPage<State> {
     }
 
     private translateToResource(o: SimpleMenuItem): Resource {
-        let path = typeof o.path == "function" ? o.path() : o.path;
+        let path = o.path; //typeof o.path == "function" ? o.path() : o.path;
         return {
             id: this.textToGuid(o.name + path || ""), name: o.name, page_path: path, type: "menu",
             icon: o.icon, parent_id: o["parent_id"]

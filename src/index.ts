@@ -1,4 +1,4 @@
-import { startServer } from 'maishu-node-mvc'
+import { startServer, getLogger } from 'maishu-node-mvc'
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
@@ -7,7 +7,7 @@ import { CliApplication } from "typedoc";
 import { g, registerStation } from './global';
 
 export { settings, Settings } from "./settings";
-export { StationConfig, PermissionConfig, PermissionConfigItem } from "./static/types";
+export { WebsiteConfig, PermissionConfig, PermissionConfigItem } from "./static/types";
 export { StationInfo } from "./global";
 
 export function start(settings: Settings): ReturnType<typeof startServer> {
@@ -34,7 +34,7 @@ export function start(settings: Settings): ReturnType<typeof startServer> {
     let innerStaticRootDirectory = path.join(__dirname, "static");
     let virtualPaths = createVirtulaPaths(innerStaticRootDirectory, staticRootDirectory);
     virtualPaths["assert"] = path.join(innerStaticRootDirectory, "assert");
-
+    virtualPaths["json.js"] = path.join(innerStaticRootDirectory, "assert/lib/requirejs-plugins/src/json.js");
     //======================================================================================
     // 生成文档
     if (settings.sourceDirectory) {
@@ -72,14 +72,13 @@ export function start(settings: Settings): ReturnType<typeof startServer> {
     });
 
     if (settings.station != null) {
-
         registerStation(settings);
-        //====================================
-        // 防止网关重启，注册站点信息丢失
-        setInterval(() => {
-            registerStation(settings);
-        }, 1000 * 60)
-        //====================================
+        //     //====================================
+        //     // 防止网关重启，注册站点信息丢失
+        //     setInterval(() => {
+        //         registerStation(settings);
+        //     }, 1000 * 60)
+        //     //====================================
     }
 
 

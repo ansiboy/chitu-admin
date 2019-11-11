@@ -8,7 +8,7 @@ let protocol = location.protocol;
 
 export abstract class Service extends ChiTuSerivce {
 
-    static token = new CookieValueStore<string>("token");
+    // static token = new CookieValueStore<string>("token");
 
     async ajax<T>(url: string, options: AjaxOptions) {
 
@@ -30,7 +30,7 @@ export abstract class Service extends ChiTuSerivce {
             }
         }
 
-        console.log(url);
+        // console.log(url);
 
         options = options || {};
         options.headers = options.headers || {};
@@ -39,12 +39,12 @@ export abstract class Service extends ChiTuSerivce {
         if (this.applicationId)
             options.headers['application-id'] = this.applicationId;
 
-        if (urlParams.token) {
-            options.headers['token'] = urlParams.token;
-        }
-        else if (Service.token.value != null && Service.token.value != null) {
-            options.headers['token'] = Service.token.value;
-        }
+        // if (urlParams.token) {
+        //     options.headers['token'] = urlParams.token;
+        // }
+        // else if (Service.token.value != null && Service.token.value != null) {
+        //     options.headers['token'] = Service.token.value;
+        // }
 
         return super.ajax<T>(url, options);
     }

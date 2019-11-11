@@ -3,9 +3,6 @@
 let node_modules = 'node_modules'
 let lib = 'assert/lib'
 
-// type RequireConfig = import("./config").RequireConfig;
-// type WebSiteConfig = import("./config").WebSiteConfig;
-
 let requirejsConfig: RequireConfig = {
     baseUrl: './',
     shim: {},
@@ -47,9 +44,9 @@ let requirejsConfig: RequireConfig = {
 }
 
 let urlParams = (location.search || "").length > 1 ? pareeUrlQuery(location.search.substr(1)) : {};
-let configUrl = urlParams["token"] ? `./stationConfig?token=${urlParams["token"]}` : "./stationConfig";
+let configUrl = "./websiteConfig";
 fetch(configUrl).then(async response => {
-    let r: import("../types").StationConfig = await response.json();
+    let r: import("../types").WebsiteConfig = await response.json();
 
     requirejs.config(requirejsConfig);
 
@@ -57,7 +54,7 @@ fetch(configUrl).then(async response => {
     Object.assign(requirejsConfig.shim, r.requirejs.shim || {});
     requirejsConfig.context = r.requirejs.context;
 
-    let req = requirejs.config(requirejsConfig); 
+    let req = requirejs.config(requirejsConfig);
     req(["assert/startup"], function (startupModule) {
         console.assert(startupModule != null && typeof startupModule["default"] == "function");
         startupModule["default"](req);

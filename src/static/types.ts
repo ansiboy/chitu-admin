@@ -184,6 +184,7 @@ export interface RequireShim {
 
 
 export type SimpleMenuItem = {
+	id: string,
 	name: string;
 	path?: string;
 	icon?: string;
@@ -191,11 +192,11 @@ export type SimpleMenuItem = {
 };
 
 export interface PermissionConfigItem {
-    roleIds: string[]
+	roleIds: string[]
 }
 
 export interface PermissionConfig {
-    [path: string]: PermissionConfigItem
+	[path: string]: PermissionConfigItem
 }
 
 export declare type WebsiteConfig = {

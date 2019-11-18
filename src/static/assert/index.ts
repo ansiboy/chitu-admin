@@ -75,9 +75,9 @@ requirejs.load = function (context, id, url: string) {
         url = url + ".js";
     }
 
-    if (context.config.baseUrl != null && !url.startsWith(context.config.baseUrl)) {
-        url = context.config.baseUrl + url
-    }
+    // if (!url.startsWith("http") && context.config.baseUrl != null && !url.startsWith(context.config.baseUrl)) {
+    //     url = context.config.baseUrl + url
+    // }
 
     load.apply(this, [context, id, url]);
 }

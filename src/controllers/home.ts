@@ -121,11 +121,16 @@ export class HomeController extends Controller {
         let config = {} as WebsiteConfig;
         let staticConfigPath = path.join(settings.rootDirectory, "website-config.js");
         let logger = getLogger(PROJECT_NAME);
-        logger.info(`Website config file path is ${staticConfigPath}.`)
         if (fs.existsSync(staticConfigPath)) {
             let mod = require(staticConfigPath);
-            // logger.info(`Website config is ${JSON.stringify(mod)}`);
+            logger.info(`Website config is ${JSON.stringify(mod)}`);
+            if (mod["default"] == null) {
+                logger.error(`Website config file '${staticConfigPath}' has not default export.`);
+            }
             config = mod["default"] || {};
+        }
+        else {
+            logger.warn(`Website config file '${staticConfigPath}' is not exists.`)
         }
 
         let r = Object.assign({}, defaultConfig, config)

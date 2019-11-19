@@ -189,6 +189,7 @@ export type SimpleMenuItem = {
 	path?: string;
 	icon?: string;
 	children?: SimpleMenuItem[];
+	roleIds?: string[],
 };
 
 export interface PermissionConfigItem {
@@ -204,5 +205,5 @@ export declare type WebsiteConfig = {
 	firstPanelWidth?: number,
 	secondPanelWidth?: number,
 	menuItems?: SimpleMenuItem[],
-	permissions?: PermissionConfig,
+	gateway?: string,
 }

@@ -132,7 +132,9 @@ export class HomeController extends Controller {
         else {
             logger.warn(`Website config file '${staticConfigPath}' is not exists.`)
         }
-
+        if (settings.station) {
+            config.gateway = settings.station.gateway;
+        }
         let r = Object.assign({}, defaultConfig, config)
         return r;
     }

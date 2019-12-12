@@ -1,4 +1,5 @@
-import { Service as ChiTuSerivce, AjaxOptions, CookieValueStore } from 'maishu-chitu-service'
+import { Service as ChiTuSerivce, AjaxOptions } from 'maishu-chitu-service'
+import config = require("json!websiteConfig");
 
 export let urlParams: { appKey?: string, token?: string } = {};
 if (location.search)
@@ -6,9 +7,22 @@ if (location.search)
 
 let protocol = location.protocol;
 
-export abstract class Service extends ChiTuSerivce {
+/** 站点路径 */
+export function stationPath(path: string) {
+    console.assert(requirejs != null);
+    let contexts = requirejs.exec("contexts");
+    let contextName: string;
+    if (config.requirejs)
+        contextName = config.requirejs.context;
 
-    // static token = new CookieValueStore<string>("token");
+    let context: RequireContext = contexts[contextName];
+    if (context != null && context.config != null && context.config.baseUrl != null) {
+        return `${context.config.baseUrl}${path}`;
+    }
+    return `${path}`;
+}
+
+export abstract class Service extends ChiTuSerivce {
 
     async ajax<T>(url: string, options: AjaxOptions) {
 
@@ -30,8 +44,6 @@ export abstract class Service extends ChiTuSerivce {
             }
         }
 
-        // console.log(url);
-
         options = options || {};
         options.headers = options.headers || {};
 
@@ -39,24 +51,11 @@ export abstract class Service extends ChiTuSerivce {
         if (this.applicationId)
             options.headers['application-id'] = this.applicationId;
 
-        // if (urlParams.token) {
-        //     options.headers['token'] = urlParams.token;
-        // }
-        // else if (Service.token.value != null && Service.token.value != null) {
-        //     options.headers['token'] = Service.token.value;
-        // }
-
         return super.ajax<T>(url, options);
     }
 
-    localUrl(contextName: string, path: string) {
-        console.assert(requirejs != null);
-        let contexts = requirejs.exec("contexts");
-        let context: RequireContext = contexts[contextName];
-        if (context != null && context.config != null && context.config.baseUrl != null) {
-            return `${context.config.baseUrl}${path}`;
-        }
-        return `${path}`;
+    localUrl(path: string) {
+        return stationPath(path);
     }
 
     get applicationId() {

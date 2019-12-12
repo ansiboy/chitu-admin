@@ -1,9 +1,7 @@
 import { Settings } from "./settings";
 import { HomeController } from "./controllers/home";
-import fetch from "node-fetch";
-import { WebsiteConfig } from "./static/types";
 import IO = require("socket.io-client");
-import { getLogger, LogLevel } from "maishu-node-mvc";
+import { getLogger } from "maishu-node-mvc";
 
 export const PROJECT_NAME = "chitu-admin";
 export let g = {
@@ -38,8 +36,7 @@ export function registerStation(settings: Settings) {
         port: settings.port,
     }
 
-    let registerURL = `http://${settings.station.gateway}/auth/station/register`;
-    logger.info(`Register station url is ${registerURL}.`);
+    logger.info(`Register station '${settings.station.path}'.`);
     let socket = IO(`http://${settings.station.gateway}`);
     socket.on("connect", () => {
         logger.info("Socket client connected.");

@@ -190,6 +190,8 @@ export type SimpleMenuItem = {
 	icon?: string;
 	children?: SimpleMenuItem[];
 	roleIds?: string[],
+	sortNumber?: number,
+	parentId?: string,
 };
 
 export interface PermissionConfigItem {

@@ -30,11 +30,11 @@ export abstract class BasePage<P = {}, S = {}> extends React.Component<P, S> {
         }
     }
 
-    renderToolbarLeft(): React.ReactElement[] {
+    renderToolbarLeft(): React.ReactElement<any,any>[] {
         return [];
     }
 
-    renderToolbarRight(): React.ReactElement[] {
+    renderToolbarRight(): React.ReactElement<any,any>[] {
         return [];
     }
 }

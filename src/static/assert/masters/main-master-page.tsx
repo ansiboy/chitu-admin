@@ -132,14 +132,14 @@ export class MainMasterPage extends MasterPage<State> {
         let path = o.path; //typeof o.path == "function" ? o.path() : o.path;
         return {
             id: this.textToGuid(o.name + path || ""), name: o.name, page_path: path, type: "menu",
-            icon: o.icon, parent_id: o["parent_id"]
+            icon: o.icon, parent_id: o.parentId, sort_number: o.sortNumber
         } as Resource
     }
 
     setMenu(...menuItems: SimpleMenuItem[]) {
 
         let resources: Resource[] = [];
-
+        menuItems.sort((a, b) => a.sortNumber < b.sortNumber ? -1 : 1);
         let stack = new Array<SimpleMenuItem>();
         stack.push(...menuItems);
         while (stack.length > 0) {
@@ -149,7 +149,7 @@ export class MainMasterPage extends MasterPage<State> {
             resources.push(resource);
 
             item.children = item.children || [];
-            item.children.forEach(c => c["parent_id"] = resource.id);
+            item.children.forEach(c => c.parentId = resource.id);
             stack.push(...(item.children || []));
         }
 
@@ -219,7 +219,7 @@ export class MainMasterPage extends MasterPage<State> {
                             style={{ cursor: 'pointer', display: o.type != "menu" ? "none" : '' }}
                             onClick={() => this.showPageByNode(o)}>
                             <i className={o.icon}></i>
-                            <span>{o.name}</span>
+                            <span sort-number={o.sort_number}>{o.name}</span>
                         </li>
                     )}
                 </ul>
@@ -231,7 +231,7 @@ export class MainMasterPage extends MasterPage<State> {
                             style={{ cursor: 'pointer', display: o.type != "menu" ? "none" : '' }}
                             onClick={() => this.showPageByNode(o)}>
                             <i className={o.icon}></i>
-                            <span>{o.name}</span>
+                            <span sort-number={o.sort_number}>{o.name}</span>
                         </li>
                     )}
                 </ul>

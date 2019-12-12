@@ -2,7 +2,7 @@ import { BasePage } from "./base-page";
 import { DataSource, DataControlField, GridView, CustomField, GridViewCell, GridViewEditableCell, BoundField } from "maishu-wuzhui";
 import React = require("react");
 import { createGridView } from "maishu-wuzhui-helper";
-import { createItemDialog, Dialog, ItemDialogContext } from "./item-dialog";
+import { createItemDialog, Dialog } from "./item-dialog";
 import ReactDOM = require("react-dom");
 import { InputControl, InputControlProps } from "./inputs/input-control";
 import { GridViewCellControl } from "maishu-wuzhui";
@@ -92,7 +92,7 @@ export abstract class DataListPage<T> extends BasePage {
         })
     }
 
-    renderEditor(): React.ReactElement {
+    renderEditor(): React.ReactElement<any,any> {
         return <>
             {this.columns.filter(o => o instanceof BoundField && o.readOnly != true).map((col, i) =>
                 <div key={i} className="form-group clearfix input-control">

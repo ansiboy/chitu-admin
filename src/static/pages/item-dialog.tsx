@@ -21,7 +21,7 @@ export interface Dialog<T> {
 }
 
 export function createItemDialog<T>
-    (dataSource: DataSource<T>, name: string, child: React.ReactElement, beforeSave?: BeforeSave<T>): Dialog<T> {
+    (dataSource: DataSource<T>, name: string, child: React.ReactElement<any, any>, beforeSave?: BeforeSave<T>): Dialog<T> {
 
     class ItemDialog extends React.Component<{}, { title?: string }> {
 

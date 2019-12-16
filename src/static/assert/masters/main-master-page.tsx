@@ -131,7 +131,8 @@ export class MainMasterPage extends MasterPage<State> {
     private translateToResource(o: SimpleMenuItem): Resource {
         let path = o.path; //typeof o.path == "function" ? o.path() : o.path;
         return {
-            id: this.textToGuid(o.name + path || ""), name: o.name, page_path: path, type: "menu",
+            id: o.id,//this.textToGuid(o.name + path || ""),
+            name: o.name, page_path: path, type: "menu",
             icon: o.icon, parent_id: o.parentId, sort_number: o.sortNumber
         } as Resource
     }
@@ -219,7 +220,7 @@ export class MainMasterPage extends MasterPage<State> {
                             style={{ cursor: 'pointer', display: o.type != "menu" ? "none" : '' }}
                             onClick={() => this.showPageByNode(o)}>
                             <i className={o.icon}></i>
-                            <span sort-number={o.sort_number}>{o.name}</span>
+                            <span menu-id={o.id} sort-number={o.sort_number}>{o.name}</span>
                         </li>
                     )}
                 </ul>
@@ -231,7 +232,7 @@ export class MainMasterPage extends MasterPage<State> {
                             style={{ cursor: 'pointer', display: o.type != "menu" ? "none" : '' }}
                             onClick={() => this.showPageByNode(o)}>
                             <i className={o.icon}></i>
-                            <span sort-number={o.sort_number}>{o.name}</span>
+                            <span menu-id={o.id} sort-number={o.sort_number}>{o.name}</span>
                         </li>
                     )}
                 </ul>

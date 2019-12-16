@@ -2,11 +2,11 @@ import { startServer, getLogger } from 'maishu-node-mvc'
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
-import { Settings, MyServerContext } from './settings';
+import { Settings, ServerContext } from './settings';
 import { CliApplication } from "typedoc";
 import { g, registerStation } from './global';
 
-export { settings, Settings } from "./settings";
+export { settings, Settings, ServerContext } from "./settings";
 export { WebsiteConfig, PermissionConfig, PermissionConfigItem, SimpleMenuItem } from "./static/types";
 export { StationInfo } from "./global";
 
@@ -51,6 +51,7 @@ export function start(settings: Settings): ReturnType<typeof startServer> {
 
     virtualPaths = Object.assign(settings.virtualPaths || {}, virtualPaths);
 
+    let setServerContext = false;
     let r = startServer({
         port: settings.port,
         staticRootDirectory: staticRootDirectory,
@@ -59,12 +60,19 @@ export function start(settings: Settings): ReturnType<typeof startServer> {
         proxy: settings.proxy,
         bindIP: settings.bindIP,
         headers: settings.headers,
-        actionFilters: [
-            (req, res, context: MyServerContext) => {
-                context.settings = Object.assign(settings, {
-                    innerStaticRoot: innerStaticRootDirectory,
-                    clientStaticRoot: staticRootDirectory
-                });
+        requestFilters: [
+            (req, res, context: ServerContext<any>) => {
+
+                if (setServerContext == false) {
+                    setServerContext = true;
+                    context.data = settings.serverContextData;
+                    Object.assign(context, settings.serverContextData);
+                    context.settings = Object.assign(settings, {
+                        innerStaticRoot: innerStaticRootDirectory,
+                        clientStaticRoot: staticRootDirectory
+                    });
+                }
+
                 return null;
             },
             ...(settings.actionFilters || [])

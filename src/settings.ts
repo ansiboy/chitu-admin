@@ -1,13 +1,14 @@
 import { createParameterDecorator, LogLevel } from "maishu-node-mvc";
-import { ServerContext } from "maishu-node-mvc";
-import { startServer, Settings as NodeMVCConfig } from 'maishu-node-mvc'
+import { ServerContext as BaseServerContext } from "maishu-node-mvc";
+import { Settings as NodeMVCConfig } from 'maishu-node-mvc'
 import { PermissionConfig } from "./static/types";
 
-export interface MyServerContext extends ServerContext {
+export interface ServerContext<T> extends BaseServerContext {
     settings: Settings & {
         innerStaticRoot: string;
         clientStaticRoot: string;
-    }
+    },
+    data: T
 }
 
 export interface Settings {
@@ -18,7 +19,7 @@ export interface Settings {
     bindIP?: string,
     virtualPaths?: { [path: string]: string },
     headers?: NodeMVCConfig["headers"],
-    actionFilters?: NodeMVCConfig["actionFilters"],
+    actionFilters?: NodeMVCConfig["requestFilters"],
     logLevel?: LogLevel,
     station?: {
         // 网关地址
@@ -26,11 +27,12 @@ export interface Settings {
         // 站点的路径
         path: string,
         permissions?: PermissionConfig
-    }
+    },
+    serverContextData?: { [key: string]: any }
     // gateway: string,
 }
 
-export let settings = createParameterDecorator(async (req, res, context: MyServerContext) => {
+export let settings = createParameterDecorator(async (req, res, context: ServerContext<any>) => {
     return context.settings;
 })
 

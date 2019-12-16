@@ -92,7 +92,7 @@ export abstract class DataListPage<T> extends BasePage {
         })
     }
 
-    renderEditor(): React.ReactElement<any,any> {
+    renderEditor(): React.ReactElement<any, any> {
         return <>
             {this.columns.filter(o => o instanceof BoundField && o.readOnly != true).map((col, i) =>
                 <div key={i} className="form-group clearfix input-control">
@@ -110,11 +110,11 @@ export abstract class DataListPage<T> extends BasePage {
         }
 
         this.dialog = createItemDialog(this.dataSource, this.itemName, editor);
-        let button = <button key="btnAdd" className="btn btn-primary"
+        let button = this.dataSource.canInsert ? <button key="btnAdd" className="btn btn-primary"
             onClick={() => this.dialog.show({} as T)}>
             <i className="icon-plus"></i>
             <span>添加</span>
-        </button>
+        </button> : null
 
         return [button]
     }

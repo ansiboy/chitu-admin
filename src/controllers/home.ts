@@ -1,8 +1,8 @@
-import { controller, action, Controller, getLogger } from "maishu-node-mvc";
+import { controller, action, Controller, getLogger, serverContext } from "maishu-node-mvc";
 import path = require("path");
 import fs = require("fs");
 import os = require("os");
-import { settings, Settings, MyServerContext } from "../settings";
+import { settings, Settings, ServerContext } from "../settings";
 import { errors } from "../errors";
 import { WebsiteConfig } from "../static/types";
 import { PROJECT_NAME } from "../global";
@@ -25,7 +25,7 @@ export class HomeController extends Controller {
      * @param settings 设置，由系统注入。
      */
     @action("/clientjs_init.js")
-    initjs(@settings settings: MyServerContext["settings"]) {
+    initjs(@settings settings: ServerContext<any>["settings"]) {
         let initJS = `define([],function(){
             return {
                 default: function(){
@@ -49,7 +49,7 @@ export class HomeController extends Controller {
      * @param settings 设置，由系统注入。   
      */
     @action("/")
-    indexHtml(@settings settings: MyServerContext["settings"]) {
+    indexHtml(@settings settings: ServerContext<any>["settings"]) {
         let html: string = null;
         if (settings.clientStaticRoot) {
             let indexHtmlPath = path.join(settings.clientStaticRoot, "index.html");
@@ -76,7 +76,7 @@ export class HomeController extends Controller {
      * @param settings 设置，由系统注入。   
      */
     @action()
-    clientFiles(@settings settings: MyServerContext["settings"]): string[] {
+    clientFiles(@settings settings: ServerContext<any>["settings"]): string[] {
         console.assert(settings.clientStaticRoot != null);
         if (!fs.existsSync(settings.clientStaticRoot))
             return null;
@@ -127,7 +127,13 @@ export class HomeController extends Controller {
             if (mod["default"] == null) {
                 logger.error(`Website config file '${staticConfigPath}' has not default export.`);
             }
-            config = mod["default"] || {};
+            let modDefault = mod["default"] || {};
+            if (typeof modDefault == "function") {
+                config = modDefault(settings.serverContextData || {});
+            }
+            else {
+                config = modDefault;
+            }
         }
         else {
             logger.warn(`Website config file '${staticConfigPath}' is not exists.`)

@@ -1,6 +1,6 @@
 {
     "name": "maishu-chitu-admin",
-    "version": "2.60.0",
+    "version": "2.80.0",
     "main": "out/index.js",
     "types": "out/index.d.ts",
     "scripts": {
@@ -29,6 +29,7 @@
         "requirejs-plugins": "^1.0.2",
         "socket.io-client": "^2.3.0",
         "typedoc": "^0.15.0",
+        "typescript": "^3.7.3",
         "url-pattern": "^1.0.3"
     },
     "devDependencies": {

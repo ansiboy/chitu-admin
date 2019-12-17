@@ -44,5 +44,9 @@ export function registerStation(settings: Settings) {
         socket.emit("registerStation", data);
     })
 
-  
+    socket.on("error", (err) => {
+        logger.error(err);
+    })
+
+
 }

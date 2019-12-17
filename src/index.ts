@@ -10,7 +10,7 @@ export { settings, Settings, ServerContext } from "./settings";
 export { WebsiteConfig, PermissionConfig, PermissionConfigItem, SimpleMenuItem } from "./static/types";
 export { StationInfo } from "./global";
 
-export function start(settings: Settings): ReturnType<typeof startServer> {
+export function start(settings: Settings) {
 
     if (!settings.rootDirectory)
         throw errors.settingItemNull<Settings>("rootDirectory");
@@ -52,7 +52,7 @@ export function start(settings: Settings): ReturnType<typeof startServer> {
     virtualPaths = Object.assign(settings.virtualPaths || {}, virtualPaths);
 
     let setServerContext = false;
-    let r = startServer({
+    startServer({
         port: settings.port,
         staticRootDirectory: staticRootDirectory,
         controllerDirectory: controllerPath ? [path.join(__dirname, './controllers'), controllerPath] : [path.join(__dirname, './controllers')],
@@ -88,9 +88,6 @@ export function start(settings: Settings): ReturnType<typeof startServer> {
         //     }, 1000 * 60)
         //     //====================================
     }
-
-
-    return r;
 }
 
 function generateDocuments(sourceDirectory: string, tsconfigPath: string) {

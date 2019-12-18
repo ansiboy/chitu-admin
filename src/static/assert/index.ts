@@ -1,6 +1,6 @@
 
 
-let node_modules = 'node_modules'
+let node_modules = '/node_modules'
 let lib = 'assert/lib'
 
 let requirejsConfig: RequireConfig = {
@@ -74,11 +74,7 @@ requirejs.load = function (context, id, url: string) {
     if (url.endsWith(".js") == false) {
         url = url + ".js";
     }
-
-    // if (!url.startsWith("http") && context.config.baseUrl != null && !url.startsWith(context.config.baseUrl)) {
-    //     url = context.config.baseUrl + url
-    // }
-
+    
     load.apply(this, [context, id, url]);
 }
 

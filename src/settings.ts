@@ -29,7 +29,9 @@ export interface Settings {
         permissions?: PermissionConfig
     },
     serverContextData?: { [key: string]: any }
-    // gateway: string,
+
+    /** 模式, 默认为 development, 不对 js 进行打包和压缩. production 对 js 进行打包和压缩 */
+    mode?: "development" | "production"
 }
 
 export let settings = createParameterDecorator(async (req, res, context: ServerContext<any>) => {

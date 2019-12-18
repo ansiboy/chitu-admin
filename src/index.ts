@@ -81,12 +81,6 @@ export function start(settings: Settings) {
 
     if (settings.station != null) {
         registerStation(settings);
-        //     //====================================
-        //     // 防止网关重启，注册站点信息丢失
-        //     setInterval(() => {
-        //         registerStation(settings);
-        //     }, 1000 * 60)
-        //     //====================================
     }
 }
 

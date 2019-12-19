@@ -141,7 +141,7 @@ export class HomeController extends Controller {
         if (settings.station) {
             config.gateway = settings.station.gateway;
         }
-        let r = Object.assign({}, defaultConfig, config)
+        let r = Object.assign({}, defaultConfig, config);
         return r;
     }
 

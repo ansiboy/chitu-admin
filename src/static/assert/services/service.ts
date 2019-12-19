@@ -51,7 +51,14 @@ export abstract class Service extends ChiTuSerivce {
         if (this.applicationId)
             options.headers['application-id'] = this.applicationId;
 
-        return super.ajax<T>(url, options);
+        let r = await super.ajax<T>(url, options);
+        if (r["Type"] == "DataSourceSelectResult") {
+            r["dataItems"] = r["DataItems"];
+            r["totalRowCount"] = r["TotalRowCount"];
+            r["maximumRows"] = r["MaximumRows"];
+            r["startRowIndex"] = r["StartRowIndex"];
+        }
+        return r;
     }
 
     localUrl(path: string) {

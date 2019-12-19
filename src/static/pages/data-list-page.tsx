@@ -6,6 +6,7 @@ import { createItemDialog, Dialog } from "./item-dialog";
 import ReactDOM = require("react-dom");
 import { InputControl, InputControlProps } from "./inputs/input-control";
 import { GridViewCellControl } from "maishu-wuzhui";
+import { PageDataSource } from "./page-data-source";
 
 interface BoundInputControlProps<T> extends InputControlProps<T> {
     boundField: BoundField<T>
@@ -46,7 +47,7 @@ class BoundInputControl<T> extends InputControl<T, BoundInputControlProps<T>>{
 
 }
 
-export abstract class DataListPage<T> extends BasePage {
+export abstract class DataListPage<T, P = {}, S = {}> extends BasePage<P, S> {
     abstract dataSource: DataSource<T>;
     abstract itemName: string;
     abstract columns: DataControlField<T>[];
@@ -114,9 +115,18 @@ export abstract class DataListPage<T> extends BasePage {
             onClick={() => this.dialog.show({} as T)}>
             <i className="icon-plus"></i>
             <span>添加</span>
-        </button> : null
+        </button> : null;
 
-        return [button]
+        let dataSource = this.dataSource as PageDataSource<T>;
+        let search = dataSource.options ? dataSource.options.search : null;
+        let searchInput = search ? <>
+            <input type="text" className="form-control pull-left" placeholder={search.placeholder || ""} style={{ width: 300 }}></input>
+            <button className="btn btn-primary btn-sm  pull-left">
+                <i className="icon-search"></i>
+                <span>搜索</span>
+            </button>
+        </> : null;
+        return [button, searchInput,];
     }
 
     render() {

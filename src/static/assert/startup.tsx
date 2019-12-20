@@ -6,6 +6,7 @@ import React = require("react");
 import { MasterPage } from "./masters/master-page";
 import { MyService } from "./services/my-service";
 import { WebsiteConfig } from "../types";
+import 'text!../assert/content/admin_style_default.less'
 
 export default async function startup(requirejs: RequireJS) {
     async function createMasterPages(app: Application) {

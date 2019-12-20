@@ -1,7 +1,5 @@
 import * as chitu_react from 'maishu-chitu-react';
-import 'text!../assert/content/admin_style_default.less'
 import errorHandle from './error-handle';
-import websiteConfig = require("json!websiteConfig");
 
 export interface RequireJS {
     (modules: string[], success?: (arg0: any, arg1: any) => void, err?: (err) => void);

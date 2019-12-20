@@ -164,7 +164,7 @@ let defaultConfig: WebsiteConfig = {
 }
 
 let node_modules = '/node_modules'
-let lib = 'assert/lib'
+let lib = '/assert/lib'
 let defaultPaths = {
     css: `${lib}/css`,
     less: `${lib}/require-less-0.1.5/less`,

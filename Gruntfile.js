@@ -34,7 +34,7 @@ module.exports = function (grunt) {
         },
         webpack: {
             es6: webpackES6Config,
-            // es5: webpackES5Config,
+            es5: webpackES5Config,
         },
         babel: {
             options: {
@@ -63,4 +63,5 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('default', ['shell', 'copy', 'babel', "webpack"]);
+    grunt.registerTask("static", ["shell:client", "webpack:es6"]);
 }

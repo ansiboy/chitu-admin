@@ -11,14 +11,15 @@ module.exports = {
     output: {
         path: __dirname + "/out/static", //打包后的文件存放的地方
         filename: "build.js", //打包后输出文件的文件名
-        libraryTarget: 'umd'
+        libraryTarget: 'amd'
     },
     mode: 'development',
     devtool: 'source-map',
-    externals: ['react', 'react-dom', 'less',
+    externals: ['react', 'react-dom', "json!websiteConfig", 'less',
         'maishu-chitu', 'maishu-chitu-react', 'maishu-dilu',
-        'maishu-services-sdk', 'maishu-ui-toolkit',"json!websiteConfig"
+        'maishu-services-sdk', 'maishu-ui-toolkit',
     ],
+
     plugins: [
         new webpack.BannerPlugin(license),
     ],

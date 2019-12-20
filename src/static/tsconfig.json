@@ -5,7 +5,7 @@
         "jsx": "react",
         "baseUrl": "./",
         "declaration": true,
-        "module": "umd",
+        "module": "AMD",
         "target": "es6",
         "paths": {
             "maishu-chitu": [

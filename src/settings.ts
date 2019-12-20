@@ -3,12 +3,11 @@ import { ServerContext as BaseServerContext } from "maishu-node-mvc";
 import { Settings as NodeMVCConfig } from 'maishu-node-mvc'
 import { PermissionConfig } from "./static/types";
 
-export interface ServerContext<T> extends BaseServerContext {
+export interface ServerContext<T> extends BaseServerContext<T> {
     settings: Settings & {
         innerStaticRoot: string;
         clientStaticRoot: string;
-    },
-    data: T
+    }
 }
 
 export interface Settings {

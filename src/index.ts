@@ -76,7 +76,8 @@ export function start(settings: Settings) {
                 return null;
             },
             ...(settings.actionFilters || [])
-        ]
+        ],
+        serverContextData: settings.serverContextData
     });
 
     if (settings.station != null) {
@@ -103,7 +104,11 @@ function generateDocuments(sourceDirectory: string, tsconfigPath: string) {
     return docsPath;
 }
 
-
+/**
+ * 
+ * @param rootAbsolutePath 项目根目录
+ * @param clientRootAbsolutePath 静态文件根目录
+ */
 function createVirtulaPaths(rootAbsolutePath: string, clientRootAbsolutePath: string) {
     let virtualPaths: { [path: string]: string } = {}
     let virtualPahtStack: string[] = [""];

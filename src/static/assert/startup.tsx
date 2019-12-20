@@ -72,7 +72,7 @@ function renderElement(componentClass: React.ComponentClass, props: any, contain
 /** 加载样式文件 */
 function loadStyle(config: WebsiteConfig) {
 
-    let str: string = require('text!../content/admin_style_default.less')
+    let str: string = require('text!../assert/content/admin_style_default.less')
     if (config.firstPanelWidth) {
         str = str + `\r\n@firstPanelWidth: ${config.firstPanelWidth}px;`
     }

@@ -9,15 +9,15 @@ let license = `
 module.exports = {
     entry: __dirname + "/out/static/index.js", //已多次提及的唯一入口文件
     output: {
-        path: __dirname + "/dist", //打包后的文件存放的地方
-        filename: "index.js", //打包后输出文件的文件名
-        libraryTarget: 'amd'
+        path: __dirname + "/out/static", //打包后的文件存放的地方
+        filename: "build.js", //打包后输出文件的文件名
+        libraryTarget: 'umd'
     },
     mode: 'development',
     devtool: 'source-map',
     externals: ['react', 'react-dom', 'less',
         'maishu-chitu', 'maishu-chitu-react', 'maishu-dilu',
-        'maishu-services-sdk', 'maishu-ui-toolkit'
+        'maishu-services-sdk', 'maishu-ui-toolkit',"json!websiteConfig"
     ],
     plugins: [
         new webpack.BannerPlugin(license),

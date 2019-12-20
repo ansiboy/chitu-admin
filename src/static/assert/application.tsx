@@ -1,5 +1,5 @@
 import * as chitu_react from 'maishu-chitu-react';
-import 'text!../content/admin_style_default.less'
+import 'text!../assert/content/admin_style_default.less'
 import errorHandle from './error-handle';
 import websiteConfig = require("json!websiteConfig");
 

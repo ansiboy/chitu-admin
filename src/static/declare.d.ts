@@ -1,21 +1,21 @@
 
 declare module 'fs' {
-    function readFileSync(path: string): any
+	function readFileSync(path: string): any
 }
 
 declare type RequireFunction = (modules: string[], callback?: Function, err?: Function) => void;
 
 declare let requirejs: {
-    (config: RequireConfig, modules: string[], callback?: Function, err?: Function);
+	(config: RequireConfig, modules: string[], callback?: Function, err?: Function);
 	(config: RequireConfig): RequireFunction;
 	(modules: string[], callback?: Function, err?: Function);
-    config: Function;
-    exec(name: string);
-    load(context: RequireContext, id: string, url: string);
+	config: (args: RequireConfig) => RequireFunction;
+	exec(name: string);
+	load(context: RequireContext, id: string, url: string);
 };
 
 type RequireContext = {
-    config: RequireConfig
+	config: RequireConfig
 }
 
 interface RequireConfig {
@@ -213,20 +213,20 @@ interface RequireShim {
 declare let define: Function;
 
 declare module "js-md5" {
-    let md5: {
-        (text: string): string;
-    };
-    export = md5;
+	let md5: {
+		(text: string): string;
+	};
+	export = md5;
 }
 
 declare module "auth/settings" {
-    let settings: { gateway: string };
-    export = settings;
+	let settings: { gateway: string };
+	export = settings;
 }
 
 declare module "json!websiteConfig" {
-    let a: import("./types").WebsiteConfig;
-    export = a;
+	let a: import("./types").WebsiteConfig;
+	export = a;
 }
 
 

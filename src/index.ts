@@ -34,7 +34,7 @@ export function start(settings: Settings) {
     let innerStaticRootDirectory = path.join(__dirname, "static");
     let virtualPaths = {};// createVirtulaPaths(innerStaticRootDirectory, staticRootDirectory);
     virtualPaths["assert"] = path.join(innerStaticRootDirectory, "assert");
-    virtualPaths["json.js"] = path.join(innerStaticRootDirectory, "assert/lib/requirejs-plugins/src/json.js");
+    virtualPaths["json.js"] = path.join(innerStaticRootDirectory, "asset/lib/requirejs-plugins/src/json.js");
     //======================================================================================
     // 生成文档
     if (settings.sourceDirectory) {

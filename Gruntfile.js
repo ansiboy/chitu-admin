@@ -19,7 +19,7 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: 'src/static',
                         dest: 'out/static',
-                        src: ['**/*.html', '**/*.css', '**/*.less', 'assert/lib/**', "content/**"]
+                        src: ['**/*.html', '**/*.css', '**/*.less', 'asset/lib/**', "content/**"]
                     },
                 ],
             }

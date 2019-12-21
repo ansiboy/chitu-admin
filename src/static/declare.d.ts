@@ -229,4 +229,10 @@ declare module "json!websiteConfig" {
 	export = a;
 }
 
+declare module "lessjs" {
+	let less: {
+		render: (content: string, callback: (e: Error, result: { css: string }) => void) => void;
+	}
 
+	export = less;
+}

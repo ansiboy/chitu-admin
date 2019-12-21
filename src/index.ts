@@ -2,11 +2,11 @@ import { startServer, getLogger } from 'maishu-node-mvc'
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
-import { Settings, ServerContext } from './settings';
+import { Settings, ServerContextData } from './settings';
 import { CliApplication } from "typedoc";
 import { g, registerStation } from './global';
 
-export { settings, Settings, ServerContext } from "./settings";
+export { Settings, ServerContextData } from "./settings";
 export { WebsiteConfig, PermissionConfig, PermissionConfigItem, SimpleMenuItem } from "./static/types";
 export { StationInfo } from "./global";
 
@@ -33,7 +33,7 @@ export function start(settings: Settings) {
 
     let innerStaticRootDirectory = path.join(__dirname, "static");
     let virtualPaths = {};// createVirtulaPaths(innerStaticRootDirectory, staticRootDirectory);
-    virtualPaths["assert"] = path.join(innerStaticRootDirectory, "assert");
+    virtualPaths["asset"] = path.join(innerStaticRootDirectory, "asset");
     virtualPaths["json.js"] = path.join(innerStaticRootDirectory, "asset/lib/requirejs-plugins/src/json.js");
     //======================================================================================
     // 生成文档
@@ -51,7 +51,17 @@ export function start(settings: Settings) {
 
     virtualPaths = Object.assign(settings.virtualPaths || {}, virtualPaths);
 
-    let setServerContext = false;
+    let serverContextData: ServerContextData = {
+        innerStaticRoot: innerStaticRootDirectory,
+        clientStaticRoot: staticRootDirectory,
+        rootDirectory: settings.rootDirectory,
+        station: settings.station,
+        requirejs: settings.requirejs,
+    };
+
+    serverContextData = Object.assign(settings.serverContextData || {}, serverContextData);
+
+    // let setServerContext = false;
     startServer({
         port: settings.port,
         staticRootDirectory: staticRootDirectory,
@@ -60,28 +70,11 @@ export function start(settings: Settings) {
         proxy: settings.proxy,
         bindIP: settings.bindIP,
         headers: settings.headers,
-        requestFilters: [
-            (req, res, context: ServerContext<any>) => {
-
-                if (setServerContext == false) {
-                    setServerContext = true;
-                    context.data = settings.serverContextData;
-                    Object.assign(context, settings.serverContextData);
-                    context.settings = Object.assign(settings, {
-                        innerStaticRoot: innerStaticRootDirectory,
-                        clientStaticRoot: staticRootDirectory
-                    });
-                }
-
-                return null;
-            },
-            ...(settings.actionFilters || [])
-        ],
-        serverContextData: settings.serverContextData
+        serverContextData: serverContextData
     });
 
     if (settings.station != null) {
-        registerStation(settings);
+        registerStation(serverContextData, settings);
     }
 }
 

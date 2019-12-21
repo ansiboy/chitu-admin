@@ -1,8 +1,8 @@
-import { controller, action, Controller, getLogger, serverContext } from "maishu-node-mvc";
+import { controller, action, Controller, getLogger, serverContext, ServerContext } from "maishu-node-mvc";
 import path = require("path");
 import fs = require("fs");
 import os = require("os");
-import { settings, Settings, ServerContext } from "../settings";
+import { Settings, ServerContextData } from "../settings";
 import { errors } from "../errors";
 import { WebsiteConfig } from "../static/types";
 import { PROJECT_NAME } from "../global";
@@ -22,10 +22,9 @@ export class HomeController extends Controller {
 
     /** 
      * 客户端初始化脚本 
-     * @param settings 设置，由系统注入。
      */
     @action("/clientjs_init.js")
-    initjs(@settings settings: ServerContext<any>["settings"]) {
+    initjs(@serverContext context: ServerContext<ServerContextData>) {
         let initJS = `define([],function(){
             return {
                 default: function(){
@@ -34,8 +33,8 @@ export class HomeController extends Controller {
             }
         })`;
 
-        if (settings.clientStaticRoot) {
-            let initJSPath = path.join(settings.clientStaticRoot, "init.js");
+        if (context.data.clientStaticRoot) {
+            let initJSPath = path.join(context.data.clientStaticRoot, "init.js");
             if (fs.existsSync(initJSPath)) {
                 let buffer = fs.readFileSync(initJSPath);
                 initJS = buffer.toString();
@@ -46,13 +45,12 @@ export class HomeController extends Controller {
 
     /**
      * 首页 HTML 文件
-     * @param settings 设置，由系统注入。   
      */
     @action("/")
-    indexHtml(@settings settings: ServerContext<any>["settings"]) {
+    indexHtml(@serverContext context: ServerContext<ServerContextData>) {
         let html: string = null;
-        if (settings.clientStaticRoot) {
-            let indexHtmlPath = path.join(settings.clientStaticRoot, "index.html");
+        if (context.data.clientStaticRoot) {
+            let indexHtmlPath = path.join(context.data.clientStaticRoot, "index.html");
             if (fs.existsSync(indexHtmlPath)) {
                 let buffer = fs.readFileSync(indexHtmlPath);
                 html = buffer.toString();
@@ -60,7 +58,7 @@ export class HomeController extends Controller {
         }
 
         if (!html) {
-            let indexHtmlPath = path.join(settings.innerStaticRoot, "index.html");
+            let indexHtmlPath = path.join(context.data.innerStaticRoot, "index.html");
             if (!fs.existsSync(indexHtmlPath))
                 throw errors.fileNotExists(indexHtmlPath);
 
@@ -76,16 +74,16 @@ export class HomeController extends Controller {
      * @param settings 设置，由系统注入。   
      */
     @action()
-    clientFiles(@settings settings: ServerContext<any>["settings"]): string[] {
-        console.assert(settings.clientStaticRoot != null);
-        if (!fs.existsSync(settings.clientStaticRoot))
+    clientFiles(@serverContext context: ServerContext<ServerContextData>): string[] {
+        console.assert(context.data.clientStaticRoot != null);
+        if (!fs.existsSync(context.data.clientStaticRoot))
             return null;
 
-        let s = fs.statSync(settings.clientStaticRoot);
+        let s = fs.statSync(context.data.clientStaticRoot);
         console.assert(s.isDirectory());
 
         let paths: string[] = [];
-        let stack = [settings.clientStaticRoot];
+        let stack = [context.data.clientStaticRoot];
         while (stack.length > 0) {
             let parentPath = stack.pop();
 
@@ -96,7 +94,7 @@ export class HomeController extends Controller {
                 if (s.isDirectory())
                     stack.push(p);
                 else {
-                    let filePath = path.relative(settings.clientStaticRoot, p);
+                    let filePath = path.relative(context.data.clientStaticRoot, p);
                     paths.push(filePath);
                     path.resolve()
                 }
@@ -114,12 +112,16 @@ export class HomeController extends Controller {
 
     /**
      * 获取站点配置
-     * @param settings 设置，由系统注入。   
+     * @param context 设置，由系统注入。   
      */
     @action()
-    websiteConfig(@settings settings: Settings): WebsiteConfig {
+    websiteConfig(@serverContext context: ServerContext<ServerContextData>): WebsiteConfig {
+        return HomeController.getWebsiteConfig(context.data)
+    }
+
+    static getWebsiteConfig(data: ServerContextData) {
         let config = {} as WebsiteConfig;
-        let staticConfigPath = path.join(settings.rootDirectory, "website-config.js");
+        let staticConfigPath = path.join(data.rootDirectory, "website-config.js");
         let logger = getLogger(PROJECT_NAME);
         if (fs.existsSync(staticConfigPath)) {
             let mod = require(staticConfigPath);
@@ -129,7 +131,7 @@ export class HomeController extends Controller {
             }
             let modDefault = mod["default"] || {};
             if (typeof modDefault == "function") {
-                config = modDefault(settings.serverContextData || {});
+                config = modDefault(data || {});
             }
             else {
                 config = modDefault;
@@ -138,22 +140,21 @@ export class HomeController extends Controller {
         else {
             logger.warn(`Website config file '${staticConfigPath}' is not exists.`)
         }
-        if (settings.station) {
-            config.gateway = settings.station.gateway;
+        if (data.station) {
+            config.gateway = data.station.gateway;
         }
         let r = Object.assign({}, defaultConfig, config);
         r.requirejs.paths = Object.assign(defaultPaths, r.requirejs.paths || {});
+
+        if (data.requirejs) {
+            r.requirejs.shim = Object.assign(r.requirejs.shim || {}, data.requirejs.shim || {});
+            r.requirejs.paths = Object.assign(r.requirejs.paths, data.requirejs.paths || {});
+        }
+
         return r;
     }
 
-    /**
-     * 获取站点设置
-     * @param settings 设置，由系统注入。   
-     */
-    @action()
-    settings(@settings settings: Settings) {
-        return settings;
-    }
+
 }
 
 let defaultConfig: WebsiteConfig = {
@@ -170,6 +171,7 @@ let defaultPaths = {
     less: `${lib}/require-less-0.1.5/less`,
     lessc: `${lib}/require-less-0.1.5/lessc`,
     normalize: `${lib}/require-less-0.1.5/normalize`,
+    lessjs: `${node_modules}/less/dist/less`,
     text: `${lib}/text`,
     json: `${lib}/requirejs-plugins/src/json`,
 
@@ -184,8 +186,7 @@ let defaultPaths = {
     "react": `${node_modules}/react/umd/react.development`,
     "react-dom": `${node_modules}/react-dom/umd/react-dom.development`,
     "maishu-chitu": `${node_modules}/maishu-chitu/dist/index`,
-    // "maishu-chitu-admin/static": `${node_modules}/maishu-chitu-admin/out/static/index`,
-    "maishu-chitu-admin/static": `${node_modules}/maishu-chitu-admin/out/static/build`,
+    "maishu-chitu-admin/static": `${node_modules}/maishu-chitu-admin/dist/index`,
     "maishu-chitu-react": `${node_modules}/maishu-chitu-react/dist/index`,
     "maishu-chitu-service": `${node_modules}/maishu-chitu-service/dist/index`,
     "maishu-dilu": `${node_modules}/maishu-dilu/dist/index`,
@@ -199,4 +200,7 @@ let defaultPaths = {
     "xml2js": `${node_modules}/xml2js/lib/xml2js`,
     "polyfill": `${node_modules}/@babel/polyfill/dist/polyfill`,
     "url-pattern": `${node_modules}/url-pattern/lib/url-pattern`,
+
+    "admin_style_default": "/asset/content/admin_style_default.less",
+    "startup": `${node_modules}/maishu-chitu-admin/out/static/asset/startup`,//"/asset/startup",
 };

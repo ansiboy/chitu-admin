@@ -11,19 +11,7 @@ fetch(configUrl).then(async response => {
         console.assert(startupModule != null && typeof startupModule["default"] == "function");
         startupModule["default"](req);
     })
-
-    delete r.requirejs.context;
-    r.requirejs.baseUrl = "./";
-    requirejs.config(r.requirejs);
 });
-
-(function () {
-    let _define = define;
-    window['define'] = function (name, deps, callback) {
-        return _define.apply(window, [name, deps, callback]);
-    };
-    window['define'].amd = (_define as any).amd;
-})();
 
 let load: Function = requirejs.load;
 requirejs.load = function (context, id, url: string) {

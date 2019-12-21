@@ -1,10 +1,10 @@
 import React = require('react');
-import { Application } from '../application';
 import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
 import { ValueStore } from 'maishu-chitu';
 import { Resource } from '../models';
 import { SimpleMenuItem } from '../../types';
+import { Application } from 'maishu-chitu-react';
 
 export type MenuItem = Resource & {
     icon?: string, parent: MenuItem, children: MenuItem[],

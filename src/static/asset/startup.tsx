@@ -1,4 +1,3 @@
-import { Application, RequireJS } from "./application";
 import ReactDOM = require("react-dom");
 import { SimpleMasterPage } from "./masters/simple-master-page";
 import { MainMasterPage } from "./masters/main-master-page";
@@ -6,7 +5,10 @@ import React = require("react");
 import { MasterPage } from "./masters/master-page";
 import { MyService } from "./services/my-service";
 import { WebsiteConfig } from "../types";
-import 'text!../asset/content/admin_style_default.less'
+import 'text!admin_style_default';
+import * as chitu_react from 'maishu-chitu-react';
+import * as ui from "maishu-ui-toolkit";
+import less = require("lessjs");
 
 export default async function startup(requirejs: RequireJS) {
     async function createMasterPages(app: Application) {
@@ -73,7 +75,7 @@ function renderElement(componentClass: React.ComponentClass, props: any, contain
 /** 加载样式文件 */
 function loadStyle(config: WebsiteConfig) {
 
-    let str: string = require('text!../asset/content/admin_style_default.less')
+    let str: string = require('text!admin_style_default')
     if (config.firstPanelWidth) {
         str = str + `\r\n@firstPanelWidth: ${config.firstPanelWidth}px;`
     }
@@ -82,7 +84,7 @@ function loadStyle(config: WebsiteConfig) {
         str = str + `\r\n@secondPanelWidth: ${config.secondPanelWidth}px;`
     }
 
-    let less = (window as any)['less']
+    // let less = (window as any)['less']
     less.render(str, function (e: Error, result: { css: string }) {
         if (e) {
             console.error(e)
@@ -100,5 +102,40 @@ export type InitArguments = {
     mainMaster: MainMasterPage,
     requirejs: RequireJS
 }
+
+export class Application extends chitu_react.Application {
+    constructor(requirejs: RequireJS, simpleContainer: HTMLElement, mainContainer: HTMLElement, blankContainer: HTMLElement) {
+        super({
+            container: {
+                simple: simpleContainer,
+                default: mainContainer,
+                blank: blankContainer,
+            }
+        })
+
+        this.error.add((sender, error, page) => errorHandle(error, sender, page as chitu_react.Page));
+    }
+
+}
+
+export interface RequireJS {
+    (modules: string[], success?: (arg0: any, arg1: any) => void, err?: (err) => void);
+    ({ context: string }, modules: string[], success?: (arg0: any, arg1: any) => void, err?: (err) => void);
+}
+
+
+let errorMessages = {
+    "726": "没有权限访问"
+}
+
+export function errorHandle(error: Error, app?: Application, page?: chitu_react.Page) {
+    error.message = errorMessages[error.name] || error.message;
+
+    ui.alert({
+        title: "错误",
+        message: error.message
+    })
+}
+
 
 

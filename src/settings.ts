@@ -1,16 +1,24 @@
-import { createParameterDecorator, LogLevel } from "maishu-node-mvc";
+import { createParameterDecorator, LogLevel, ServerContext } from "maishu-node-mvc";
 import { ServerContext as BaseServerContext } from "maishu-node-mvc";
 import { Settings as NodeMVCConfig } from 'maishu-node-mvc'
-import { PermissionConfig } from "./static/types";
+import { PermissionConfig, WebsiteConfig } from "./static/types";
 
-export interface ServerContext<T> extends BaseServerContext<T> {
-    settings: Settings & {
-        innerStaticRoot: string;
-        clientStaticRoot: string;
-    }
+// export interface ServerContext<T> extends BaseServerContext<T> {
+//     settings: Settings & {
+//         innerStaticRoot: string;
+//         clientStaticRoot: string;
+//     }
+// }
+
+export type ServerContextData = {
+    innerStaticRoot: string;
+    clientStaticRoot: string;
+    rootDirectory: string,
+    station: Settings["station"],
+    requirejs?: WebsiteConfig["requirejs"],
 }
 
-export interface Settings {
+export interface Settings<T = any> {
     port: number,
     rootDirectory: string,
     sourceDirectory?: string,
@@ -27,13 +35,8 @@ export interface Settings {
         path: string,
         permissions?: PermissionConfig
     },
-    serverContextData?: { [key: string]: any }
+    serverContextData?: T,
 
-    /** 模式, 默认为 development, 不对 js 进行打包和压缩. production 对 js 进行打包和压缩 */
-    mode?: "development" | "production"
+    requirejs?: WebsiteConfig["requirejs"],
 }
-
-export let settings = createParameterDecorator(async (req, res, context: ServerContext<any>) => {
-    return context.settings;
-})
 

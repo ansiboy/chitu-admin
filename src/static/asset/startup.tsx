@@ -4,13 +4,16 @@ import { MainMasterPage } from "./masters/main-master-page";
 import React = require("react");
 import { MasterPage } from "./masters/master-page";
 import { MyService } from "./services/my-service";
-import { WebsiteConfig } from "../types";
 import 'text!admin_style_default';
 import * as chitu_react from 'maishu-chitu-react';
 import * as ui from "maishu-ui-toolkit";
 import less = require("lessjs");
+import { PageData, Page } from "maishu-chitu";
 
 export default async function startup(requirejs: RequireJS) {
+
+    console.assert(requirejs != null);
+
     async function createMasterPages(app: Application) {
         let mainProps: MainMasterPage["props"] = { app };
         let simplePorps: SimpleMasterPage["props"] = { app };
@@ -34,7 +37,7 @@ export default async function startup(requirejs: RequireJS) {
 
     let service = app.createService(MyService);
     let config = await service.config();
-    loadStyle(config);
+    loadDefaultStyle(config.firstPanelWidth, config.secondPanelWidth);
     console.assert(config.menuItems != null);
 
     let masterPages = await createMasterPages(app);
@@ -73,15 +76,15 @@ function renderElement(componentClass: React.ComponentClass, props: any, contain
 }
 
 /** 加载样式文件 */
-function loadStyle(config: WebsiteConfig) {
+function loadDefaultStyle(firstPanelWidth?: number, secondPanelWidth?: number) {
 
     let str: string = require('text!admin_style_default')
-    if (config.firstPanelWidth) {
-        str = str + `\r\n@firstPanelWidth: ${config.firstPanelWidth}px;`
+    if (firstPanelWidth) {
+        str = str + `\r\n@firstPanelWidth: ${firstPanelWidth}px;`
     }
 
-    if (config.secondPanelWidth) {
-        str = str + `\r\n@secondPanelWidth: ${config.secondPanelWidth}px;`
+    if (secondPanelWidth) {
+        str = str + `\r\n@secondPanelWidth: ${secondPanelWidth}px;`
     }
 
     // let less = (window as any)['less']
@@ -97,6 +100,8 @@ function loadStyle(config: WebsiteConfig) {
     })
 }
 
+
+
 export type InitArguments = {
     app: Application,
     mainMaster: MainMasterPage,
@@ -104,6 +109,7 @@ export type InitArguments = {
 }
 
 export class Application extends chitu_react.Application {
+    private requirejs: RequireJS;
     constructor(requirejs: RequireJS, simpleContainer: HTMLElement, mainContainer: HTMLElement, blankContainer: HTMLElement) {
         super({
             container: {
@@ -113,7 +119,73 @@ export class Application extends chitu_react.Application {
             }
         })
 
+        this.requirejs = requirejs;
         this.error.add((sender, error, page) => errorHandle(error, sender, page as chitu_react.Page));
+
+        this.pageCreated.add((sender, page) => this.onPageCreated(page))
+    }
+
+    private async onPageCreated(page: Page) {
+        let lessFilePath: string;
+        if (page.name.indexOf(":")) {
+            let arr = page.name.split(":");
+            lessFilePath = `modules/${arr[1]}.less`;
+        }
+        else {
+            lessFilePath = `modules/${page.name}.less`;
+        }
+
+        let pageClassName = page.name.split("/").filter(o => o != "").join("-");
+        pageClassName = pageClassName.split(":").join("-");
+        page.element.className = `admin-page ${pageClassName}`;
+
+        let stationPath = getStationPath(page.name);
+        let myService = this.createService(MyService);
+        let files = await myService.files(stationPath);
+        let pageLessFiles = files.filter(o => o.startsWith("modules") && o.endsWith(".less"));
+        if (pageLessFiles.indexOf(lessFilePath) >= 0) {
+            this.loadPageLess(lessFilePath, pageClassName, stationPath);
+        }
+    }
+
+    private loadPageLess(lessFilePath: string, pageClassName: string, stationPath: string) {
+
+        let fun1 = (str: string) => {
+            str = `.${pageClassName} {${str}}`
+
+            let extractUrlParts = less.FileManager.prototype.extractUrlParts;
+            less.FileManager.prototype.extractUrlParts = function (url, baseUrl) {
+                let { protocol, host } = location;
+                baseUrl = `${protocol}//${host}${stationPath}${lessFilePath}`;
+                debugger
+                return extractUrlParts.apply(less, [url, baseUrl]);
+            }
+
+            less.render(str, function (e: Error, result: { css: string }) {
+                if (e) {
+                    console.error(e)
+                    return
+                }
+
+                let style = document.createElement('style');
+                style.setAttribute("page-name", pageClassName);
+                style.type = "text/css";
+                document.head.appendChild(style)
+                style.innerText = result.css
+            })
+
+        }
+
+        let fun2 = err => {
+            console.error(err);
+        }
+
+        if (stationPath) {
+            requirejs({ context: stationPath }, [`text!${stationPath}${lessFilePath}`], fun1, fun2);
+        }
+        else {
+            this.requirejs([`text!${lessFilePath}`], fun1, fun2);
+        }
     }
 
 }
@@ -135,6 +207,23 @@ export function errorHandle(error: Error, app?: Application, page?: chitu_react.
         title: "错误",
         message: error.message
     })
+}
+
+function getStationPath(path: string) {
+    if (path.indexOf(":") >= 0) {
+        let arr = path.split(":");
+        let stationPath = arr[0];
+        if (stationPath.startsWith("/") == false) {
+            stationPath = "/" + stationPath;
+        }
+        if (stationPath.endsWith("/") == false) {
+            stationPath = stationPath + "/";
+        }
+
+        return stationPath;
+    }
+
+    return null;
 }
 
 

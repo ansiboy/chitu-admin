@@ -7,7 +7,7 @@ import { CliApplication } from "typedoc";
 import { g, registerStation } from './global';
 
 export { Settings, ServerContextData } from "./settings";
-export { WebsiteConfig, PermissionConfig, PermissionConfigItem, SimpleMenuItem } from "./static/types";
+export { WebsiteConfig, PermissionConfig, PermissionConfigItem, SimpleMenuItem, RequireConfig } from "./static/types";
 export { StationInfo } from "./global";
 
 export function start(settings: Settings) {

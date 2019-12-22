@@ -230,9 +230,16 @@ declare module "json!websiteConfig" {
 }
 
 declare module "lessjs" {
+
+	class FileManager {
+		extractUrlParts: (url: string, baseUrl: string) => string;
+	}
+
 	let less: {
 		render: (content: string, callback: (e: Error, result: { css: string }) => void) => void;
+		FileManager: typeof FileManager
 	}
+
 
 	export = less;
 }

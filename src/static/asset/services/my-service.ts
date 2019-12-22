@@ -1,14 +1,18 @@
 import { Service } from './service'
 import { WebsiteConfig } from "../../types";
 
-let clientFiles: string[];
+// let clientFiles: string[];
+let stationClientFiles: { [stationPath: string]: string[] } = {};
 export class MyService extends Service {
-    async files() {
-        if (clientFiles) {
-            return clientFiles;
+    async files(stationPath?: string) {
+        stationPath = stationPath || "";
+
+        if (stationClientFiles[stationPath]) {
+            return stationClientFiles[stationPath];
         }
-        clientFiles = await this.get<string[]>("./clientFiles");
-        return clientFiles;
+
+        stationClientFiles[stationPath] = await this.get<string[]>(`${stationPath}clientFiles`);
+        return stationClientFiles[stationPath];
     }
 
     async config(): Promise<WebsiteConfig> {

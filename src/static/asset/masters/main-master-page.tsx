@@ -114,20 +114,6 @@ export class MainMasterPage extends MasterPage<State> {
         return null
     }
 
-    private textToGuid(name: string) {
-        const storageName = "nameToGuid";
-        let nameToGuid = localStorage.getItem(storageName) || "{}";
-        let data = JSON.parse(nameToGuid);
-        let id = data[name];
-        if (!id) {
-            id = guid();
-            data[name] = id;
-            localStorage.setItem(storageName, JSON.stringify(data));
-        }
-
-        return id;
-    }
-
     private translateToResource(o: SimpleMenuItem): Resource {
         let path = o.path; //typeof o.path == "function" ? o.path() : o.path;
         return {
@@ -253,12 +239,6 @@ export class MainMasterPage extends MasterPage<State> {
 
 
 
-function guid() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-}
 
 function translateToMenuItems(resources: Resource[]): MenuItem[] {
     let arr = new Array<MenuItem>();

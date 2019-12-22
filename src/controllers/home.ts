@@ -202,5 +202,5 @@ let defaultPaths = {
     "url-pattern": `${node_modules}/url-pattern/lib/url-pattern`,
 
     "admin_style_default": "/asset/content/admin_style_default.less",
-    "startup": `${node_modules}/maishu-chitu-admin/out/static/asset/startup`,//"/asset/startup",
+    // "startup": `${node_modules}/maishu-chitu-admin/out/static/asset/startup`,
 };

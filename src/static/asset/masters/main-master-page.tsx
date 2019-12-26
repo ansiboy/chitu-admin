@@ -10,8 +10,6 @@ export type MenuItem = Resource & {
     icon?: string, parent: MenuItem, children: MenuItem[],
 }
 
-// export { SimpleMenuItem } from "../config";
-
 interface State {
     currentPageName?: string,
     toolbar?: JSX.Element,
@@ -63,7 +61,8 @@ export class MainMasterPage extends MasterPage<State> {
 
         if (pagePath.startsWith("#")) {
             pagePath = pagePath.substr(1);
-            this.app.redirect(pagePath, { resourceId: node.id });
+            // this.app.redirect(pagePath, { resourceId: node.id });
+            location.hash = pagePath;
             return;
         }
 

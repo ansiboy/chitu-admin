@@ -7,6 +7,7 @@ import ReactDOM = require("react-dom");
 import { InputControl, InputControlProps } from "./inputs/input-control";
 import { GridViewCellControl } from "maishu-wuzhui";
 import { PageDataSource } from "./page-data-source";
+import { PageData } from "maishu-chitu";
 
 interface BoundInputControlProps<T> extends InputControlProps<T> {
     boundField: BoundField<T>
@@ -176,18 +177,41 @@ interface DataCommandProps<T> {
 }
 
 class DataCommand<T> extends React.Component<DataCommandProps<T>> {
+    private dataSource: PageDataSource<T>;
+
+    constructor(props: DataCommandProps<T>) {
+        super(props);
+
+        this.dataSource = props.dataSource as PageDataSource<T>;
+        console.assert(this.dataSource != null);
+    }
+
     private edit() {
         this.props.dialog.show(this.props.dataItem);
+    }
+    private itemCanDelete() {
+        if (this.dataSource.options.itemCanDelete == null)
+            return true;
+
+        return this.dataSource.options.itemCanDelete(this.props.dataItem);
+    }
+    private itemCanUpdate() {
+        if (this.dataSource.options.itemCanUpdate == null)
+            return true;
+
+        return this.dataSource.options.itemCanUpdate(this.props.dataItem);
     }
     render() {
         return <>
             {this.props.dataSource.canUpdate ?
                 <button className="btn btn-minier btn-info"
-                    onClick={() => this.edit()}>
+                    onClick={() => this.edit()}
+                    disabled={!this.itemCanUpdate()}>
                     <i className="icon-pencil"></i>
                 </button> : null}
-            {this.props.dataSource.canDelete ?
-                <button className="btn btn-minier btn-danger">
+            {this.dataSource.canDelete ?
+                <button className="btn btn-minier btn-danger"
+                    disabled={!this.itemCanDelete()}>
                     <i className="icon-trash"></i>
                 </button> : null}
         </>

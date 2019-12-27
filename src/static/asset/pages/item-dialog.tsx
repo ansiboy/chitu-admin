@@ -27,7 +27,7 @@ export function createItemDialog<T>
         private beforeSaves: BeforeSave<T>[];
         private fieldsConatiner: HTMLElement;
 
-        inputControls: InputControl<any>[];
+        inputControls: InputControl<{}>[];
         private dataItem: T;
 
         constructor(props: ItemDialog["props"]) {
@@ -105,7 +105,7 @@ export function createItemDialog<T>
 
             this.inputControls.forEach(c => {
                 let value = dataItem[c.props.dataField];
-                c.setState({ value: value });
+                c.value = value;
             })
 
             this.setState({ title })
@@ -114,7 +114,7 @@ export function createItemDialog<T>
         async save() {
             let dataItem = this.dataItem;
             this.inputControls.forEach(c => {
-                dataItem[c.props.dataField] = c.state.value;
+                dataItem[c.props.dataField as string] = c.value;
             })
 
             if (beforeSave) {
@@ -133,74 +133,6 @@ export function createItemDialog<T>
                 await dataSource.insert(dataItem);
             }
         }
-
-        childrenToArray(children: any): React.ReactElement[] {
-            let r = Array.isArray(children) ? children : [children];
-            r = r.filter(o => o);
-            return r;
-        }
-
-        // controlCreated(ctrl: InputControl<any>) {
-        //     let exists = this.inputControls.filter(o => o.id == ctrl.id).length > 0;
-        //     if (exists)
-        //         return;
-
-        //     let c = this.findInputControls();
-        //     this.inputControls.push(ctrl);
-        // }
-
-        scanInputControls(rootElement: React.ReactElement) {
-            let inputControls: InputControl<any>[] = [];
-            let stack: React.ReactNode[] = [];
-            if (Array.isArray(rootElement)) {
-                stack = rootElement;
-            }
-            else {
-                stack = [rootElement];
-            }
-
-            while (stack.length > 0) {
-                let item = stack.pop();
-                if (item["props"] == null) {
-                    continue;
-                }
-                let c: React.Component<any, any> = item as any;
-
-                let children = this.toArray(c.props.children);
-
-                // for (let i = 0; i < children.length; i++) {
-                //     let componentType = children[i]["type"];
-                //     if (typeof componentType == "function") {
-                //         if (componentType.constructor == InputControl.constructor) {
-                //             children[i]["props"]["dialog"] = this;
-                //         }
-                //     }
-                // }
-
-                if (c.props.children == null)
-                    continue;
-
-                stack.push(...children);
-            }
-
-            return inputControls;
-        }
-
-
-        private toArray(child: React.ReactNode): React.ReactNode[] {
-            if (Array.isArray(child))
-                return child;
-
-            return [child];
-        }
-
-        private isClassComponent(component: React.ReactNode) {
-            return (
-                typeof component === 'function' &&
-                !!component.prototype.isReactComponent
-            ) ? true : false
-        }
-
 
         componentDidMount() {
             let ctrls = this.inputControls;

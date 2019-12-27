@@ -1,5 +1,4 @@
 import React = require("react");
-import { guid } from "maishu-chitu-service";
 import { ValidateDataField } from "../item-dialog";
 
 export interface InputControlProps<T> extends ValidateDataField {
@@ -7,7 +6,7 @@ export interface InputControlProps<T> extends ValidateDataField {
 }
 
 export interface InputControlState {
-    value?: any,
+    // value?: any,
 }
 
 export interface ItemDialog {
@@ -19,9 +18,11 @@ export abstract class InputControl<T, P extends InputControlProps<T> = InputCont
 
     static defaultProps: InputControlProps<any> = { validateRules: [] } as InputControlProps<any>;
 
-    id = guid();
-
     constructor(props: InputControl<T, P>["props"]) {
         super(props);
+
     }
+
+    abstract get value(): any;
+    abstract set value(value:any)
 }

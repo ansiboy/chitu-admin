@@ -17,7 +17,7 @@ module.exports = {
     devtool: 'source-map',
     externals: ["json!websiteConfig",
         "text!admin_style_default",
-        'react', 'react-dom', 'less',
+        'react', 'react-dom', 'less', 'lessjs',
         'maishu-chitu', 'maishu-chitu-react', 'maishu-dilu',
         'maishu-services-sdk', 'maishu-ui-toolkit',
     ],

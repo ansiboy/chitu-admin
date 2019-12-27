@@ -5,6 +5,7 @@
         "jsx": "react",
         "baseUrl": "./",
         "declaration": true,
+        "sourceMap": false,
         "module": "AMD",
         "target": "es6",
         "paths": {
@@ -38,7 +39,7 @@
             "entities": [
                 "../../../node-auth-server/out/entities.d.ts"
             ],
-            "url-pattern":[
+            "url-pattern": [
                 "../../node_modules/url-pattern/index.d.ts"
             ]
         }

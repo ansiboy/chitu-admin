@@ -4,7 +4,9 @@ type PageDataSourceArguments<T> = DataSourceArguments<T> & {
     search?: {
         placeholder?: string,
         execute: (searchText: string) => Promise<DataSourceSelectResult<T>>,
-    }
+    },
+    itemCanDelete?: (dataItem: T) => boolean,
+    itemCanUpdate?: (dataItem: T) => boolean
 }
 
 export class PageDataSource<T> extends DataSource<T> {

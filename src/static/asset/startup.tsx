@@ -4,11 +4,10 @@ import { MainMasterPage } from "./masters/main-master-page";
 import React = require("react");
 import { MasterPage } from "./masters/master-page";
 import { MyService } from "./services/my-service";
-import 'text!admin_style_default';
 import * as chitu_react from 'maishu-chitu-react';
 import * as ui from "maishu-ui-toolkit";
 import less = require("lessjs");
-import { PageData, Page } from "maishu-chitu";
+import { Page } from "maishu-chitu";
 
 export default async function startup(requirejs: RequireJS) {
 
@@ -37,7 +36,7 @@ export default async function startup(requirejs: RequireJS) {
 
     let service = app.createService(MyService);
     let config = await service.config();
-    loadDefaultStyle(config.firstPanelWidth, config.secondPanelWidth);
+    loadDefaultStyle(requirejs, config.firstPanelWidth, config.secondPanelWidth);
     console.assert(config.menuItems != null);
 
     let masterPages = await createMasterPages(app);
@@ -64,7 +63,7 @@ export default async function startup(requirejs: RequireJS) {
 }
 
 function renderElement(componentClass: React.ComponentClass, props: any, container: HTMLElement) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         props.ref = function (e) {
             if (!e) return;
             resolve(e);
@@ -76,27 +75,27 @@ function renderElement(componentClass: React.ComponentClass, props: any, contain
 }
 
 /** 加载样式文件 */
-function loadDefaultStyle(firstPanelWidth?: number, secondPanelWidth?: number) {
-
-    let str: string = require('text!admin_style_default')
-    if (firstPanelWidth) {
-        str = str + `\r\n@firstPanelWidth: ${firstPanelWidth}px;`
-    }
-
-    if (secondPanelWidth) {
-        str = str + `\r\n@secondPanelWidth: ${secondPanelWidth}px;`
-    }
-
-    // let less = (window as any)['less']
-    less.render(str, function (e: Error, result: { css: string }) {
-        if (e) {
-            console.error(e)
-            return
+function loadDefaultStyle(req: RequireJS, firstPanelWidth?: number, secondPanelWidth?: number) {
+    req(['text!admin_style_default'], str => {
+        if (firstPanelWidth) {
+            str = str + `\r\n@firstPanelWidth: ${firstPanelWidth}px;`
         }
 
-        let style = document.createElement('style')
-        document.head.appendChild(style)
-        style.innerText = result.css
+        if (secondPanelWidth) {
+            str = str + `\r\n@secondPanelWidth: ${secondPanelWidth}px;`
+        }
+
+        // let less = (window as any)['less']
+        less.render(str, function (e: Error, result: { css: string }) {
+            if (e) {
+                console.error(e)
+                return
+            }
+
+            let style = document.createElement('style')
+            document.head.appendChild(style)
+            style.innerText = result.css
+        })
     })
 }
 
@@ -120,7 +119,7 @@ export class Application extends chitu_react.Application {
         })
 
         this.requirejs = requirejs;
-        this.error.add((sender, error, page) => errorHandle(error, sender, page as chitu_react.Page));
+        this.error.add((sender, error, page) => errorHandle(error));
 
         this.pageCreated.add((sender, page) => this.onPageCreated(page))
     }
@@ -157,7 +156,6 @@ export class Application extends chitu_react.Application {
             less.FileManager.prototype.extractUrlParts = function (url, baseUrl) {
                 let { protocol, host } = location;
                 baseUrl = `${protocol}//${host}${stationPath}${lessFilePath}`;
-                debugger
                 return extractUrlParts.apply(less, [url, baseUrl]);
             }
 
@@ -200,7 +198,7 @@ let errorMessages = {
     "726": "没有权限访问"
 }
 
-export function errorHandle(error: Error, app?: Application, page?: chitu_react.Page) {
+export function errorHandle(error: Error) {
     error.message = errorMessages[error.name] || error.message;
 
     ui.alert({

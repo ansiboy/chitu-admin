@@ -34,7 +34,7 @@ module.exports = function (grunt) {
         },
         webpack: {
             es6: webpackES6Config,
-            es5: webpackES5Config,
+            // es5: webpackES5Config,
         },
         babel: {
             options: {
@@ -58,16 +58,16 @@ module.exports = function (grunt) {
             }
         },
         requirejs: {
-            asset: {
-                options: {
-                    include: ["maishu-chitu"],
-                    out: "out/static/asset.build.js",
-                    paths: {
-                        "maishu-chitu": "node_modules/maishu-chitu/dist/index",
-                        "maishu-chitu-service": "node_modules/maishu-chitu-service/dist/index",
-                    }
-                }
-            },
+            // asset: {
+            //     options: {
+            //         include: ["maishu-chitu"],
+            //         out: "out/static/asset.build.js",
+            //         paths: {
+            //             "maishu-chitu": "node_modules/maishu-chitu/dist/index",
+            //             "maishu-chitu-service": "node_modules/maishu-chitu-service/dist/index",
+            //         }
+            //     }
+            // },
             static: {
                 options: {
                     include: ["out/static/index"],
@@ -78,18 +78,18 @@ module.exports = function (grunt) {
                     optimize: "none"
                 }
             },
-            package: {
-                options: {
-                    include: [
-                        "requirejs", "text", "json", "js-md5", "less",
-                        "maishu-chitu", "maishu-chitu-react", "maishu-chitu-service",
-                    ],
-                    out: "dist/package.js",
-                    paths: Object.assign(requirejsDefaultPaths, {
-                    }),
-                    optimize: "none"
-                }
-            }
+            // package: {
+            //     options: {
+            //         include: [
+            //             "requirejs", "text", "json", "js-md5", "less",
+            //             "maishu-chitu", "maishu-chitu-react", "maishu-chitu-service",
+            //         ],
+            //         out: "dist/package.js",
+            //         paths: Object.assign(requirejsDefaultPaths, {
+            //         }),
+            //         optimize: "none"
+            //     }
+            // }
         }
     });
 
@@ -101,6 +101,7 @@ var requirejsDefaultPaths = {
     "requirejs": "node_modules/requirejs/require",
     "json": "node_modules/maishu-requirejs-plugins/src/json",
     "less": "node_modules/less/dist/less",
+    "lessjs": "node_modules/less/dist/less",
     "text": "node_modules/maishu-requirejs-plugins/lib/text",
     "react": "empty:",//"node_modules/react/umd/react.production.min",
     "react-dom": "empty:",// "node_modules/react-dom/umd/react-dom.production.min",

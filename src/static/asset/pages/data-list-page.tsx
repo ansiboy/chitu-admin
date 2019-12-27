@@ -7,7 +7,6 @@ import ReactDOM = require("react-dom");
 import { InputControl, InputControlProps } from "./inputs/input-control";
 import { GridViewCellControl } from "maishu-wuzhui";
 import { PageDataSource } from "./page-data-source";
-import { PageData } from "maishu-chitu";
 
 interface BoundInputControlProps<T> extends InputControlProps<T> {
     boundField: BoundField<T>
@@ -20,74 +19,111 @@ class BoundInputControl<T> extends InputControl<T, BoundInputControlProps<T>>{
     control: GridViewCellControl;
     cell: GridViewEditableCell<T>;
 
+    private _value;
     constructor(props: BoundInputControl<T>["props"]) {
         super(props);
 
+        this.state = {};
     }
 
-    set value(value: any) {
-        this.control.value = value;
+    get value() {
+        return this._value;
     }
 
-    get value(): any {
-        return this.control.value;
+    set value(value) {
+        this._value = value;
+
+        if (this.control != null)
+            this.control.value = value;
     }
 
     render() {
+        console.assert(this.state != null);
+
         return <span ref={e => {
-            if (e == null || this.control != null)
+            if (this.control != null) {
                 return;
+            }
 
             this.control = this.props.boundField.createControl();
-            this.control.element.className = "form-control";
+            this.control.element.setAttribute("name", this.props.dataField as string);
+            this.control.value = this._value;
+
+            this.control.element.onchange = () => {
+                this._value = this.control.value;
+            }
+
             e.appendChild(this.control.element);
         }}>
 
         </span>
     }
+}
 
+let boundFieldCreateControl = BoundField.prototype.createControl;
+BoundField.prototype.createControl = function () {
+    let r: GridViewCellControl = boundFieldCreateControl.apply(this);
+    r.element.className = "form-control";
+    return r;
 }
 
 export abstract class DataListPage<T, P = {}, S = {}> extends BasePage<P, S> {
+
     abstract dataSource: DataSource<T>;
     abstract itemName: string;
     abstract columns: DataControlField<T>[];
 
-    protected translate?: (items: T[]) => T[];
+    //============================================
+    // protected
+    protected pageSize?: number = 15;
+    protected headerFixed = false;
 
-    pageSize?: number = 15;
-    headerFixed = false;
+    /** 是否显示命令字段 */
+    protected showCommandField = true;
+
+    /** 对显示的数据进行转换 */
+    protected translate?: (items: T[]) => T[];
+    //============================================
 
     private itemTable: HTMLTableElement;
-    gridView: GridView<T>;
-    dialog: Dialog<T>;
-    operationColumn: CustomField<T>;
+    private gridView: GridView<T>;
+    private dialog: Dialog<T>;
+    private _operationField: CustomField<T>;
 
-    constructor(props) {
+    constructor(props: P) {
         super(props);
 
-        let it = this;
-        this.operationColumn = new CustomField<T>({
-            headerText: "操作",
-            headerStyle: { textAlign: "center", width: `${OperationColumnWidth}px` },
-            itemStyle: { textAlign: "center" },
-            createItemCell(dataItem: T) {
-                let cell = new GridViewCell();
-                ReactDOM.render(
-                    <DataCommand<T> {...{ dataItem, dataSource: it.dataSource, dialog: it.dialog, }} />,
-                    cell.element
-                );
-                return cell;
-            }
-        });
+
+    }
+
+    get operationField() {
+        return this._operationField;
     }
 
     componentDidMount() {
         this.columns = this.columns || [];
+
+        if (this.showCommandField) {
+            let it = this;
+            this._operationField = new CustomField<T>({
+                headerText: "操作",
+                headerStyle: { textAlign: "center", width: `${OperationColumnWidth}px` },
+                itemStyle: { textAlign: "center" },
+                createItemCell(dataItem: T) {
+                    let cell = new GridViewCell();
+                    ReactDOM.render(
+                        <DataCommand<T> {...{ dataItem, dataSource: it.dataSource, dialog: it.dialog, }} />,
+                        cell.element
+                    );
+                    return cell;
+                }
+            });
+        }
+
         this.gridView = createGridView({
             element: this.itemTable,
             dataSource: this.dataSource,
-            columns: [... this.columns, this.operationColumn],
+            columns: this.operationField ? [...this.columns, this._operationField] : this.columns,
             pageSize: this.pageSize,
             translate: this.translate,
             showHeader: this.headerFixed != true,
@@ -144,12 +180,15 @@ export abstract class DataListPage<T, P = {}, S = {}> extends BasePage<P, S> {
                                         return;
 
                                     e.style.width = col.itemStyle["width"];
+                                    if (this.operationField == null && i == columns.length - 1) {
+                                        e.style.width = `calc(${e.style.width} + ${ScrollBarWidth}px)`
+                                    }
 
                                 }}>{col.headerText}</th>
                             )}
-                            <th style={{ width: OperationColumnWidth + ScrollBarWidth }}>
-                                {this.operationColumn.headerText}
-                            </th>
+                            {this.operationField ? <th style={{ width: OperationColumnWidth + ScrollBarWidth }}>
+                                {this._operationField.headerText}
+                            </th> : null}
                         </tr>
                     </thead>
                 </table>
@@ -183,6 +222,8 @@ class DataCommand<T> extends React.Component<DataCommandProps<T>> {
         super(props);
 
         this.dataSource = props.dataSource as PageDataSource<T>;
+        this.dataSource.options = this.dataSource.options || {} as any;
+
         console.assert(this.dataSource != null);
     }
 

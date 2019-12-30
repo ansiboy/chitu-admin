@@ -1,7 +1,7 @@
 import { BasePage } from "./base-page";
 import { DataSource, DataControlField, GridView, CustomField, GridViewCell, GridViewEditableCell, BoundField } from "maishu-wuzhui";
 import React = require("react");
-import { createGridView } from "maishu-wuzhui-helper";
+import { createGridView, FieldValidate } from "maishu-wuzhui-helper";
 import { createItemDialog, Dialog } from "./item-dialog";
 import ReactDOM = require("react-dom");
 import { InputControl, InputControlProps } from "./inputs/input-control";
@@ -15,12 +15,13 @@ interface BoundInputControlProps<T> extends InputControlProps<T> {
 let OperationColumnWidth = 140;
 let ScrollBarWidth = 18;
 
-class BoundInputControl<T> extends InputControl<T, BoundInputControlProps<T>>{
+/** 数据绑定列控件 */
+class BoundFieldControl<T> extends InputControl<T, BoundInputControlProps<T>>{
     control: GridViewCellControl;
     cell: GridViewEditableCell<T>;
 
     private _value;
-    constructor(props: BoundInputControl<T>["props"]) {
+    constructor(props: BoundFieldControl<T>["props"]) {
         super(props);
 
         this.state = {};
@@ -60,12 +61,12 @@ class BoundInputControl<T> extends InputControl<T, BoundInputControlProps<T>>{
     }
 }
 
-let boundFieldCreateControl = BoundField.prototype.createControl;
-BoundField.prototype.createControl = function () {
-    let r: GridViewCellControl = boundFieldCreateControl.apply(this);
-    r.element.className = "form-control";
-    return r;
-}
+// let boundFieldCreateControl = BoundField.prototype.createControl;
+// BoundField.prototype.createControl = function () {
+//     let r: GridViewCellControl = boundFieldCreateControl.apply(this);
+//     r.element.className = "form-control";
+//     return r;
+// }
 
 export abstract class DataListPage<T, P = {}, S = {}> extends BasePage<P, S> {
 
@@ -135,7 +136,8 @@ export abstract class DataListPage<T, P = {}, S = {}> extends BasePage<P, S> {
             {this.columns.filter(o => o instanceof BoundField && o.readOnly != true).map((col, i) =>
                 <div key={i} className="form-group clearfix input-control">
                     <label>{col.headerText}</label>
-                    <BoundInputControl boundField={col as BoundField<any>} dataField={(col as BoundField<any>).dataField} />
+                    <BoundFieldControl boundField={col as BoundField<any>} dataField={(col as BoundField<any>).dataField}
+                        validateRules={(col as FieldValidate).validateRules} />
                 </div>
             )}
         </>

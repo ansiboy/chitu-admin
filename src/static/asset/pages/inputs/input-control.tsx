@@ -1,7 +1,7 @@
 import React = require("react");
-import { ValidateDataField } from "../item-dialog";
+import { FieldValidate } from "maishu-wuzhui-helper";
 
-export interface InputControlProps<T> extends ValidateDataField {
+export interface InputControlProps<T> extends FieldValidate {
     dataField: keyof T,
 }
 

@@ -2,14 +2,11 @@ import React = require("react");
 import { hideDialog, showDialog } from "maishu-ui-toolkit";
 import ReactDOM = require("react-dom");
 import { DataSource } from "maishu-wuzhui";
-import { FormValidator, Rule } from "maishu-dilu";
+import { FormValidator } from "maishu-dilu";
 import { InputControl, ItemDialog as IItemDialog } from "./inputs/input-control";
+import { FieldValidate } from "maishu-wuzhui-helper";
 
 type BeforeSave<T> = (dataItem: T) => Promise<any>
-
-export interface ValidateDataField {
-    validateRules?: Rule[]
-}
 
 export interface Dialog<T> {
     show: (args: T) => void
@@ -188,11 +185,3 @@ export function createItemDialog<T>
 
     return ItemDialog;
 }
-
-export interface ValidateDataField {
-    validateRules?: Rule[]
-}
-
-// export let ItemDialogContext = React.createContext({
-//     controlCreated: null as (ctrl: InputControl<any>) => void
-// });

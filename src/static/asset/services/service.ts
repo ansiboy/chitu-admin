@@ -86,3 +86,35 @@ function parseUrlParams(query: string) {
 
     return urlParams;
 }
+
+export abstract class ServiceModule<T extends Service> {
+    protected service: T;
+    constructor(service: T) {
+        this.service = service;
+    }
+
+    getByJson<T>(url: string, data?: any): Promise<T> {
+        return this.service.getByJson(url, data);
+    }
+    putByJson<T>(url: string, data?: any): Promise<T> {
+        return this.service.putByJson(url, data);
+    }
+    postByJson<T>(url: string, data?: any): Promise<T> {
+        return this.service.postByJson(url, data);
+    }
+    deleteByJson<T>(url: string, data: any): Promise<T> {
+        return this.service.deleteByJson(url, data);
+    }
+    get<T>(url: string, data?: any): Promise<T> {
+        return this.service.get(url, data);
+    }
+    put<T>(url: string, data?: any): Promise<T> {
+        return this.service.put(url, data);
+    }
+    post<T>(url: string, data?: any): Promise<T> {
+        return this.service.post(url, data);
+    }
+    delete<T>(url: string, data: any): Promise<T> {
+        return this.service.delete(url, data);
+    }
+}

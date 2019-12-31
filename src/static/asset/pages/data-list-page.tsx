@@ -61,13 +61,6 @@ class BoundFieldControl<T> extends InputControl<T, BoundInputControlProps<T>>{
     }
 }
 
-// let boundFieldCreateControl = BoundField.prototype.createControl;
-// BoundField.prototype.createControl = function () {
-//     let r: GridViewCellControl = boundFieldCreateControl.apply(this);
-//     r.element.className = "form-control";
-//     return r;
-// }
-
 export abstract class DataListPage<T, P = {}, S = {}> extends BasePage<P, S> {
 
     abstract dataSource: DataSource<T>;

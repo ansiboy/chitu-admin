@@ -51,5 +51,11 @@
         "raw-loader": "^2.0.0",
         "webpack": "^4.41.4",
         "webpack-cli": "^3.3.10"
-    }
+    },
+    "files": [
+        "dist/*",
+        "out/*",
+        "out-es5/*",
+        "src/*"
+    ]
 }

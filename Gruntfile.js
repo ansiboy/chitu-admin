@@ -15,9 +15,16 @@ let webpack_es5_min = Object.assign({}, webpack_es5, {
     mode: 'production',
 })
 
-// webpack_es5.entry = __dirname + "/out-es5/static/index.js" //已多次提及的唯一入口文件
-// webpack_es5.output = Object.assign({}, webpack_es5.output)
-// webpack_es5.output.filename = "index.es5.js"
+let webpack_startup = Object.assign({}, webpack_es5, {
+    entry: __dirname + "/out/static/asset/startup.js",
+    output: Object.assign({}, webpack_es6.output, { filename: "startup.js" }),
+})
+
+let webpack_startup_min = Object.assign({}, webpack_es5, {
+    entry: __dirname + "/out/static/asset/startup.js",
+    output: Object.assign({}, webpack_es6.output, { filename: "startup.min.js" }),
+    mode: 'production',
+})
 
 module.exports = function (grunt) {
 
@@ -52,6 +59,8 @@ module.exports = function (grunt) {
             es6_min: webpack_es6_min,
             es5: webpack_es5,
             es5_min: webpack_es5_min,
+            startup: webpack_startup,
+            startup_min: webpack_startup_min,
         },
         babel: {
             options: {

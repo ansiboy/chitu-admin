@@ -168,9 +168,6 @@ let node_modules = '/node_modules'
 let lib = '/asset/lib'
 let defaultPaths = {
     css: `${lib}/css`,
-    less: `${lib}/require-less-0.1.5/less`,
-    lessc: `${lib}/require-less-0.1.5/lessc`,
-    normalize: `${lib}/require-less-0.1.5/normalize`,
     lessjs: `${node_modules}/less/dist/less`,
     text: `${lib}/text`,
     json: `${lib}/requirejs-plugins/src/json`,
@@ -202,5 +199,5 @@ let defaultPaths = {
     "url-pattern": `${node_modules}/url-pattern/lib/url-pattern`,
 
     "admin_style_default": "/asset/content/admin_style_default.less",
-    // "startup": `${node_modules}/maishu-chitu-admin/out/static/asset/startup`,
+    "startup": `/asset/startup`,
 };

@@ -8,6 +8,7 @@ import * as chitu_react from 'maishu-chitu-react';
 import * as ui from "maishu-ui-toolkit";
 import less = require("lessjs");
 import { Page } from "maishu-chitu";
+import { pathContact, Less } from "maishu-toolkit";
 
 export default async function startup(requirejs: RequireJS) {
 
@@ -85,17 +86,7 @@ function loadDefaultStyle(req: RequireJS, firstPanelWidth?: number, secondPanelW
             str = str + `\r\n@secondPanelWidth: ${secondPanelWidth}px;`
         }
 
-        // let less = (window as any)['less']
-        less.render(str, function (e: Error, result: { css: string }) {
-            if (e) {
-                console.error(e)
-                return
-            }
-
-            let style = document.createElement('style')
-            document.head.appendChild(style)
-            style.innerText = result.css
-        })
+        Less.renderByText(str, { name: "admin_style_default" });
     })
 }
 
@@ -148,42 +139,8 @@ export class Application extends chitu_react.Application {
     }
 
     private loadPageLess(lessFilePath: string, pageClassName: string, stationPath: string) {
-
-        let fun1 = (str: string) => {
-            str = `.${pageClassName} {${str}}`
-
-            let extractUrlParts = less.FileManager.prototype.extractUrlParts;
-            less.FileManager.prototype.extractUrlParts = function (url, baseUrl) {
-                let { protocol, host } = location;
-                baseUrl = `${protocol}//${host}${stationPath}${lessFilePath}`;
-                return extractUrlParts.apply(less, [url, baseUrl]);
-            }
-
-            less.render(str, function (e: Error, result: { css: string }) {
-                if (e) {
-                    console.error(e)
-                    return
-                }
-
-                let style = document.createElement('style');
-                style.setAttribute("page-name", pageClassName);
-                style.type = "text/css";
-                document.head.appendChild(style)
-                style.innerText = result.css
-            })
-
-        }
-
-        let fun2 = err => {
-            console.error(err);
-        }
-
-        if (stationPath) {
-            requirejs({ context: stationPath }, [`text!${stationPath}${lessFilePath}`], fun1, fun2);
-        }
-        else {
-            this.requirejs([`text!${lessFilePath}`], fun1, fun2);
-        }
+        let url = stationPath ? pathContact(stationPath, lessFilePath) : lessFilePath;
+        Less.load(url, { wrapperClassName: pageClassName, name: pageClassName })
     }
 
 }

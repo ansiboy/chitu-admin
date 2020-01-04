@@ -19,7 +19,9 @@ module.exports = {
         "text!admin_style_default",
         'react', 'react-dom', 'less', 'lessjs',
         'maishu-chitu', 'maishu-chitu-react', 'maishu-dilu',
-        'maishu-services-sdk', 'maishu-ui-toolkit',
+        'maishu-services-sdk', 'maishu-toolkit', 'maishu-ui-toolkit',
+        'maishu-wuzhui', 'maishu-wuzhui-helper',
+
     ],
     plugins: [
         new webpack.BannerPlugin(license),

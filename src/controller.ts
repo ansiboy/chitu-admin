@@ -1,17 +1,20 @@
-import { controller, action, Controller, getLogger, serverContext, ServerContext } from "maishu-node-mvc";
+import { controller, action, Controller, getLogger, serverContext, ServerContext, VirtualDirectory } from "maishu-node-mvc";
 import path = require("path");
 import fs = require("fs");
 import os = require("os");
-import { Settings, ServerContextData } from "../settings";
-import { errors } from "../errors";
-import { WebsiteConfig } from "../static/types";
-import { PROJECT_NAME } from "../global";
+import { Settings, ServerContextData } from "./settings";
+import { errors } from "./errors";
+import { WebsiteConfig } from "./static/types";
+import { PROJECT_NAME } from "./global";
 
 /** 
  * Home 控制器 
  */
 @controller("/")
 export class HomeController extends Controller {
+
+    static clientFiles: string[];
+
     /** 
      * Index 页面，用于测试 
      */
@@ -33,13 +36,20 @@ export class HomeController extends Controller {
             }
         })`;
 
-        if (context.data.clientStaticRoot) {
-            let initJSPath = path.join(context.data.clientStaticRoot, "init.js");
-            if (fs.existsSync(initJSPath)) {
-                let buffer = fs.readFileSync(initJSPath);
-                initJS = buffer.toString();
-            }
+        // if (context.data.staticRoot) {
+        //     let initJSPath = path.join(context.data.clientStaticRoot, "init.js");
+        //     if (fs.existsSync(initJSPath)) {
+        //         let buffer = fs.readFileSync(initJSPath);
+        //         initJS = buffer.toString();
+        //     }
+        // }
+
+        let initJSPath = context.data.staticRoot.getFile("init.js")
+        if (initJSPath && fs.existsSync(initJSPath)) {
+            let buffer = fs.readFileSync(initJSPath);
+            initJS = buffer.toString();
         }
+
         return initJS;
     }
 
@@ -49,22 +59,12 @@ export class HomeController extends Controller {
     @action("/")
     indexHtml(@serverContext context: ServerContext<ServerContextData>) {
         let html: string = null;
-        if (context.data.clientStaticRoot) {
-            let indexHtmlPath = path.join(context.data.clientStaticRoot, "index.html");
-            if (fs.existsSync(indexHtmlPath)) {
-                let buffer = fs.readFileSync(indexHtmlPath);
-                html = buffer.toString();
-            }
-        }
-
-        if (!html) {
-            let indexHtmlPath = path.join(context.data.innerStaticRoot, "index.html");
-            if (!fs.existsSync(indexHtmlPath))
-                throw errors.fileNotExists(indexHtmlPath);
-
-            let buffer = fs.readFileSync(indexHtmlPath);
-            html = buffer.toString()
-        }
+        console.assert(context.data.staticRoot);
+        let indexHtmlPath = context.data.staticRoot.getFile("index.html"); //path.join(context.data.clientStaticRoot, "index.html");
+        console.assert(indexHtmlPath);
+        console.assert(fs.existsSync(indexHtmlPath));
+        let buffer = fs.readFileSync(indexHtmlPath);
+        html = buffer.toString();
 
         return this.content(html, "text/html");
     }
@@ -73,57 +73,93 @@ export class HomeController extends Controller {
      * 获取客户端文件
      * @param settings 设置，由系统注入。   
      */
-    @action()
-    clientFiles(@serverContext context: ServerContext<ServerContextData>): string[] {
-        console.assert(context.data.clientStaticRoot != null);
-        if (!fs.existsSync(context.data.clientStaticRoot))
-            return null;
+    @action("/clientFiles")
+    getClientFiles(@serverContext context: ServerContext<ServerContextData>): string[] {
+        console.assert(context.data.staticRoot != null);
 
-        let s = fs.statSync(context.data.clientStaticRoot);
-        console.assert(s.isDirectory());
+        if (HomeController.clientFiles) {
+            return HomeController.clientFiles;
+        }
 
-        let paths: string[] = [];
-        let stack = [context.data.clientStaticRoot];
-        while (stack.length > 0) {
-            let parentPath = stack.pop();
+        if (fs.existsSync(context.data.clientStaticRoot)) {
+            let s = fs.statSync(context.data.clientStaticRoot);
+            console.assert(s.isDirectory());
 
-            let files = fs.readdirSync(parentPath);
-            for (let i = 0; i < files.length; i++) {
-                let p = path.join(parentPath, files[i]);
-                let s = fs.statSync(p);
-                if (s.isDirectory())
-                    stack.push(p);
-                else {
-                    let filePath = path.relative(context.data.clientStaticRoot, p);
-                    paths.push(filePath);
-                    path.resolve()
+            let paths: string[] = [];
+            let stack = [context.data.clientStaticRoot];
+            while (stack.length > 0) {
+                let parentPath = stack.pop();
+
+                let files = fs.readdirSync(parentPath);
+                for (let i = 0; i < files.length; i++) {
+                    let p = path.join(parentPath, files[i]);
+                    let s = fs.statSync(p);
+                    if (s.isDirectory())
+                        stack.push(p);
+                    else {
+                        let filePath = path.relative(context.data.clientStaticRoot, p);
+                        paths.push(filePath);
+                        path.resolve()
+                    }
                 }
             }
+
+            if (os.platform() == "win32") {
+                paths.forEach((p, i) => {
+                    paths[i] = p.replace(/\\/g, "/")
+                })
+            }
+
+            HomeController.clientFiles = paths;
+        }
+        else {
+            HomeController.clientFiles = [];
         }
 
-        if (os.platform() == "win32") {
-            paths.forEach((p, i) => {
-                paths[i] = p.replace(/\\/g, "/")
-            })
-        }
 
-        return paths;
+        return HomeController.clientFiles;
+
+        // if (HomeController.clientFiles == null) {
+        //     HomeController.clientFiles = [];
+        //     let stack: VirtualDirectory[] = [context.data.staticRoot];
+        //     while (stack.length > 0) {
+        //         let item = stack.shift();
+
+        //         let fileDic = item.getChildFiles();
+        //         let files = Object.getOwnPropertyNames(fileDic).map(n => fileDic[n]);
+        //         HomeController.clientFiles.push(...files);
+
+        //         let childDirDic = item.getChildDirectories();
+        //         let childDirs = Object.getOwnPropertyNames(childDirDic).map(n => childDirDic[n]);
+        //         stack.unshift(...childDirs);
+
+        //     }
+
+        //     if (os.platform() == "win32") {
+        //         HomeController.clientFiles.forEach((p, i) => {
+        //             HomeController.clientFiles[i] = p.replace(/\\/g, "/")
+        //         })
+        //     }
+
+        // }
+
+
     }
 
     /**
      * 获取站点配置
      * @param context 设置，由系统注入。   
      */
-    @action()
+    @action("/websiteConfig", "/asset/websiteConfig")
     websiteConfig(@serverContext context: ServerContext<ServerContextData>): WebsiteConfig {
         return HomeController.getWebsiteConfig(context.data)
     }
 
     static getWebsiteConfig(data: ServerContextData) {
         let config = {} as WebsiteConfig;
-        let staticConfigPath = path.join(data.rootDirectory, "website-config.js");
+        let staticConfigPath = data.rootDirectory.getFile("website-config.js"); //path.join(data.rootDirectory, "website-config.js");
         let logger = getLogger(PROJECT_NAME);
-        if (fs.existsSync(staticConfigPath)) {
+        if (staticConfigPath) {
             let mod = require(staticConfigPath);
             logger.info(`Website config is ${JSON.stringify(mod)}`);
             if (mod["default"] == null) {
@@ -138,8 +174,9 @@ export class HomeController extends Controller {
             }
         }
         else {
-            logger.warn(`Website config file '${staticConfigPath}' is not exists.`)
+            logger.warn(`Website config file  is not exists.`)
         }
+
         if (data.station) {
             config.gateway = data.station.gateway;
         }
@@ -189,6 +226,7 @@ let defaultPaths = {
     "maishu-dilu": `${node_modules}/maishu-dilu/dist/index.min`,
     "maishu-services-sdk": `${node_modules}/maishu-services-sdk/dist/index`,
     "maishu-image-components": `${node_modules}/maishu-image-components/index`,
+    "maishu-toolkit": `${node_modules}/maishu-toolkit/dist/index.min`,
     "maishu-ui-toolkit": `${node_modules}/maishu-ui-toolkit/dist/index.min`,
     "maishu-node-auth": `${node_modules}/maishu-node-auth/dist/client/index`,
     "maishu-wuzhui": `${node_modules}/maishu-wuzhui/dist/index.min`,

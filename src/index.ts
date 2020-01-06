@@ -1,10 +1,10 @@
-import { startServer, getLogger } from 'maishu-node-mvc'
+import { startServer, getLogger, VirtualDirectory } from 'maishu-node-mvc'
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
 import { Settings, ServerContextData } from './settings';
 import { CliApplication } from "typedoc";
-import { g, registerStation } from './global';
+import { registerStation } from './global';
 
 export { Settings, ServerContextData } from "./settings";
 export { WebsiteConfig, PermissionConfig, PermissionConfigItem, SimpleMenuItem, RequireConfig } from "./static/types";
@@ -21,52 +21,86 @@ export function start(settings: Settings) {
     if (!fs.existsSync(settings.rootDirectory))
         throw errors.pathNotExists(settings.rootDirectory);
 
-    let staticRootDirectory = path.join(settings.rootDirectory, "static")
-    if (!fs.existsSync(staticRootDirectory))
-        throw errors.pathNotExists(staticRootDirectory);
+    let rootDirectory = new VirtualDirectory(__dirname, settings.rootDirectory);
+    let staticRootDirectory = rootDirectory.getDirectory("static");
+    let controllerDirectory = rootDirectory.getDirectory("controllers");
+    controllerDirectory.addVirtualFile("admin-home-controller", path.join(__dirname, "controller.js"))
 
-    g.settings = settings;
 
-    let controllerPath: string;
-    if (fs.existsSync(path.join(settings.rootDirectory, "controllers")))
-        controllerPath = path.join(settings.rootDirectory, "controllers");
+    console.assert(staticRootDirectory != null);
+    console.assert(controllerDirectory != null);
 
-    let innerStaticRootDirectory = path.join(__dirname, "static");
-    let virtualPaths = {};// createVirtulaPaths(innerStaticRootDirectory, staticRootDirectory);
-    virtualPaths["asset"] = path.join(innerStaticRootDirectory, "asset");
-    virtualPaths["json.js"] = path.join(innerStaticRootDirectory, "asset/lib/requirejs-plugins/src/json.js");
+
+    // let staticRootDirectory = path.join(settings.rootDirectory, "static")
+    // if (!fs.existsSync(staticRootDirectory))
+    //     throw errors.pathNotExists(staticRootDirectory);
+
+
+    // let controllerPath: string;
+    // if (fs.existsSync(path.join(settings.rootDirectory, "controllers")))
+    //     controllerPath = path.join(settings.rootDirectory, "controllers");
+
+    // let staticPath: string;
+    // if (fs.existsSync(path.join(settings.rootDirectory, "static"))) {
+    //     staticPath = path.join(settings.rootDirectory, "static");
+    // }
+
+    // let innerStaticRootDirectory = path.join(__dirname, "static");
+    let virtualPaths = {};
+    virtualPaths["asset"] = path.join(__dirname, "static/asset");
+    virtualPaths["json.js"] = path.join(__dirname, "static/asset/lib/requirejs-plugins/src/json.js");
     //======================================================================================
     // 生成文档
-    if (settings.sourceDirectory) {
-        if (!path.isAbsolute(settings.sourceDirectory))
-            throw errors.notAbsolutePath(settings.sourceDirectory);
+    // if (settings.sourceDirectory) {
+    //     if (!path.isAbsolute(settings.sourceDirectory))
+    //         throw errors.notAbsolutePath(settings.sourceDirectory);
 
-        let tsconfigPath = path.join(settings.sourceDirectory, "tsconfig.json");
-        if (fs.existsSync(tsconfigPath)) {
-            let docsPath = generateDocuments(settings.sourceDirectory, tsconfigPath);
-            virtualPaths["docs"] = docsPath;
-        }
-    }
+    //     let tsconfigPath = path.join(settings.sourceDirectory, "tsconfig.json");
+    //     if (fs.existsSync(tsconfigPath)) {
+    //         let docsPath = generateDocuments(settings.sourceDirectory, tsconfigPath);
+    //         virtualPaths["docs"] = docsPath;
+    //     }
+    // }
     //======================================================================================
 
     virtualPaths = Object.assign(settings.virtualPaths || {}, virtualPaths);
 
+
+
+    // let controllerDirectory = controllerPath ?
+    //     new VirtualDirectory(path.join(__dirname, './controllers'), controllerPath)
+    //     : new VirtualDirectory(path.join(__dirname, './controllers'));
+
+    // let staticRootDirectory = staticPath ? new VirtualDirectory(path.join(__dirname, './static'), staticPath)
+    //     : new VirtualDirectory(path.join(__dirname, './static'));
+
+    // let rootDirectory = new VirtualDirectory(__dirname, settings.rootDirectory);
+
+    for (let key in virtualPaths) {
+        let physicalPath = virtualPaths[key];
+        if (/\.[a-zA-Z]+$/.test(physicalPath)) {
+            staticRootDirectory.addVirtualFile(key, physicalPath)
+        }
+        else {
+            staticRootDirectory.addVirtualDirectory(key, physicalPath, "merge");
+        }
+    }
+
     let serverContextData: ServerContextData = {
-        innerStaticRoot: innerStaticRootDirectory,
-        clientStaticRoot: staticRootDirectory,
-        rootDirectory: settings.rootDirectory,
+        staticRoot: staticRootDirectory,
+        rootDirectory: rootDirectory,
+        clientStaticRoot: path.join(settings.rootDirectory, "static"),
         station: settings.station,
         requirejs: settings.requirejs,
     };
 
     serverContextData = Object.assign(settings.serverContextData || {}, serverContextData);
 
-    // let setServerContext = false;
     startServer({
         port: settings.port,
         staticRootDirectory: staticRootDirectory,
-        controllerDirectory: controllerPath ? [path.join(__dirname, './controllers'), controllerPath] : [path.join(__dirname, './controllers')],
-        virtualPaths,
+        controllerDirectory: controllerDirectory,
+        // virtualPaths,
         proxy: settings.proxy,
         bindIP: settings.bindIP,
         headers: settings.headers,
@@ -77,6 +111,8 @@ export function start(settings: Settings) {
         registerStation(serverContextData, settings);
     }
 }
+
+
 
 function generateDocuments(sourceDirectory: string, tsconfigPath: string) {
     let tsconfig = require(tsconfigPath) as { compilerOptions: { outDir: string } };

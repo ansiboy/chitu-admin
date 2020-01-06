@@ -6,7 +6,6 @@ import { MasterPage } from "./masters/master-page";
 import { MyService } from "./services/my-service";
 import * as chitu_react from 'maishu-chitu-react';
 import * as ui from "maishu-ui-toolkit";
-import less = require("lessjs");
 import { Page } from "maishu-chitu";
 import { pathContact, Less } from "maishu-toolkit";
 

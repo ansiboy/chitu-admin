@@ -1,19 +1,11 @@
-import { createParameterDecorator, LogLevel, ServerContext } from "maishu-node-mvc";
-import { ServerContext as BaseServerContext } from "maishu-node-mvc";
+import { LogLevel, VirtualDirectory } from "maishu-node-mvc";
 import { Settings as NodeMVCConfig } from 'maishu-node-mvc'
 import { PermissionConfig, WebsiteConfig } from "./static/types";
 
-// export interface ServerContext<T> extends BaseServerContext<T> {
-//     settings: Settings & {
-//         innerStaticRoot: string;
-//         clientStaticRoot: string;
-//     }
-// }
-
 export type ServerContextData = {
-    innerStaticRoot: string;
-    clientStaticRoot: string;
-    rootDirectory: string,
+    staticRoot: VirtualDirectory;
+    rootDirectory: VirtualDirectory,
+    clientStaticRoot: string,
     station: Settings["station"],
     requirejs?: WebsiteConfig["requirejs"],
 }

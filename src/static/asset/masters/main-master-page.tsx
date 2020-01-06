@@ -5,6 +5,7 @@ import { ValueStore } from 'maishu-chitu';
 import { Resource } from '../models';
 import { SimpleMenuItem } from '../../types';
 import { Application } from 'maishu-chitu-react';
+import { guid } from 'maishu-toolkit';
 
 export type MenuItem = Resource & {
     icon?: string, parent: MenuItem, children: MenuItem[],
@@ -241,6 +242,11 @@ export class MainMasterPage extends MasterPage<State> {
 
 
 function translateToMenuItems(resources: Resource[]): MenuItem[] {
+
+    resources.forEach(o => {
+        o.id = o.id || guid();
+    })
+
     let arr = new Array<MenuItem>();
     let stack: MenuItem[] = [...resources.filter(o => o.parent_id == null) as MenuItem[]];
     while (stack.length > 0) {

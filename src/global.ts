@@ -1,12 +1,12 @@
 import { Settings, ServerContextData } from "./settings";
-import { HomeController } from "./controllers/home";
+import { HomeController } from "./controller";
 import IO = require("socket.io-client");
 import { getLogger } from "maishu-node-mvc";
 
 export const PROJECT_NAME = "chitu-admin";
-export let g = {
-    settings: null as Settings
-}
+// export let g = {
+//     settings: null as Settings
+// }
 
 export interface StationInfo {
     path: string,

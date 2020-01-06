@@ -4,22 +4,16 @@ import IO = require("socket.io-client");
 import { getLogger } from "maishu-node-mvc";
 
 export const PROJECT_NAME = "chitu-admin";
-// export let g = {
-//     settings: null as Settings
-// }
-
 export interface StationInfo {
     path: string,
     ip: string,
     port: number,
-    // permissions?: PermissionConfig
 }
 
 export function registerStation(data: ServerContextData, settings: Settings) {
 
     console.assert(data.station != null, "Station field is null");
 
-    let ctrl = new HomeController();
     let config = HomeController.getWebsiteConfig(data);
 
     let logger = getLogger(PROJECT_NAME, settings.logLevel);

@@ -54,22 +54,6 @@ export class HomeController extends Controller {
     }
 
     /**
-     * 首页 HTML 文件
-     */
-    @action("/")
-    indexHtml(@serverContext context: ServerContext<ServerContextData>) {
-        let html: string = null;
-        console.assert(context.data.staticRoot);
-        let indexHtmlPath = context.data.staticRoot.getFile("index.html"); //path.join(context.data.clientStaticRoot, "index.html");
-        console.assert(indexHtmlPath);
-        console.assert(fs.existsSync(indexHtmlPath));
-        let buffer = fs.readFileSync(indexHtmlPath);
-        html = buffer.toString();
-
-        return this.content(html, "text/html");
-    }
-
-    /**
      * 获取客户端文件
      * @param settings 设置，由系统注入。   
      */
@@ -116,34 +100,7 @@ export class HomeController extends Controller {
             HomeController.clientFiles = [];
         }
 
-
         return HomeController.clientFiles;
-
-        // if (HomeController.clientFiles == null) {
-        //     HomeController.clientFiles = [];
-        //     let stack: VirtualDirectory[] = [context.data.staticRoot];
-        //     while (stack.length > 0) {
-        //         let item = stack.shift();
-
-        //         let fileDic = item.getChildFiles();
-        //         let files = Object.getOwnPropertyNames(fileDic).map(n => fileDic[n]);
-        //         HomeController.clientFiles.push(...files);
-
-        //         let childDirDic = item.getChildDirectories();
-        //         let childDirs = Object.getOwnPropertyNames(childDirDic).map(n => childDirDic[n]);
-        //         stack.unshift(...childDirs);
-
-        //     }
-
-        //     if (os.platform() == "win32") {
-        //         HomeController.clientFiles.forEach((p, i) => {
-        //             HomeController.clientFiles[i] = p.replace(/\\/g, "/")
-        //         })
-        //     }
-
-        // }
-
-
     }
 
     /**

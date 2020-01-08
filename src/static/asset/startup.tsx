@@ -6,8 +6,9 @@ import { MasterPage } from "./masters/master-page";
 import { MyService } from "./services/my-service";
 import * as chitu_react from 'maishu-chitu-react';
 import * as ui from "maishu-ui-toolkit";
+import { Less } from "maishu-ui-toolkit";
 import { Page } from "maishu-chitu";
-import { pathContact, Less } from "maishu-toolkit";
+import { pathContact } from "maishu-toolkit";
 
 export default async function startup(requirejs: RequireJS) {
 

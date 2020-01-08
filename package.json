@@ -20,7 +20,7 @@
         "maishu-node-static": "file:../node-static",
         "maishu-requirejs-plugins": "^1.2.0",
         "maishu-toolkit": "file:../toolkit",
-        "maishu-ui-toolkit": "^1.6.0",
+        "maishu-ui-toolkit": "file:../ui-toolkit",
         "maishu-wuzhui": "file:../wuzhui",
         "maishu-wuzhui-helper": "file:../wuzhui-helper",
         "react": "^16.12.0",

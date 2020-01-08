@@ -5,14 +5,14 @@ import { PermissionConfig, WebsiteConfig } from "./static/types";
 export type ServerContextData = {
     staticRoot: VirtualDirectory;
     rootDirectory: VirtualDirectory,
-    clientStaticRoot: string,
+    // clientStaticRoot: string,
     station: Settings["station"],
     requirejs?: WebsiteConfig["requirejs"],
 }
 
 export interface Settings<T = any> {
     port: number,
-    rootDirectory: string,
+    rootDirectory: string | VirtualDirectory,
     sourceDirectory?: string,
     proxy?: NodeMVCConfig["proxy"],
     bindIP?: string,

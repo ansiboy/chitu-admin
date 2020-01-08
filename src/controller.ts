@@ -2,8 +2,7 @@ import { controller, action, Controller, getLogger, serverContext, ServerContext
 import path = require("path");
 import fs = require("fs");
 import os = require("os");
-import { Settings, ServerContextData } from "./settings";
-import { errors } from "./errors";
+import { ServerContextData } from "./settings";
 import { WebsiteConfig } from "./static/types";
 import { PROJECT_NAME } from "./global";
 
@@ -12,8 +11,6 @@ import { PROJECT_NAME } from "./global";
  */
 @controller("/")
 export class HomeController extends Controller {
-
-    static clientFiles: string[];
 
     /** 
      * Index 页面，用于测试 
@@ -61,46 +58,40 @@ export class HomeController extends Controller {
     getClientFiles(@serverContext context: ServerContext<ServerContextData>): string[] {
         console.assert(context.data.staticRoot != null);
 
-        if (HomeController.clientFiles) {
-            return HomeController.clientFiles;
+        let clientFiles = [];
+        let staticDir = context.data.rootDirectory.getDirectory("static");
+        if (staticDir == null) {
+            let logger = getLogger(PROJECT_NAME);
+            logger.warn("Static directory is not exists.");
+            return clientFiles;
         }
 
-        if (fs.existsSync(context.data.clientStaticRoot)) {
-            let s = fs.statSync(context.data.clientStaticRoot);
-            console.assert(s.isDirectory());
+        let stack: VirtualDirectory[] = [staticDir];
+        while (stack.length > 0) {
+            let dir = stack.pop();
+            let filesDic = dir.getChildFiles();
+            let files = Object.getOwnPropertyNames(filesDic)
+                .map(n => path.join(dir.getVirtualPath().substr("static/".length), n));
 
-            let paths: string[] = [];
-            let stack = [context.data.clientStaticRoot];
-            while (stack.length > 0) {
-                let parentPath = stack.pop();
+            clientFiles.push(...files);
 
-                let files = fs.readdirSync(parentPath);
-                for (let i = 0; i < files.length; i++) {
-                    let p = path.join(parentPath, files[i]);
-                    let s = fs.statSync(p);
-                    if (s.isDirectory())
-                        stack.push(p);
-                    else {
-                        let filePath = path.relative(context.data.clientStaticRoot, p);
-                        paths.push(filePath);
-                        path.resolve()
-                    }
-                }
+            let childrenDic = dir.getChildDirectories();
+            for (let name in childrenDic) {
+
+                if (name == "node_modules" || name == "lib")
+                    continue;
+
+                stack.push(childrenDic[name]);
             }
-
-            if (os.platform() == "win32") {
-                paths.forEach((p, i) => {
-                    paths[i] = p.replace(/\\/g, "/")
-                })
-            }
-
-            HomeController.clientFiles = paths;
-        }
-        else {
-            HomeController.clientFiles = [];
         }
 
-        return HomeController.clientFiles;
+        if (os.platform() == "win32") {
+            clientFiles.forEach((p, i) => {
+                clientFiles[i] = p.replace(/\\/g, "/")
+            })
+        }
+
+        return clientFiles;
     }
 
     /**

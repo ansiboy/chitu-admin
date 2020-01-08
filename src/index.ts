@@ -1,9 +1,8 @@
-import { startServer, getLogger, VirtualDirectory } from 'maishu-node-mvc'
+import { startServer, VirtualDirectory } from 'maishu-node-mvc'
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
 import { Settings, ServerContextData } from './settings';
-import { CliApplication } from "typedoc";
 import { registerStation } from './global';
 
 export { Settings, ServerContextData } from "./settings";
@@ -15,13 +14,20 @@ export function start(settings: Settings) {
     if (!settings.rootDirectory)
         throw errors.settingItemNull<Settings>("rootDirectory");
 
-    if (!path.isAbsolute(settings.rootDirectory))
-        throw errors.notAbsolutePath(settings.rootDirectory);
+    let rootDirectory: VirtualDirectory;
+    if (typeof settings.rootDirectory == "string") {
+        if (!path.isAbsolute(settings.rootDirectory))
+            throw errors.notAbsolutePath(settings.rootDirectory);
 
-    if (!fs.existsSync(settings.rootDirectory))
-        throw errors.pathNotExists(settings.rootDirectory);
+        if (!fs.existsSync(settings.rootDirectory))
+            throw errors.pathNotExists(settings.rootDirectory);
 
-    let rootDirectory = new VirtualDirectory(__dirname, settings.rootDirectory);
+        rootDirectory = new VirtualDirectory(__dirname, settings.rootDirectory);
+    }
+    else {
+        rootDirectory = settings.rootDirectory;
+    }
+
     let staticRootDirectory = rootDirectory.getDirectory("static");
     let controllerDirectory = rootDirectory.getDirectory("controllers");
     controllerDirectory.addVirtualFile("admin-home-controller", path.join(__dirname, "controller.js"))
@@ -65,17 +71,6 @@ export function start(settings: Settings) {
 
     virtualPaths = Object.assign(settings.virtualPaths || {}, virtualPaths);
 
-
-
-    // let controllerDirectory = controllerPath ?
-    //     new VirtualDirectory(path.join(__dirname, './controllers'), controllerPath)
-    //     : new VirtualDirectory(path.join(__dirname, './controllers'));
-
-    // let staticRootDirectory = staticPath ? new VirtualDirectory(path.join(__dirname, './static'), staticPath)
-    //     : new VirtualDirectory(path.join(__dirname, './static'));
-
-    // let rootDirectory = new VirtualDirectory(__dirname, settings.rootDirectory);
-
     for (let key in virtualPaths) {
         let physicalPath = virtualPaths[key];
         if (/\.[a-zA-Z]+$/.test(physicalPath)) {
@@ -89,7 +84,7 @@ export function start(settings: Settings) {
     let serverContextData: ServerContextData = {
         staticRoot: staticRootDirectory,
         rootDirectory: rootDirectory,
-        clientStaticRoot: path.join(settings.rootDirectory, "static"),
+        // clientStaticRoot: path.join(settings.rootDirectory, "static"),
         station: settings.station,
         requirejs: settings.requirejs,
     };
@@ -114,48 +109,4 @@ export function start(settings: Settings) {
 
 
 
-function generateDocuments(sourceDirectory: string, tsconfigPath: string) {
-    let tsconfig = require(tsconfigPath) as { compilerOptions: { outDir: string } };
-    console.assert(tsconfig != null);
-    console.assert(tsconfig.compilerOptions != null);
-    let outDir = tsconfig.compilerOptions.outDir || "./";
-    console.assert(path.isAbsolute(outDir) == false);
 
-    let docsPath = path.join(sourceDirectory, outDir, "docs");
-    let jsonPath = path.join(docsPath, "api.json");
-    new CliApplication({
-        "out": docsPath,
-        "json": jsonPath,
-        "excludePrivate": true,
-        "excludeProtected": true,
-        "tsconfig": tsconfigPath
-    });
-    return docsPath;
-}
-
-/**
- * 
- * @param rootAbsolutePath 项目根目录
- * @param clientRootAbsolutePath 静态文件根目录
- */
-function createVirtulaPaths(rootAbsolutePath: string, clientRootAbsolutePath: string) {
-    let virtualPaths: { [path: string]: string } = {}
-    let virtualPahtStack: string[] = [""];
-    while (virtualPahtStack.length > 0) {
-        let virtualPath = virtualPahtStack.pop();
-        let absolutePath = path.join(rootAbsolutePath, virtualPath);
-        let stat = fs.statSync(absolutePath);
-        if (stat.isDirectory()) {
-            let r = fs.readdirSync(absolutePath);
-            let paths = r.map(o => `${virtualPath}/${o}`);
-            virtualPahtStack.push(...paths);
-        }
-        else if (stat.isFile()) {
-            let clientFilePath = path.join(clientRootAbsolutePath, virtualPath);
-            if (!fs.existsSync(clientFilePath))
-                virtualPaths[virtualPath] = absolutePath;
-        }
-    }
-
-    return virtualPaths;
-}

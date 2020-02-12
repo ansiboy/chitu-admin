@@ -1,6 +1,7 @@
 import { LogLevel, VirtualDirectory } from "maishu-node-mvc";
 import { Settings as NodeMVCConfig } from 'maishu-node-mvc'
 import { PermissionConfig, WebsiteConfig } from "./static/types";
+import { ConnectionConfig } from "mysql";
 
 export type ServerContextData = {
     staticRoot: VirtualDirectory;
@@ -12,7 +13,7 @@ export type ServerContextData = {
 
 export interface Settings<T = any> {
     port: number,
-    rootDirectory: string | VirtualDirectory,
+    rootDirectory: string,
     sourceDirectory?: string,
     proxy?: NodeMVCConfig["proxy"],
     bindIP?: string,
@@ -30,5 +31,6 @@ export interface Settings<T = any> {
     serverContextData?: T,
 
     requirejs?: WebsiteConfig["requirejs"],
+    conn?: ConnectionConfig
 }
 

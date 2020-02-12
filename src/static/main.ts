@@ -11,6 +11,11 @@ fetch(configUrl).then(async response => {
         console.assert(startupModule != null && typeof startupModule["default"] == "function");
         startupModule["default"](req);
     })
+
+    if (r.requirejs.context) {
+        delete r.requirejs.context;
+        requirejs.config(r.requirejs);
+    }
 });
 
 let load: Function = requirejs.load;

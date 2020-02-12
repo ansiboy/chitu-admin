@@ -2,9 +2,9 @@ import { controller, action, Controller, getLogger, serverContext, ServerContext
 import path = require("path");
 import fs = require("fs");
 import os = require("os");
-import { ServerContextData } from "./settings";
-import { WebsiteConfig } from "./static/types";
-import { PROJECT_NAME } from "./global";
+import { ServerContextData } from "../settings";
+import { WebsiteConfig } from "../static/types";
+import { PROJECT_NAME } from "../global";
 
 /** 
  * Home 控制器 

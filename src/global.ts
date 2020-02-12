@@ -1,5 +1,5 @@
 import { Settings, ServerContextData } from "./settings";
-import { HomeController } from "./controller";
+import { HomeController } from "./controllers/admin-home-controller";
 import IO = require("socket.io-client");
 import { getLogger } from "maishu-node-mvc";
 

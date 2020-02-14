@@ -31,6 +31,6 @@ export interface Settings<T = any> {
     serverContextData?: T,
 
     requirejs?: WebsiteConfig["requirejs"],
-    conn?: ConnectionConfig
+    db?: ConnectionConfig
 }
 

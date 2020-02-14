@@ -22,4 +22,8 @@ export let errors = {
     argumentFieldNull(argumentName: string, fieldName: string) {
         return new Error(`Argument ${argumentName} field ${fieldName} cannt ben null or emtpy.`)
     },
+    moduleRequireMember(modulePath: string, memberName: string) {
+        let msg = `Module ${modulePath} has not member ${memberName}.`;
+        return new Error(msg);
+    }
 }

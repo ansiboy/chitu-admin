@@ -7,6 +7,7 @@ import ReactDOM = require("react-dom");
 import { InputControl, InputControlProps } from "./inputs/input-control";
 import { GridViewCellControl } from "maishu-wuzhui";
 import { PageDataSource } from "./page-data-source";
+import { PageProps } from "maishu-chitu-react";
 
 interface BoundInputControlProps<T> extends InputControlProps<T> {
     boundField: BoundField<T>
@@ -61,7 +62,7 @@ class BoundFieldControl<T> extends InputControl<T, BoundInputControlProps<T>>{
     }
 }
 
-export abstract class DataListPage<T, P = {}, S = {}> extends BasePage<P, S> {
+export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> extends BasePage<P, S> {
 
     abstract dataSource: DataSource<T>;
     abstract itemName: string;
@@ -136,19 +137,29 @@ export abstract class DataListPage<T, P = {}, S = {}> extends BasePage<P, S> {
         </>
     }
 
-    renderToolbarRight() {
+    protected renderToolbarRight() {
         let editor = this.renderEditor();
         if (editor == null) {
             return [];
         }
 
         this.dialog = createItemDialog(this.dataSource, this.itemName, editor);
+        let addButton = this.getAddButton();
+        let searchInput = this.getSearchControl();
+        return [addButton, searchInput,];
+    }
+
+    protected getAddButton() {
         let button = this.dataSource.canInsert ? <button key="btnAdd" className="btn btn-primary"
             onClick={() => this.dialog.show({} as T)}>
             <i className="icon-plus"></i>
             <span>添加</span>
         </button> : null;
 
+        return button;
+    }
+
+    protected getSearchControl() {
         let dataSource = this.dataSource as PageDataSource<T>;
         let search = dataSource.options ? dataSource.options.search : null;
         let searchInput = search ? <>
@@ -158,7 +169,8 @@ export abstract class DataListPage<T, P = {}, S = {}> extends BasePage<P, S> {
                 <span>搜索</span>
             </button>
         </> : null;
-        return [button, searchInput,];
+
+        return searchInput;
     }
 
     render() {

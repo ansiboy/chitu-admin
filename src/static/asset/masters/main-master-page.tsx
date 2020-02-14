@@ -118,7 +118,7 @@ export class MainMasterPage extends MasterPage<State> {
         let path = o.path; //typeof o.path == "function" ? o.path() : o.path;
         return {
             id: o.id,//this.textToGuid(o.name + path || ""),
-            name: o.name, page_path: path, type: "menu",
+            name: o.name, page_path: path, type: o.hidden ? "module" : "menu",
             icon: o.icon, parent_id: o.parentId, sort_number: o.sortNumber
         } as Resource
     }

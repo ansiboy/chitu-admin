@@ -1,17 +1,18 @@
-import { startServer, VirtualDirectory } from 'maishu-node-mvc'
+import { startServer, VirtualDirectory, getLogger } from 'maishu-node-mvc'
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
 import { Settings, ServerContextData } from './settings';
-import { registerStation } from './global';
-import { DataHelper } from "maishu-data";
+import { registerStation, PROJECT_NAME } from './global';
+import { DataHelper, createDatabaseIfNotExists, getConnectionManager, createConnection, ConnectionOptions } from "maishu-data";
 import { ConnectionConfig } from "mysql";
+
 
 export { Settings, ServerContextData } from "./settings";
 export { WebsiteConfig, PermissionConfig, PermissionConfigItem, SimpleMenuItem, RequireConfig } from "./static/types";
 export { StationInfo } from "./global";
 
-export function start(settings: Settings) {
+export async function start(settings: Settings) {
 
     if (!settings.rootDirectory)
         throw errors.settingItemNull<Settings>("rootDirectory");
@@ -53,10 +54,10 @@ export function start(settings: Settings) {
         let mod = require(childFiles["data-context.js"]);
         console.assert(mod.default != null);
         if (childFiles["entities.js"]) {
-            DataHelper.createDataContext(mod.default, settings.conn, childFiles["entities.js"]);
+            DataHelper.createDataContext(mod.default, settings.db, childFiles["entities.js"]);
         }
         else {
-            DataHelper.createDataContext(mod.default, settings.conn);
+            DataHelper.createDataContext(mod.default, settings.db);
         }
     }
 
@@ -69,6 +70,7 @@ export function start(settings: Settings) {
     };
 
     serverContextData = Object.assign(settings.serverContextData || {}, serverContextData);
+    await createDatabase(settings, rootDirectory);
 
     startServer({
         port: settings.port,
@@ -85,6 +87,58 @@ export function start(settings: Settings) {
     }
 
     return { rootDirectory }
+}
+
+async function createDatabase(settings: Settings, rootDirectory: VirtualDirectory) {
+
+    if (!settings.db) {
+        return;
+    }
+
+    let contextFileName = "data-context.js";
+    let entitiesFileName = "entities.js";
+    let files = rootDirectory.getChildFiles();
+    let logger = getLogger(PROJECT_NAME, settings.logLevel);
+    if (files[contextFileName] == null) {
+        logger.info(`File ${contextFileName} is not exists.`)
+        return;
+    }
+
+    if (files[entitiesFileName] == null) {
+        logger.info(`File ${entitiesFileName} is not exists.`);
+        return;
+    }
+
+    let entitiesModule = require(files[entitiesFileName]);
+    await createDatabaseIfNotExists(settings.db);
+    await createDataConnection(settings.db, files[entitiesFileName]);
+
+    if (entitiesModule["init"]) {
+        entitiesModule["init"](settings.db)
+    }
+}
+
+async function createDataConnection(connConfig: ConnectionConfig, entitiesPath: string) {
+    let connectionManager = getConnectionManager();
+    if (connectionManager.has(connConfig.database) == false) {
+        let entities: string[] = [entitiesPath];
+        let dbOptions: ConnectionOptions = {
+            type: "mysql",
+            host: connConfig.host,
+            port: connConfig.port,
+            username: connConfig.user,
+            password: connConfig.password,
+            database: connConfig.database,
+            synchronize: true,
+            logging: false,
+            connectTimeout: 3000,
+            entities,
+            name: connConfig.database
+        }
+
+        await createConnection(dbOptions);
+    }
+
 }
 
 

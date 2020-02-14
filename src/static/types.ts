@@ -192,6 +192,7 @@ export type SimpleMenuItem = {
 	roleIds?: string[],
 	sortNumber?: number,
 	parentId?: string,
+	hidden?: boolean,
 };
 
 export interface PermissionConfigItem {

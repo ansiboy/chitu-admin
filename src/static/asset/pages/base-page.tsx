@@ -1,7 +1,11 @@
 import React = require("react");
+import { PageProps } from "maishu-chitu-react";
 
-export abstract class BasePage<P = {}, S = {}> extends React.Component<P, S> {
-    constructor(props) {
+export abstract class BasePage<P extends PageProps = PageProps, S = {}> extends React.Component<P, S> {
+
+    protected backbuttonVisiable = false;
+
+    constructor(props: P) {
         super(props);
 
         let render = this.render;
@@ -18,7 +22,8 @@ export abstract class BasePage<P = {}, S = {}> extends React.Component<P, S> {
                             <li key={i} className="pull-right">{o}</li>
                         )}
                         <li className="pull-right">
-                            <button className="btn btn-primary pull-right" style={{ display: "none" }}>
+                            <button className="btn btn-primary pull-right" style={{ display: this.backbuttonVisiable ? null : "none" }}
+                                onClick={() => this.props.app.back()}>
                                 <i className="icon-reply"></i>
                                 <span>返回</span>
                             </button>
@@ -30,11 +35,11 @@ export abstract class BasePage<P = {}, S = {}> extends React.Component<P, S> {
         }
     }
 
-    renderToolbarLeft(): React.ReactElement<any,any>[] {
+    protected renderToolbarLeft(): React.ReactElement<any, any>[] {
         return [];
     }
 
-    renderToolbarRight(): React.ReactElement<any,any>[] {
+    protected renderToolbarRight(): React.ReactElement<any, any>[] {
         return [];
     }
 }

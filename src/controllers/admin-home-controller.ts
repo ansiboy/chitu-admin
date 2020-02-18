@@ -1,10 +1,12 @@
-import { controller, action, Controller, getLogger, serverContext, ServerContext, VirtualDirectory } from "maishu-node-mvc";
+import { controller, action, Controller, getLogger, serverContext, ServerContext, VirtualDirectory, routeData } from "maishu-node-mvc";
 import path = require("path");
 import fs = require("fs");
 import os = require("os");
 import { ServerContextData } from "../settings";
 import { WebsiteConfig } from "../static/types";
 import { PROJECT_NAME } from "../global";
+import { commonjsToAmd } from "../js-transform";
+import { StatusCode } from "maishu-chitu-service";
 
 /** 
  * Home 控制器 
@@ -33,18 +35,11 @@ export class HomeController extends Controller {
             }
         })`;
 
-        // if (context.data.staticRoot) {
-        //     let initJSPath = path.join(context.data.clientStaticRoot, "init.js");
-        //     if (fs.existsSync(initJSPath)) {
-        //         let buffer = fs.readFileSync(initJSPath);
-        //         initJS = buffer.toString();
-        //     }
-        // }
-
         let initJSPath = context.data.staticRoot.getFile("init.js")
         if (initJSPath && fs.existsSync(initJSPath)) {
             let buffer = fs.readFileSync(initJSPath);
             initJS = buffer.toString();
+            initJS = commonjsToAmd(initJS);
         }
 
         return initJS;
@@ -135,6 +130,31 @@ export class HomeController extends Controller {
             r.requirejs.shim = Object.assign(r.requirejs.shim || {}, data.requirejs.shim || {});
             r.requirejs.paths = Object.assign(r.requirejs.paths, data.requirejs.paths || {});
         }
+
+        return r;
+    }
+
+    @action("*.js")
+    commonjsToAmd(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
+        console.assert(data != null);
+        let fileVirtualPath = (data["_"] || "") + ".js";
+        if (fileVirtualPath == "clientjs_init.js") {
+            return this.initjs(context);
+        }
+        let filePhysicalPath = context.data.staticRoot.getFile(fileVirtualPath); //path.join(context.data.staticPhysicalPath, fileVirtualPath);
+        if (!fs.existsSync(filePhysicalPath)) {
+            return this.content(`File '${fileVirtualPath}' not found.`, StatusCode.NotFound);
+        }
+
+        let buffer = fs.readFileSync(filePhysicalPath);
+        let originalCode = buffer.toString();
+
+        /** lib 或者 node_modules 文件夹的 js ，默认支持 adm */
+        if (fileVirtualPath.startsWith("lib") || fileVirtualPath.startsWith("node_modules")) {
+            return originalCode;
+        }
+
+        let r = commonjsToAmd(originalCode);
 
         return r;
     }

@@ -11,8 +11,5 @@
         "baseUrl": "./",
         "paths": {
         }
-    },
-    "exclude": [
-        "static"
-    ]
+    }
 }

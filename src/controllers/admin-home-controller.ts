@@ -137,20 +137,32 @@ export class HomeController extends Controller {
     @action("*.js")
     commonjsToAmd(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
         console.assert(data != null);
-        let fileVirtualPath = (data["_"] || "") + ".js";
-        if (fileVirtualPath == "clientjs_init.js") {
+
+
+        if (data["_"] == "clientjs_init") {
             return this.initjs(context);
         }
-        let filePhysicalPath = context.data.staticRoot.getFile(fileVirtualPath); //path.join(context.data.staticPhysicalPath, fileVirtualPath);
-        if (!fs.existsSync(filePhysicalPath)) {
-            return this.content(`File '${fileVirtualPath}' not found.`, StatusCode.NotFound);
+
+        let filePath = data["_"];
+        console.assert(filePath != null);
+
+        let jsFileVirtualPath = filePath + ".js";
+        let jsxFileVirtualPath = filePath + ".jsx";
+        // let fileVirtualPath = fs.existsSync(jsFileVirtualPath) ? jsFileVirtualPath : jsxFileVirtualPath; //(data["_"] || "") + ".js";
+        let filePhysicalPath = context.data.staticRoot.getFile(jsFileVirtualPath);
+        if (filePhysicalPath == null)
+            filePhysicalPath = context.data.staticRoot.getFile(jsxFileVirtualPath);
+
+        if (filePhysicalPath == null) {
+            return this.content(`File '${jsFileVirtualPath}' or '${jsxFileVirtualPath}' not found.`, StatusCode.NotFound);
         }
+
 
         let buffer = fs.readFileSync(filePhysicalPath);
         let originalCode = buffer.toString();
 
         /** lib 或者 node_modules 文件夹的 js ，默认支持 adm */
-        if (fileVirtualPath.startsWith("lib") || fileVirtualPath.startsWith("node_modules")) {
+        if (filePath.startsWith("lib") || filePath.startsWith("node_modules")) {
             return originalCode;
         }
 

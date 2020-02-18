@@ -1,6 +1,7 @@
 import babel = require("@babel/core");
 import {
-    AssignmentExpression, ExpressionStatement, Program, Node, ImportDeclaration,
+    AssignmentExpression, ExpressionStatement, Program, Node,
+    ImportDeclaration, ImportSpecifier,
     MemberExpression, Statement, StringLiteral,
 
     VariableDeclaration, VariableDeclarator, ImportNamespaceSpecifier
@@ -12,14 +13,10 @@ import { errors } from "./errors";
  * @param originalCode commonjs 代码
  */
 export function commonjsToAmd(originalCode: string) {
-    let options = {
-        plugins: [
-            ["@babel/transform-modules-amd", { noInterop: true }],
-            ["@babel/transform-react-jsx", { "pragma": "Nerv.createElement" }],
-        ]
-    }
+    // jsxFactory = jsxFactory || "React.createElement";
 
-    let ast = babel.parseSync(originalCode, options) as Node;
+
+    let ast = babel.parseSync(originalCode, { plugins: ["@babel/transform-react-jsx"] }) as Node;
     let g = new RequireToImport();
     ast = g.transform(ast);
     let program = (ast as any as babel.types.File).program;
@@ -44,11 +41,41 @@ export function commonjsToAmd(originalCode: string) {
     let exportsImport = Nodecreator.createImportDeclaration("exports", "exports");
     program.body.unshift(...[requireImport, exportsImport]);
 
-    let r = babel.transformFromAstSync(ast, null, options);
-    console.log(r.code);
 
+    let options = {
+        plugins: [
+            ["@babel/transform-modules-amd", { noInterop: true }]
+        ] as Array<any>
+    };
+
+    let isTaro = isTaroProgram(program);
+    if (isTaro) {
+        options.plugins.push([
+            "@babel/transform-react-jsx", {
+                "pragma": "Nerv.createElement",
+                "pragmaFrag": "Nerv.Fragment"
+            }
+        ])
+    }
+    else {
+        options.plugins.push([
+            "@babel/transform-react-jsx", {
+                "pragma": "React.createElement",
+                "pragmaFrag": "React.Fragment"
+            }
+        ])
+    }
+
+    let r = babel.transformFromAstSync(ast, null, options);
     let code = `/** commonjs transform to amd */ \r\n` + r.code;
     return code;
+}
+
+function isTaroProgram(program: Program): boolean {
+    let taroImport = program.body.filter(o => o.type == "ImportDeclaration")
+        .map((o: ImportDeclaration) => o.source)
+        .filter(o => o.value == "nervjs" || o.value == "@tarojs/taro")[0];
+    return taroImport != null;
 }
 
 class NodeConverter {

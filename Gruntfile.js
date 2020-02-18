@@ -49,10 +49,7 @@ module.exports = function (grunt) {
         shell: {
             src: {
                 command: `tsc -p src`
-            },
-            client: {
-                command: `tsc -p src/static`
-            },
+            }
         },
         webpack: {
             es6: webpack_es6,

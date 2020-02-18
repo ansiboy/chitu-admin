@@ -4,7 +4,7 @@ import path = require('path')
 import fs = require("fs");
 import { Settings, ServerContextData } from './settings';
 import { registerStation, PROJECT_NAME } from './global';
-import { DataHelper, createDatabaseIfNotExists, getConnectionManager, createConnection, ConnectionOptions } from "maishu-data";
+import { DataHelper, createDatabaseIfNotExists, getConnectionManager, createConnection, ConnectionOptions } from "maishu-node-data";
 import { ConnectionConfig } from "mysql";
 
 

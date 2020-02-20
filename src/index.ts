@@ -50,14 +50,26 @@ export async function start(settings: Settings) {
 
     //处理数据库文件
     let childFiles = rootDirectory.getChildFiles();
-    if (childFiles["data-context.js"]) {
-        let mod = require(childFiles["data-context.js"]);
-        console.assert(mod.default != null);
-        if (childFiles["entities.js"]) {
-            DataHelper.createDataContext(mod.default, settings.db, childFiles["entities.js"]);
-        }
-        else {
-            DataHelper.createDataContext(mod.default, settings.db);
+    if (settings.db != null && childFiles["entities.js"] != null) {
+        let connectionManager = getConnectionManager();
+        
+        await createDatabaseIfNotExists(settings.db);
+        if (!connectionManager.has(settings.db.database)) {
+            let entities = [childFiles["entities.js"]];
+            let dbOptions :ConnectionOptions= {
+                type: "mysql",
+                host: settings.db.host,
+                port: settings.db.port,
+                username: settings.db.user,
+                password: settings.db.password,
+                database: settings.db.database,
+                synchronize: true,
+                logging: false,
+                connectTimeout: 3000,
+                entities,
+                name: settings.db.database
+            };
+           await createConnection(dbOptions);
         }
     }
 
@@ -70,7 +82,7 @@ export async function start(settings: Settings) {
     };
 
     serverContextData = Object.assign(settings.serverContextData || {}, serverContextData);
-    await createDatabase(settings, rootDirectory);
+    // await createDatabase(settings, rootDirectory);
 
     startServer({
         port: settings.port,

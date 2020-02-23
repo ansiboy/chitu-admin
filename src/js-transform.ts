@@ -44,7 +44,7 @@ export function commonjsToAmd(originalCode: string) {
 
     let options = {
         plugins: [
-            ["@babel/transform-modules-amd", { noInterop: true }]
+            ["@babel/transform-modules-amd", { noInterop: true }],
         ] as Array<any>
     };
 
@@ -67,8 +67,7 @@ export function commonjsToAmd(originalCode: string) {
     }
 
     let r = babel.transformFromAstSync(ast, null, options);
-    let code = `/** commonjs transform to amd */ \r\n` + r.code;
-    return code;
+    return r.code;
 }
 
 function isTaroProgram(program: Program): boolean {

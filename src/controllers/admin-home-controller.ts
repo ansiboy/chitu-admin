@@ -148,13 +148,18 @@ export class HomeController extends Controller {
 
         let jsFileVirtualPath = filePath + ".js";
         let jsxFileVirtualPath = filePath + ".jsx";
+        let tsxFileVirtualPath = filePath + ".tsx";
+
         // let fileVirtualPath = fs.existsSync(jsFileVirtualPath) ? jsFileVirtualPath : jsxFileVirtualPath; //(data["_"] || "") + ".js";
         let filePhysicalPath = context.data.staticRoot.getFile(jsFileVirtualPath);
         if (filePhysicalPath == null)
             filePhysicalPath = context.data.staticRoot.getFile(jsxFileVirtualPath);
 
+        if (filePhysicalPath == null)
+            filePhysicalPath = context.data.staticRoot.getFile(tsxFileVirtualPath);
+
         if (filePhysicalPath == null) {
-            return this.content(`File '${jsFileVirtualPath}' or '${jsxFileVirtualPath}' not found.`, StatusCode.NotFound);
+            return this.content(`File '${jsFileVirtualPath}' or '${jsxFileVirtualPath}' or '${tsxFileVirtualPath}' not found.`, StatusCode.NotFound);
         }
 
 
@@ -166,9 +171,9 @@ export class HomeController extends Controller {
             return originalCode;
         }
 
-        let r = commonjsToAmd(originalCode);
-
-        return r;
+        let code = commonjsToAmd(originalCode);
+        code = `/** Transform to javascript amd, source file is ${filePath} */ \r\n` + code;
+        return code;
     }
 
 

@@ -1,7 +1,7 @@
 import { BasePage } from "./base-page";
-import { DataSource, DataControlField, GridView, CustomField, GridViewCell, GridViewEditableCell, BoundField } from "maishu-wuzhui";
+import { DataSource, DataControlField, CustomField, GridViewCell, GridViewEditableCell, BoundField } from "maishu-wuzhui";
 import React = require("react");
-import { createGridView, FieldValidate } from "maishu-wuzhui-helper";
+import { FieldValidate, createGridView } from "maishu-wuzhui-helper";
 import { createItemDialog, Dialog } from "./item-dialog";
 import ReactDOM = require("react-dom");
 import { InputControl, InputControlProps } from "./inputs/input-control";
@@ -81,21 +81,18 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
     //============================================
 
     private itemTable: HTMLTableElement;
-    private gridView: GridView<T>;
     private dialog: Dialog<T>;
     private _operationField: CustomField<T>;
 
     constructor(props: P) {
         super(props);
-
-
     }
 
     get operationField() {
         return this._operationField;
     }
 
-    componentDidMount() {
+    componentDidMount() {debugger
         this.columns = this.columns || [];
 
         if (this.showCommandField) {
@@ -106,16 +103,16 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
                 itemStyle: { textAlign: "center" },
                 createItemCell(dataItem: T) {
                     let cell = new GridViewCell();
-                    ReactDOM.render(
-                        <DataCommand<T> {...{ dataItem, dataSource: it.dataSource, dialog: it.dialog, }} />,
-                        cell.element
-                    );
+                    ReactDOM.render(<>
+                        {it.getEditButton(dataItem)}
+                        {it.getDeleteButton(dataItem)}
+                    </>, cell.element);
                     return cell;
                 }
             });
         }
 
-        this.gridView = createGridView({
+       createGridView({
             element: this.itemTable,
             dataSource: this.dataSource,
             columns: this.operationField ? [...this.columns, this._operationField] : this.columns,
@@ -149,6 +146,7 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
         return [addButton, searchInput,];
     }
 
+    /** 页面添加按钮 */
     protected getAddButton() {
         let button = this.dataSource.canInsert ? <button key="btnAdd" className="btn btn-primary"
             onClick={() => this.dialog.show({} as T)}>
@@ -157,6 +155,39 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
         </button> : null;
 
         return button;
+    }
+
+    /** 页面编辑按钮 */
+    protected getEditButton(dataItem: T) {
+        if (!this.dataSource.canUpdate)
+            return null;
+
+        let ps = this.dataSource as PageDataSource<T>;
+        let options = ps.options || {} as typeof ps.options;
+        let itemCanUpdate = options.itemCanUpdate || (() => true);
+        return <button className="btn btn-minier btn-info"
+            onClick={() => this.executeEdit(dataItem)}
+            disabled={!itemCanUpdate(dataItem)}>
+            <i className="icon-pencil"></i>
+        </button>
+    }
+
+    protected getDeleteButton(dataItem: T) {
+        if (!this.dataSource.canDelete)
+            return;
+
+        let ps = this.dataSource as PageDataSource<T>;
+        let options = ps.options || {} as typeof ps.options;
+        let itemCanDelete = options.itemCanDelete || (() => true);
+        return <button className="btn btn-minier btn-danger"
+            disabled={!itemCanDelete(dataItem)}>
+            <i className="icon-trash"></i>
+        </button>
+    }
+
+    /** 执行编辑操作 */
+    protected executeEdit(dataItem: T) {
+        this.dialog.show(dataItem);
     }
 
     protected getSearchControl() {
@@ -222,46 +253,3 @@ interface DataCommandProps<T> {
     dialog: Dialog<T>
 }
 
-class DataCommand<T> extends React.Component<DataCommandProps<T>> {
-    private dataSource: PageDataSource<T>;
-
-    constructor(props: DataCommandProps<T>) {
-        super(props);
-
-        this.dataSource = props.dataSource as PageDataSource<T>;
-        this.dataSource.options = this.dataSource.options || {} as any;
-
-        console.assert(this.dataSource != null);
-    }
-
-    private edit() {
-        this.props.dialog.show(this.props.dataItem);
-    }
-    private itemCanDelete() {
-        if (this.dataSource.options.itemCanDelete == null)
-            return true;
-
-        return this.dataSource.options.itemCanDelete(this.props.dataItem);
-    }
-    private itemCanUpdate() {
-        if (this.dataSource.options.itemCanUpdate == null)
-            return true;
-
-        return this.dataSource.options.itemCanUpdate(this.props.dataItem);
-    }
-    render() {
-        return <>
-            {this.props.dataSource.canUpdate ?
-                <button className="btn btn-minier btn-info"
-                    onClick={() => this.edit()}
-                    disabled={!this.itemCanUpdate()}>
-                    <i className="icon-pencil"></i>
-                </button> : null}
-            {this.dataSource.canDelete ?
-                <button className="btn btn-minier btn-danger"
-                    disabled={!this.itemCanDelete()}>
-                    <i className="icon-trash"></i>
-                </button> : null}
-        </>
-    }
-}

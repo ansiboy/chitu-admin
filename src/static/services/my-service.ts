@@ -1,5 +1,5 @@
 import { Service } from './service'
-import { WebsiteConfig } from "../../types";
+import { WebsiteConfig } from "../types";
 
 // let clientFiles: string[];
 let stationClientFiles: { [stationPath: string]: string[] } = {};

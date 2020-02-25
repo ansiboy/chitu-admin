@@ -16,12 +16,12 @@ let webpack_es5_min = Object.assign({}, webpack_es5, {
 })
 
 let webpack_startup = Object.assign({}, webpack_es5, {
-    entry: __dirname + "/out/static/asset/startup.js",
+    entry: __dirname + "/out/static/startup.js",
     output: Object.assign({}, webpack_es6.output, { filename: "startup.js" }),
 })
 
 let webpack_startup_min = Object.assign({}, webpack_es5, {
-    entry: __dirname + "/out/static/asset/startup.js",
+    entry: __dirname + "/out/static/startup.js",
     output: Object.assign({}, webpack_es6.output, { filename: "startup.min.js" }),
     mode: 'production',
 })
@@ -41,7 +41,7 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: 'src/static',
                         dest: 'out/static',
-                        src: ['**/*.html', '**/*.css', '**/*.less', 'asset/lib/**', "content/**"]
+                        src: ['**/*.html', '**/*.css', '**/*.less',]
                     },
                 ],
             }

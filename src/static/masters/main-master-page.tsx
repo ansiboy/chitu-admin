@@ -3,7 +3,7 @@ import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
 import { ValueStore } from 'maishu-chitu';
 import { Resource } from '../models';
-import { SimpleMenuItem } from '../../types';
+import { SimpleMenuItem } from '../types';
 import { Application } from 'maishu-chitu-react';
 import { guid } from 'maishu-toolkit';
 

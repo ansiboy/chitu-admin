@@ -6,7 +6,6 @@
         "target": "es6",
         "outDir": "../out",
         "declaration": true,
-        "declarationDir": "../types",
         "sourceMap": false,
         "jsx": "react",
         "baseUrl": "./"

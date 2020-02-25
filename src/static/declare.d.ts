@@ -243,3 +243,8 @@ declare module "lessjs" {
 
 	export = less;
 }
+
+declare module "startup" {
+	let r: typeof import("./startup");
+	export = r;
+}

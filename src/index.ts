@@ -14,27 +14,26 @@ export { StationInfo } from "./global";
 
 export async function start(settings: Settings) {
 
-    if (!settings.rootDirectory)
-        throw errors.settingItemNull<Settings>("rootDirectory");
+    if (!settings.rootPhysicalPath)
+        throw errors.settingItemNull<Settings>("rootPhysicalPath");
 
     let rootDirectory: VirtualDirectory;
-    if (!path.isAbsolute(settings.rootDirectory))
-        throw errors.notAbsolutePath(settings.rootDirectory);
+    if (!path.isAbsolute(settings.rootPhysicalPath))
+        throw errors.notAbsolutePath(settings.rootPhysicalPath);
 
-    if (!fs.existsSync(settings.rootDirectory))
-        throw errors.pathNotExists(settings.rootDirectory);
+    if (!fs.existsSync(settings.rootPhysicalPath))
+        throw errors.pathNotExists(settings.rootPhysicalPath);
 
-    rootDirectory = new VirtualDirectory(__dirname, settings.rootDirectory);
+    rootDirectory = new VirtualDirectory(__dirname, settings.rootPhysicalPath);
 
     let staticRootDirectory = rootDirectory.getDirectory("static");
     let controllerDirectory = rootDirectory.getDirectory("controllers");
+    staticRootDirectory.addVirtualDirectory("lib", path.join(__dirname, "../lib"), "merge");
 
     console.assert(staticRootDirectory != null);
     console.assert(controllerDirectory != null);
 
     let virtualPaths = {};
-    virtualPaths["asset"] = path.join(__dirname, "static/asset");
-    virtualPaths["json.js"] = path.join(__dirname, "static/asset/lib/requirejs-plugins/src/json.js");
 
     virtualPaths = Object.assign(settings.virtualPaths || {}, virtualPaths);
 
@@ -52,11 +51,11 @@ export async function start(settings: Settings) {
     let childFiles = rootDirectory.getChildFiles();
     if (settings.db != null && childFiles["entities.js"] != null) {
         let connectionManager = getConnectionManager();
-        
+debugger
         await createDatabaseIfNotExists(settings.db);
         if (!connectionManager.has(settings.db.database)) {
             let entities = [childFiles["entities.js"]];
-            let dbOptions :ConnectionOptions= {
+            let dbOptions: ConnectionOptions = {
                 type: "mysql",
                 host: settings.db.host,
                 port: settings.db.port,
@@ -69,7 +68,7 @@ export async function start(settings: Settings) {
                 entities,
                 name: settings.db.database
             };
-           await createConnection(dbOptions);
+            await createConnection(dbOptions);
         }
     }
 
@@ -86,7 +85,7 @@ export async function start(settings: Settings) {
 
     startServer({
         port: settings.port,
-        staticRootDirectory,
+        staticDirectory: staticRootDirectory,
         controllerDirectory,
         proxy: settings.proxy,
         bindIP: settings.bindIP,
@@ -99,35 +98,6 @@ export async function start(settings: Settings) {
     }
 
     return { rootDirectory }
-}
-
-async function createDatabase(settings: Settings, rootDirectory: VirtualDirectory) {
-
-    if (!settings.db) {
-        return;
-    }
-
-    let contextFileName = "data-context.js";
-    let entitiesFileName = "entities.js";
-    let files = rootDirectory.getChildFiles();
-    let logger = getLogger(PROJECT_NAME, settings.logLevel);
-    if (files[contextFileName] == null) {
-        logger.info(`File ${contextFileName} is not exists.`)
-        return;
-    }
-
-    if (files[entitiesFileName] == null) {
-        logger.info(`File ${entitiesFileName} is not exists.`);
-        return;
-    }
-
-    let entitiesModule = require(files[entitiesFileName]);
-    await createDatabaseIfNotExists(settings.db);
-    await createDataConnection(settings.db, files[entitiesFileName]);
-
-    if (entitiesModule["init"]) {
-        entitiesModule["init"](settings.db)
-    }
 }
 
 async function createDataConnection(connConfig: ConnectionConfig, entitiesPath: string) {

@@ -5,7 +5,14 @@ type PageDataSourceArguments<T> = DataSourceArguments<T> & {
         placeholder?: string,
         execute: (searchText: string) => Promise<DataSourceSelectResult<T>>,
     },
+
+    /**  
+     * 指定的数据项是否可以删除
+     */
     itemCanDelete?: (dataItem: T) => boolean,
+    /** 
+     * 指定的数据项是否可以删除 
+     */
     itemCanUpdate?: (dataItem: T) => boolean
 }
 

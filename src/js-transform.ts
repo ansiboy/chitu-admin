@@ -1,6 +1,7 @@
 import babel = require("@babel/core");
 import {
-    AssignmentExpression, ExpressionStatement, Program, Node,
+    AssignmentExpression,
+    ExpressionStatement, Program, Node,
     ImportDeclaration, ImportSpecifier,
     MemberExpression, Statement, StringLiteral,
 
@@ -22,12 +23,15 @@ export function commonjsToAmd(originalCode: string) {
     let program = (ast as any as babel.types.File).program;
 
     // 查找代码中是否有导出，例如： exports.default = IndexPage;;
-    let exportsNode = program.body.filter(o => o.type == "ExpressionStatement" && o.expression.type == "AssignmentExpression")
-        .map((o: ExpressionStatement) => o.expression as AssignmentExpression)
-        .filter(o => o.left.type == "MemberExpression")
-        .map(o => o.left as MemberExpression)
-        .filter(o => o.object.type == "Identifier" && o.object.name == "exports")[0];
-
+    let exportsNode: Node = program.body.filter(o => o.type == "ExportNamedDeclaration")[0];
+    if (exportsNode == null) {
+        exportsNode = program.body.filter(o => o.type == "ExpressionStatement" && o.expression.type == "AssignmentExpression" ||
+            o.type == "ExportNamedDeclaration")
+            .map((o: ExpressionStatement) => o.expression as AssignmentExpression)
+            .filter(o => o.left.type == "MemberExpression")
+            .map(o => o.left as MemberExpression)
+            .filter(o => o.object.type == "Identifier" && o.object.name == "exports")[0];
+    }
 
     // 没有 import 和 exports
     let importsCount = program.body.filter(o => o.type == "ImportDeclaration").length;
@@ -44,7 +48,7 @@ export function commonjsToAmd(originalCode: string) {
 
     let options = {
         plugins: [
-            ["@babel/transform-modules-amd", { noInterop: true }]
+            ["@babel/transform-modules-amd", { noInterop: true }],
         ] as Array<any>
     };
 
@@ -67,8 +71,7 @@ export function commonjsToAmd(originalCode: string) {
     }
 
     let r = babel.transformFromAstSync(ast, null, options);
-    let code = `/** commonjs transform to amd */ \r\n` + r.code;
-    return code;
+    return r.code;
 }
 
 function isTaroProgram(program: Program): boolean {
@@ -125,6 +128,9 @@ class NodeConverter {
 class RequireToImport extends NodeConverter {
 
     transform(node: Node) {
+        if (node == null)
+            return null;
+
         if (node.type == "VariableDeclaration") {
             return this.processVariableDeclaration(node);
         }
@@ -190,6 +196,9 @@ class Nodecreator {
     static createImportDeclaration(moduleName: string, variableName?: string): babel.types.ImportDeclaration {
         if (!moduleName) throw errors.argumentNull("moduleName");
 
+        // if (moduleName.startsWith("./")) {
+        //     moduleName = moduleName.substr("./".length);
+        // }
         let specifiers: ImportNamespaceSpecifier[] = [];
         if (variableName) {
             let specifier: babel.types.ImportNamespaceSpecifier = {

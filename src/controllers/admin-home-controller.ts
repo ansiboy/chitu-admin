@@ -93,7 +93,7 @@ export class HomeController extends Controller {
      * 获取站点配置
      * @param context 设置，由系统注入。   
      */
-    @action("/websiteConfig", "/asset/websiteConfig")
+    @action("/websiteConfig")
     websiteConfig(@serverContext context: ServerContext<ServerContextData>): WebsiteConfig {
         return HomeController.getWebsiteConfig(context.data)
     }
@@ -148,27 +148,42 @@ export class HomeController extends Controller {
 
         let jsFileVirtualPath = filePath + ".js";
         let jsxFileVirtualPath = filePath + ".jsx";
+        let tsxFileVirtualPath = filePath + ".tsx";
+
         // let fileVirtualPath = fs.existsSync(jsFileVirtualPath) ? jsFileVirtualPath : jsxFileVirtualPath; //(data["_"] || "") + ".js";
         let filePhysicalPath = context.data.staticRoot.getFile(jsFileVirtualPath);
         if (filePhysicalPath == null)
             filePhysicalPath = context.data.staticRoot.getFile(jsxFileVirtualPath);
 
+        if (filePhysicalPath == null)
+            filePhysicalPath = context.data.staticRoot.getFile(tsxFileVirtualPath);
+
         if (filePhysicalPath == null) {
-            return this.content(`File '${jsFileVirtualPath}' or '${jsxFileVirtualPath}' not found.`, StatusCode.NotFound);
+            return this.content(`File '${jsFileVirtualPath}' or '${jsxFileVirtualPath}' or '${tsxFileVirtualPath}' not found.`, StatusCode.NotFound);
         }
 
 
         let buffer = fs.readFileSync(filePhysicalPath);
         let originalCode = buffer.toString();
 
+        //===========================================================================
+        // maishu 开头的库，在没有打包或转化前，都是 commonjs
+        let maishStaticOutput = /maishu-\S+\/out\/static\/\S+/;
+
+        let requiredConvertToAMD = maishStaticOutput.exec(filePath);
+        //===========================================================================
+
+        let content: string = null;
         /** lib 或者 node_modules 文件夹的 js ，默认支持 adm */
-        if (filePath.startsWith("lib") || filePath.startsWith("node_modules")) {
-            return originalCode;
+        if (filePath.startsWith("lib") || filePath.startsWith("node_modules") && !requiredConvertToAMD) {
+            content = originalCode;
+        }
+        else {
+            let code = commonjsToAmd(originalCode);
+            content = `/** Transform to javascript amd, source file is ${filePath} */ \r\n` + code;
         }
 
-        let r = commonjsToAmd(originalCode);
-
-        return r;
+        return this.content(content, { physicalPath: filePhysicalPath });
     }
 
 
@@ -182,7 +197,7 @@ let defaultConfig: WebsiteConfig = {
 }
 
 let node_modules = '/node_modules'
-let lib = '/asset/lib'
+let lib = '/lib'
 let defaultPaths = {
     css: `${lib}/css`,
     lessjs: `${node_modules}/less/dist/less`,
@@ -216,6 +231,5 @@ let defaultPaths = {
     "polyfill": `${node_modules}/@babel/polyfill/dist/polyfill`,
     "url-pattern": `${node_modules}/url-pattern/lib/url-pattern`,
 
-    "admin_style_default": "/asset/content/admin_style_default.less",
-    "startup": `/asset/startup`,
+    "admin_style_default": "/content/admin_style_default.less",
 };

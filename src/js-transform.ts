@@ -196,9 +196,12 @@ class Nodecreator {
     static createImportDeclaration(moduleName: string, variableName?: string): babel.types.ImportDeclaration {
         if (!moduleName) throw errors.argumentNull("moduleName");
 
-        // if (moduleName.startsWith("./")) {
-        //     moduleName = moduleName.substr("./".length);
-        // }
+
+        if (moduleName.endsWith(".less")) {
+            moduleName = `less!${moduleName}`;
+        }
+
+
         let specifiers: ImportNamespaceSpecifier[] = [];
         if (variableName) {
             let specifier: babel.types.ImportNamespaceSpecifier = {

@@ -51,7 +51,7 @@ export async function start(settings: Settings) {
     let childFiles = rootDirectory.getChildFiles();
     if (settings.db != null && childFiles["entities.js"] != null) {
         let connectionManager = getConnectionManager();
-debugger
+
         await createDatabaseIfNotExists(settings.db);
         if (!connectionManager.has(settings.db.database)) {
             let entities = [childFiles["entities.js"]];

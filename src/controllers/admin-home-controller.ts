@@ -201,6 +201,9 @@ let lib = '/lib'
 let defaultPaths = {
     css: `${lib}/css`,
     lessjs: `${node_modules}/less/dist/less`,
+    less: `${lib}/require-less-0.1.5/less`,
+    lessc: `${lib}/require-less-0.1.5/lessc`,
+    normalize: `${lib}/require-less-0.1.5/normalize`,
     text: `${lib}/text`,
     json: `${lib}/requirejs-plugins/src/json`,
 

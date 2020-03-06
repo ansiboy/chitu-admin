@@ -7,7 +7,7 @@ fetch(configUrl).then(async response => {
 
     requirejs.config(r.requirejs);
     let req = requirejs.config(r.requirejs);
-    req(["/startup"], function (startupModule) {
+    req(["startup"], function (startupModule) {
         console.assert(startupModule != null && typeof startupModule["default"] == "function");
         startupModule["default"](req);
     })

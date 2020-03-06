@@ -125,7 +125,7 @@ export class HomeController extends Controller {
         }
         let r = Object.assign({}, defaultConfig, config);
         r.requirejs.paths = Object.assign(defaultPaths, r.requirejs.paths || {});
-
+        r.requirejs.shim = Object.assign(defaultShim, r.requirejs.shim || {});
         if (data.requirejs) {
             r.requirejs.shim = Object.assign(r.requirejs.shim || {}, data.requirejs.shim || {});
             r.requirejs.paths = Object.assign(r.requirejs.paths, data.requirejs.paths || {});
@@ -196,8 +196,13 @@ let defaultConfig: WebsiteConfig = {
     menuItems: []
 }
 
-let node_modules = '/node_modules'
-let lib = '/lib'
+let node_modules = 'node_modules';
+let lib = 'lib';
+let defaultShim = {
+    "react-dom": {
+        deps: ["react"]
+    }
+};
 let defaultPaths = {
     css: `${lib}/css`,
     lessjs: `${node_modules}/less/dist/less`,
@@ -234,5 +239,5 @@ let defaultPaths = {
     "polyfill": `${node_modules}/@babel/polyfill/dist/polyfill`,
     "url-pattern": `${node_modules}/url-pattern/lib/url-pattern`,
 
-    "admin_style_default": "/content/admin_style_default.less",
+    "admin_style_default": "content/admin_style_default.less",
 };

@@ -157,7 +157,7 @@ class RequireToImport extends NodeConverter {
         let variableName: string;
         variableName = declaration.id.name;
         let initNode = declaration.init;
-        if (initNode.type != "CallExpression" || initNode.callee.type != "Identifier" || initNode.callee.name != "require") {
+        if (initNode == null || initNode.type != "CallExpression" || initNode.callee.type != "Identifier" || initNode.callee.name != "require") {
             return super.transform(node);
         }
 

@@ -18,11 +18,11 @@ export abstract class InputControl<T, P extends InputControlProps<T> = InputCont
 
     static defaultProps: InputControlProps<any> = { validateRules: [] } as InputControlProps<any>;
 
-    constructor(props: InputControl<T, P>["props"]) {
+    constructor(props: P) {
         super(props);
 
     }
 
     abstract get value(): any;
-    abstract set value(value:any)
+    abstract set value(value: any)
 }

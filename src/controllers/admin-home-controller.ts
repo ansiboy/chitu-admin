@@ -7,6 +7,8 @@ import { WebsiteConfig } from "../static/types";
 import { PROJECT_NAME } from "../global";
 import { commonjsToAmd } from "../js-transform";
 import { StatusCode } from "maishu-chitu-service";
+import { errors } from "../errors";
+import JSON5 = require("json5");
 
 /** 
  * Home 控制器 
@@ -186,6 +188,23 @@ export class HomeController extends Controller {
         return this.content(content, { physicalPath: filePhysicalPath });
     }
 
+    /** 将 json5 文件转换为标准的 json */
+    @action("*.json", "*.json5")
+    toStandJson(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
+        let jsonFilePath = data["_"] + ".json";
+        let json5FilePath = data["_"] + ".json5";
+
+        let filePhysicalPath = context.data.rootDirectory.getFile(jsonFilePath);
+        if (filePhysicalPath == null)
+            filePhysicalPath = context.data.rootDirectory.getFile(json5FilePath);
+
+        if (fs.existsSync(filePhysicalPath) == false)
+            throw errors.fileNotExists(`${jsonFilePath} or ${json5FilePath}`);
+
+        let b: Buffer[] = fs.readFileSync(filePhysicalPath);
+        let obj = JSON5.parse(b.toString());
+        return JSON.stringify(obj);
+    }
 
 }
 

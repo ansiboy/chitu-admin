@@ -91,11 +91,18 @@ module.exports = function (grunt) {
                     optimize: "none"
                 }
             },
+        },
+        open: {
+            browser: {
+                path: `http://127.0.0.1:4612/#login`,
+                app: 'Google Chrome'
+            }
         }
     });
 
     grunt.registerTask('default', ['shell', 'copy', 'babel', "webpack"]);
     grunt.registerTask("static", ["shell:client", "webpack:es6"]);
+    grunt.registerTask("start", ["open"])
 }
 
 var requirejsDefaultPaths = {

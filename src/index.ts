@@ -18,13 +18,21 @@ export async function start(settings: Settings) {
         throw errors.settingItemNull<Settings>("rootPhysicalPath");
 
     let rootDirectory: VirtualDirectory;
-    if (!path.isAbsolute(settings.rootPhysicalPath))
-        throw errors.notAbsolutePath(settings.rootPhysicalPath);
+    let rootPhysicalPaths: string[];
+    if (typeof settings.rootPhysicalPath == "string")
+        rootPhysicalPaths = [settings.rootPhysicalPath];
+    else
+        rootPhysicalPaths = settings.rootPhysicalPath;
 
-    if (!fs.existsSync(settings.rootPhysicalPath))
-        throw errors.pathNotExists(settings.rootPhysicalPath);
+    for (let i = 0; i < rootPhysicalPaths.length; i++) {
+        if (!path.isAbsolute(rootPhysicalPaths[i]))
+            throw errors.notAbsolutePath(rootPhysicalPaths[i]);
 
-    rootDirectory = new VirtualDirectory(__dirname, settings.rootPhysicalPath);
+        if (!fs.existsSync(rootPhysicalPaths[i]))
+            throw errors.pathNotExists(rootPhysicalPaths[i]);
+    }
+
+    rootDirectory = new VirtualDirectory(__dirname, ...rootPhysicalPaths);
 
     let staticRootDirectory = rootDirectory.getDirectory("static");
     let controllerDirectory = rootDirectory.getDirectory("controllers");

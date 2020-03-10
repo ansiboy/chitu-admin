@@ -92,7 +92,7 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
         return this._operationField;
     }
 
-    componentDidMount() {debugger
+    componentDidMount() {
         this.columns = this.columns || [];
 
         if (this.showCommandField) {

@@ -13,7 +13,7 @@ export type ServerContextData = {
 
 export interface Settings<T = any> {
     port: number,
-    rootPhysicalPath: string,
+    rootPhysicalPath: string | string[],
     sourceDirectory?: string,
     proxy?: NodeMVCConfig["proxy"],
     bindIP?: string,

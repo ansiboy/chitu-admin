@@ -15,7 +15,8 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}/out/main.js"
+            "program": "${workspaceRoot}/out/main.js",
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

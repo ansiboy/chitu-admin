@@ -170,7 +170,7 @@ export class HomeController extends Controller {
 
         //===========================================================================
         // maishu 开头的库，在没有打包或转化前，都是 commonjs
-        let maishStaticOutput = /maishu-\S+\/out\/static\/\S+/;
+        let maishStaticOutput = /maishu-\S+\/static\/\S+/;
 
         let requiredConvertToAMD = maishStaticOutput.exec(filePath);
         //===========================================================================
@@ -228,8 +228,10 @@ let defaultPaths = {
     less: `${lib}/require-less-0.1.5/less`,
     lessc: `${lib}/require-less-0.1.5/lessc`,
     normalize: `${lib}/require-less-0.1.5/normalize`,
-    text: `${lib}/text`,
-    json: `${lib}/requirejs-plugins/src/json`,
+
+    text: `${node_modules}/maishu-requirejs-plugins/lib/text`,
+    json: `${node_modules}/maishu-requirejs-plugins/src/json`,
+    noext: `${node_modules}/maishu-requirejs-plugins/src/noext`,
 
     jquery: `${lib}/jquery-2.1.3`,
     "jquery.event.drag": `${lib}/jquery.event.drag-2.2/jquery.event.drag-2.2`,

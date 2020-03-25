@@ -57,26 +57,24 @@ export async function start(settings: Settings) {
 
     //处理数据库文件
     let childFiles = rootDirectory.getChildFiles();
-    if (settings.db != null && childFiles["entities.js"] != null) {
+    let entitiesPhysicalPath = childFiles["entities.js"];
+    if (settings.db != null && entitiesPhysicalPath != null) {
         let connectionManager = getConnectionManager();
 
         await createDatabaseIfNotExists(settings.db);
         if (!connectionManager.has(settings.db.database)) {
-            let entities = [childFiles["entities.js"]];
-            let dbOptions: ConnectionOptions = {
-                type: "mysql",
-                host: settings.db.host,
-                port: settings.db.port,
-                username: settings.db.user,
-                password: settings.db.password,
-                database: settings.db.database,
-                synchronize: true,
-                logging: false,
-                connectTimeout: 3000,
-                entities,
-                name: settings.db.database
-            };
-            await createConnection(dbOptions);
+            let entities = [entitiesPhysicalPath];
+            let dbOptions = Object.assign({
+                type: "mysql", synchronize: true, logging: false,
+                connectTimeout: 3000, entities, name: settings.db.database,
+                username: settings.db.user, password: settings.db.password
+            } as ConnectionOptions, settings.db);
+            let conn = await createConnection(dbOptions);
+            let mod = require(entitiesPhysicalPath);
+            if (typeof mod.default == "function") {
+                mod.default(conn);
+            }
+
         }
     }
 

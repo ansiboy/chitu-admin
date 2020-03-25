@@ -1,4 +1,4 @@
-import { LogLevel, VirtualDirectory } from "maishu-node-mvc";
+import { LogLevel, VirtualDirectory, Settings as MVCSettings } from "maishu-node-mvc";
 import { Settings as NodeMVCConfig } from 'maishu-node-mvc'
 import { PermissionConfig, WebsiteConfig } from "./static/types";
 import { ConnectionConfig } from "mysql";
@@ -11,7 +11,7 @@ export type ServerContextData = {
     requirejs?: WebsiteConfig["requirejs"],
 }
 
-export interface Settings<T = any> {
+export interface Settings<T = any> extends MVCSettings {
     port: number,
     rootPhysicalPath: string | string[],
     sourceDirectory?: string,

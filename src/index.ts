@@ -43,17 +43,6 @@ export async function start(settings: Settings) {
     let virtualPaths = {};
 
     virtualPaths = Object.assign(settings.virtualPaths || {}, virtualPaths);
-
-    for (let key in virtualPaths) {
-        let physicalPath = virtualPaths[key];
-        if (/\.[a-zA-Z]+$/.test(physicalPath)) {    // 如果名称是文件名 *.abc
-            staticRootDirectory.addVirtualFile(key, physicalPath)
-        }
-        else {
-            staticRootDirectory.addVirtualDirectory(key, physicalPath, "merge");
-        }
-    }
-
     if (virtualPaths["node_modules"] == null) {
         let cwd = process.cwd();
         let logger = getLogger(PROJECT_NAME, settings.logLevel);
@@ -64,6 +53,16 @@ export async function start(settings: Settings) {
 
         logger.info(`node modules path is ${node_modules}.`);
         virtualPaths["node_modules"] = node_modules;
+    }
+
+    for (let key in virtualPaths) {
+        let physicalPath = virtualPaths[key];
+        if (/\.[a-zA-Z]+$/.test(physicalPath)) {    // 如果名称是文件名 *.abc
+            staticRootDirectory.addVirtualFile(key, physicalPath)
+        }
+        else {
+            staticRootDirectory.addVirtualDirectory(key, physicalPath, "merge");
+        }
     }
 
     //处理数据库文件

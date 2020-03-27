@@ -158,15 +158,10 @@ export class HomeController extends Controller {
 
         let jsFileVirtualPath = filePath + ".js";
         let jsxFileVirtualPath = filePath + ".jsx";
-        // let tsxFileVirtualPath = filePath + ".tsx";
 
-        // let fileVirtualPath = fs.existsSync(jsFileVirtualPath) ? jsFileVirtualPath : jsxFileVirtualPath; //(data["_"] || "") + ".js";
         let filePhysicalPath = context.data.staticRoot.getFile(jsFileVirtualPath);
         if (filePhysicalPath == null)
             filePhysicalPath = context.data.staticRoot.getFile(jsxFileVirtualPath);
-
-        // if (filePhysicalPath == null)
-        //     filePhysicalPath = context.data.staticRoot.getFile(tsxFileVirtualPath);
 
         if (filePhysicalPath == null) {
             return this.content(`File '${jsFileVirtualPath}' or '${jsxFileVirtualPath}' not found.`, StatusCode.NotFound);

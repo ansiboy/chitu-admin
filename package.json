@@ -1,6 +1,6 @@
 {
     "name": "maishu-chitu-admin",
-    "version": "2.116.2",
+    "version": "2.116.3",
     "scripts": {
         "build": "grunt",
         "start": "grunt open"

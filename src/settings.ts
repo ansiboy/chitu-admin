@@ -8,7 +8,8 @@ export type ServerContextData = {
     rootDirectory: VirtualDirectory,
     // clientStaticRoot: string,
     station: Settings["station"],
-    requirejs?: WebsiteConfig["requirejs"],
+    // requirejs?: WebsiteConfig["requirejs"],
+    websiteConfig?: WebsiteConfig,
 }
 
 export interface Settings<T = any> extends MVCSettings {
@@ -31,6 +32,7 @@ export interface Settings<T = any> extends MVCSettings {
     serverContextData?: T,
 
     requirejs?: WebsiteConfig["requirejs"],
-    db?: ConnectionConfig
+    db?: ConnectionConfig,
+    websiteConfig?: WebsiteConfig,
 }
 

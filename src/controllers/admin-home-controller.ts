@@ -102,7 +102,15 @@ export class HomeController extends Controller {
 
     static getWebsiteConfig(data: ServerContextData) {
         let config = {} as WebsiteConfig;
-        let staticConfigPath = data.rootDirectory.getFile("website-config.js"); //path.join(data.rootDirectory, "website-config.js");
+        let staticConfigPath: string;
+
+        if (data.websiteConfig == null) {
+            staticConfigPath = data.rootDirectory.getFile("website-config.js"); //path.join(data.rootDirectory, "website-config.js");
+        }
+        else {
+            config = data.websiteConfig;
+        }
+
         let logger = getLogger(PROJECT_NAME);
         if (staticConfigPath) {
             let mod = require(staticConfigPath);
@@ -128,9 +136,9 @@ export class HomeController extends Controller {
         let r = Object.assign({}, defaultConfig, config);
         r.requirejs.paths = Object.assign(defaultPaths, r.requirejs.paths || {});
         r.requirejs.shim = Object.assign(defaultShim, r.requirejs.shim || {});
-        if (data.requirejs) {
-            r.requirejs.shim = Object.assign(r.requirejs.shim || {}, data.requirejs.shim || {});
-            r.requirejs.paths = Object.assign(r.requirejs.paths, data.requirejs.paths || {});
+        if (data.websiteConfig != null && data.websiteConfig.requirejs != null) {
+            r.requirejs.shim = Object.assign(r.requirejs.shim || {}, data.websiteConfig.requirejs.shim || {});
+            r.requirejs.paths = Object.assign(r.requirejs.paths, data.websiteConfig.requirejs.paths || {});
         }
 
         return r;

@@ -1,11 +1,10 @@
-import { startServer, VirtualDirectory, getLogger } from 'maishu-node-mvc'
+import { startServer, VirtualDirectory } from 'maishu-node-mvc'
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
 import { Settings, ServerContextData } from './settings';
-import { registerStation, PROJECT_NAME } from './global';
-import { DataHelper, createDatabaseIfNotExists, getConnectionManager, createConnection, ConnectionOptions } from "maishu-node-data";
-import { ConnectionConfig } from "mysql";
+import { registerStation } from './global';
+import { createDatabaseIfNotExists, getConnectionManager, createConnection, ConnectionOptions } from "maishu-node-data";
 
 
 export { Settings, ServerContextData } from "./settings";
@@ -83,7 +82,8 @@ export async function start(settings: Settings) {
         staticRoot: staticRootDirectory,
         rootDirectory: rootDirectory,
         station: settings.station,
-        requirejs: settings.requirejs,
+        // requirejs: settings.requirejs,
+        websiteConfig: settings.websiteConfig,
     };
 
     serverContextData = Object.assign(settings.serverContextData || {}, serverContextData);
@@ -106,28 +106,6 @@ export async function start(settings: Settings) {
     return { rootDirectory }
 }
 
-async function createDataConnection(connConfig: ConnectionConfig, entitiesPath: string) {
-    let connectionManager = getConnectionManager();
-    if (connectionManager.has(connConfig.database) == false) {
-        let entities: string[] = [entitiesPath];
-        let dbOptions: ConnectionOptions = {
-            type: "mysql",
-            host: connConfig.host,
-            port: connConfig.port,
-            username: connConfig.user,
-            password: connConfig.password,
-            database: connConfig.database,
-            synchronize: true,
-            logging: false,
-            connectTimeout: 3000,
-            entities,
-            name: connConfig.database
-        }
-
-        await createConnection(dbOptions);
-    }
-
-}
 
 
 

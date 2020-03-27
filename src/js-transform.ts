@@ -45,6 +45,17 @@ export function commonjsToAmd(originalCode: string) {
     let exportsImport = Nodecreator.createImportDeclaration("exports", "exports");
     program.body.unshift(...[requireImport, exportsImport]);
 
+    // import "empty.less" 转换为 import "less!empty"
+    program.body.filter(o => o.type == "ImportDeclaration").forEach((s: babel.types.ImportDeclaration) => {
+        if (s.source == null || s.source.value == null)
+            return;
+
+        if (s.source.value.endsWith(".less") && s.source.value.startsWith("less!") == false) {
+            let path = s.source.value.substr(0, s.source.value.length - ".less".length);
+            s.source.value = `less!${path}`;
+        }
+    });
+
 
     let options = {
         plugins: [
@@ -81,7 +92,7 @@ function isTaroProgram(program: Program): boolean {
     return taroImport != null;
 }
 
-class NodeConverter {
+abstract class NodeConverter {
     transform(node: Node): Node {
         if (node == null) throw errors.argumentNull("node");
         switch (node.type) {

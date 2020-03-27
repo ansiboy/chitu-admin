@@ -1,9 +1,9 @@
-import { startServer, VirtualDirectory } from 'maishu-node-mvc'
+import { startServer, VirtualDirectory, getLogger } from 'maishu-node-mvc'
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
 import { Settings, ServerContextData } from './settings';
-import { registerStation } from './global';
+import { registerStation, PROJECT_NAME } from './global';
 import { createDatabaseIfNotExists, getConnectionManager, createConnection, ConnectionOptions } from "maishu-node-data";
 
 
@@ -54,6 +54,18 @@ export async function start(settings: Settings) {
         }
     }
 
+    if (virtualPaths["node_modules"] == null) {
+        let cwd = process.cwd();
+        let logger = getLogger(PROJECT_NAME, settings.logLevel);
+        logger.info(`cwd path:${cwd}`);
+        let node_modules = path.join(cwd, "node_modules");
+        if (!node_modules)
+            throw errors.pathNotExists(node_modules);
+
+        logger.info(`node modules path is ${node_modules}.`);
+        virtualPaths["node_modules"] = node_modules;
+    }
+
     //处理数据库文件
     let childFiles = rootDirectory.getChildFiles();
     let entitiesPhysicalPath = childFiles["entities.js"];
@@ -82,7 +94,6 @@ export async function start(settings: Settings) {
         staticRoot: staticRootDirectory,
         rootDirectory: rootDirectory,
         station: settings.station,
-        // requirejs: settings.requirejs,
         websiteConfig: settings.websiteConfig,
     };
 
@@ -96,7 +107,7 @@ export async function start(settings: Settings) {
         proxy: settings.proxy,
         bindIP: settings.bindIP,
         headers: settings.headers,
-        serverContextData: serverContextData
+        serverContextData: serverContextData,
     });
 
     if (settings.station != null) {

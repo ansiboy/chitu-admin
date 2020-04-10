@@ -6,7 +6,7 @@ import { ServerContextData } from "../settings";
 import { WebsiteConfig } from "../static/types";
 import { PROJECT_NAME } from "../global";
 import { commonjsToAmd } from "../js-transform";
-import { StatusCode } from "maishu-chitu-service";
+import { StatusCode, StatusCodes } from "maishu-chitu-service";
 import { errors } from "../errors";
 import JSON5 = require("json5");
 
@@ -244,8 +244,8 @@ let defaultPaths = {
 
     pin: `${lib}/jquery.pin/jquery.pin.min`,
 
-    "react": `${node_modules}/react/umd/react.production.min`,
-    "react-dom": `${node_modules}/react-dom/umd/react-dom.production.min`,
+    "react": `${node_modules}/react/umd/react.development`,
+    "react-dom": `${node_modules}/react-dom/umd/react-dom.development`,
     "maishu-chitu": `${node_modules}/maishu-chitu/dist/index.min`,
     "maishu-chitu-admin/static": `${node_modules}/maishu-chitu-admin/dist/index.min`,
     "maishu-chitu-react": `${node_modules}/maishu-chitu-react/dist/index.min`,

@@ -2,8 +2,7 @@ import babel = require("@babel/core");
 import {
     AssignmentExpression,
     ExpressionStatement, Program, Node,
-    ImportDeclaration, ImportSpecifier,
-    MemberExpression, Statement, StringLiteral,
+    ImportDeclaration, MemberExpression, Statement, StringLiteral,
 
     VariableDeclaration, VariableDeclarator, ImportNamespaceSpecifier
 } from "@babel/types";
@@ -14,9 +13,6 @@ import { errors } from "./errors";
  * @param originalCode commonjs 代码
  */
 export function commonjsToAmd(originalCode: string) {
-    // jsxFactory = jsxFactory || "React.createElement";
-
-
     let ast = babel.parseSync(originalCode, { plugins: ["@babel/transform-react-jsx"] }) as Node;
     let g = new RequireToImport();
     ast = g.transform(ast);
@@ -53,6 +49,10 @@ export function commonjsToAmd(originalCode: string) {
         if (s.source.value.endsWith(".less") && s.source.value.startsWith("less!") == false) {
             let path = s.source.value.substr(0, s.source.value.length - ".less".length);
             s.source.value = `less!${path}`;
+        }
+        else if (s.source.value.endsWith(".scss")) {
+            let path = s.source.value;
+            s.source.value = `css!${path}`;
         }
     });
 

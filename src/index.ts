@@ -101,7 +101,7 @@ export async function start(settings: Settings) {
 
     startServer({
         port: settings.port,
-        staticDirectory: staticRootDirectory,
+        staticRootDirectory: staticRootDirectory,
         controllerDirectory,
         proxy: settings.proxy,
         bindIP: settings.bindIP,

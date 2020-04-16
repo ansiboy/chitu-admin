@@ -144,7 +144,24 @@ export class HomeController extends Controller {
         return r;
     }
 
-    @action("*.js")
+    @action((virtualPath) => {
+        //===========================================================================
+        // maishu 开头的库，在没有打包或转化前，都是 commonjs
+        let maishStaticOutput = /maishu-\S+\/static\/\S+/;
+
+        let requiredConvertToAMD = maishStaticOutput.exec(virtualPath);
+        //===========================================================================
+        if (virtualPath.startsWith("lib") || virtualPath.startsWith("node_modules") && !requiredConvertToAMD) {
+            return null;
+        }
+
+        let arr = virtualPath.split(".");
+        if (arr.length == 2 && arr[1] == "js") {
+            return { "_": arr[0] }
+        }
+
+        return null;
+    })
     commonjsToAmd(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
         console.assert(data != null);
 
@@ -153,8 +170,12 @@ export class HomeController extends Controller {
             return this.initjs(context);
         }
 
-        let filePath = data["_"];
+        let filePath = data["_"] as string;
         console.assert(filePath != null);
+        if (filePath[0] == '/') {
+            filePath = filePath.substr(1);
+        }
+
 
         let jsFileVirtualPath = filePath + ".js";
         let jsxFileVirtualPath = filePath + ".jsx";
@@ -179,14 +200,14 @@ export class HomeController extends Controller {
         //===========================================================================
 
         let content: string = null;
-        /** lib 或者 node_modules 文件夹的 js ，默认支持 adm */
-        if (filePath.startsWith("lib") || filePath.startsWith("node_modules") && !requiredConvertToAMD) {
-            content = originalCode;
-        }
-        else {
-            let code = commonjsToAmd(originalCode);
-            content = `/** Transform to javascript amd, source file is ${filePath} */ \r\n` + code;
-        }
+        // /** lib 或者 node_modules 文件夹的 js ，默认支持 adm */
+        // if (filePath.startsWith("lib") || filePath.startsWith("node_modules") && !requiredConvertToAMD) {
+        //     content = `/** MVC Action: commonjsToAmd, source file is ${filePath} */ \r\n` + originalCode;
+        // }
+        // else {
+        let code = commonjsToAmd(originalCode);
+        content = `/** MVC Action: commonjsToAmd, transform to javascript amd, source file is ${filePhysicalPath} */ \r\n` + code;
+        // }
 
         return this.content(content, { physicalPath: filePhysicalPath });
     }

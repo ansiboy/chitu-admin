@@ -30,8 +30,6 @@ export interface Settings<T = any> extends MVCSettings {
         permissions?: PermissionConfig
     },
     serverContextData?: T,
-
-    requirejs?: WebsiteConfig["requirejs"],
     db?: ConnectionConfig,
     websiteConfig?: WebsiteConfig,
 }

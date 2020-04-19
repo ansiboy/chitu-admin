@@ -145,13 +145,17 @@ export class HomeController extends Controller {
     }
 
     @action((virtualPath) => {
+        if (virtualPath.startsWith("/")) {
+            virtualPath = virtualPath.substr(1);
+        }
+
         //===========================================================================
         // maishu 开头的库，在没有打包或转化前，都是 commonjs
         let maishStaticOutput = /maishu-\S+\/static\/\S+/;
 
-        let requiredConvertToAMD = maishStaticOutput.exec(virtualPath);
+        let requiredConvertToAMD = maishStaticOutput.exec(virtualPath) != null;
         //===========================================================================
-        if (virtualPath.startsWith("lib") || virtualPath.startsWith("node_modules") && !requiredConvertToAMD) {
+        if (virtualPath.startsWith("lib") || (virtualPath.startsWith("node_modules") && !requiredConvertToAMD)) {
             return null;
         }
 
@@ -194,9 +198,9 @@ export class HomeController extends Controller {
 
         //===========================================================================
         // maishu 开头的库，在没有打包或转化前，都是 commonjs
-        let maishStaticOutput = /maishu-\S+\/static\/\S+/;
+        // let maishStaticOutput = /maishu-\S+\/static\/\S+/;
 
-        let requiredConvertToAMD = maishStaticOutput.exec(filePath);
+        // let requiredConvertToAMD = maishStaticOutput.exec(filePath);
         //===========================================================================
 
         let content: string = null;

@@ -112,7 +112,7 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
             });
         }
 
-       createGridView({
+        createGridView({
             element: this.itemTable,
             dataSource: this.dataSource,
             columns: this.operationField ? [...this.columns, this._operationField] : this.columns,
@@ -180,6 +180,7 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
         let options = ps.options || {} as typeof ps.options;
         let itemCanDelete = options.itemCanDelete || (() => true);
         return <button className="btn btn-minier btn-danger"
+            onClick={() => this.executeDelete(dataItem)}
             disabled={!itemCanDelete(dataItem)}>
             <i className="icon-trash"></i>
         </button>
@@ -188,6 +189,10 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
     /** 执行编辑操作 */
     protected executeEdit(dataItem: T) {
         this.dialog.show(dataItem);
+    }
+
+    protected executeDelete(dataItem: T) {
+        this.dataSource.delete(dataItem);
     }
 
     protected getSearchControl() {

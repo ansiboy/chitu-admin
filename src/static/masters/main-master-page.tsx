@@ -27,7 +27,7 @@ export class MainMasterPage extends MasterPage<State> {
     name = masterPageNames.main
 
     pageContainer: HTMLElement;
-    element: HTMLElement;
+    // element: HTMLElement;
     private app: Application;
     private menuResources = new ValueStore<Resource[]>([]);
 
@@ -41,6 +41,10 @@ export class MainMasterPage extends MasterPage<State> {
             let menuItems = translateToMenuItems(value).filter(o => o.parent == null);
             this.setState({ menuItems: menuItems })
         })
+    }
+
+    get element() {
+        return document.getElementById("main-master");
     }
 
     private showPageByNode(node: MenuItem) {
@@ -170,7 +174,12 @@ export class MainMasterPage extends MasterPage<State> {
             currentNode = this.findMenuItemByResourceId(firstLevelNodes, this.state.resourceId)
         }
         else if (currentPageUrl) {
-            currentNode = this.findMenuItemByPageUrl(firstLevelNodes, currentPageUrl)
+            currentNode = this.findMenuItemByPageUrl(firstLevelNodes, currentPageUrl);
+            let q = currentPageUrl.indexOf("?");
+            if (currentNode == null && q > 0) {
+                let shortUrl = currentPageUrl.substr(0, q);
+                currentNode = this.findMenuItemByPageUrl(firstLevelNodes, shortUrl);
+            }
         }
         let firstLevelNode: MenuItem | null = null;
         let secondLevelNode: MenuItem;
@@ -189,17 +198,26 @@ export class MainMasterPage extends MasterPage<State> {
             }
         }
 
+        let hideFirst = false;
+        let hideSecond = false;
         let nodeClassName = '';
         let hideMenuPages = this.state.hideMenuPages || []
         if (hideMenuPages.indexOf(currentPageUrl) >= 0) {
             nodeClassName = 'hideFirst';
+            hideFirst = true;
+            hideSecond = true;
         }
         else if (firstLevelNode == null || (firstLevelNode.children || []).filter(o => o.type == "menu").length == 0) {
             nodeClassName = 'hideSecond';
+            hideSecond = true;
         }
 
-        return <div className={`${nodeClassName}`} ref={e => this.element = e || this.element}>
-            <div className="first">
+        // return <div className={`${nodeClassName}`} ref={e => this.element = e || this.element}>
+
+        // </div >
+
+        return <>
+            <div className="first" style={{ display: hideFirst ? "none" : "" }}>
                 <ul className="list-group">
                     {firstLevelNodes.map((o, i) =>
                         <li key={i} className={o == firstLevelNode ? "list-group-item active" : "list-group-item"}
@@ -211,7 +229,7 @@ export class MainMasterPage extends MasterPage<State> {
                     )}
                 </ul>
             </div>
-            <div className="second">
+            <div className="second" style={{ display: hideSecond ? "none" : "" }}>
                 <ul className="list-group">
                     {(firstLevelNode ? (firstLevelNode.children || []) : []).filter(o => o.type == "menu").map((o, i) =>
                         <li key={i} className={o == secondLevelNode ? "list-group-item active" : "list-group-item"}
@@ -232,7 +250,8 @@ export class MainMasterPage extends MasterPage<State> {
                     ref={(e: HTMLElement) => this.pageContainer = e || this.pageContainer}>
                 </div>
             </div>
-        </div >
+
+        </>
 
     }
 }

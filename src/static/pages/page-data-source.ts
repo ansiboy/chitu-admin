@@ -1,4 +1,4 @@
-import { DataSource, DataSourceArguments, DataSourceSelectResult } from "maishu-wuzhui";
+import { DataSource, DataSourceArguments, DataSourceSelectResult } from "maishu-wuzhui-helper";
 
 type PageDataSourceArguments<T> = DataSourceArguments<T> & {
     search?: {

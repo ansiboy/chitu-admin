@@ -1,10 +1,9 @@
 import React = require("react");
 import { hideDialog, showDialog } from "maishu-ui-toolkit";
 import ReactDOM = require("react-dom");
-import { DataSource } from "maishu-wuzhui";
+import { DataSource } from "maishu-wuzhui-helper";
 import { FormValidator } from "maishu-dilu";
 import { InputControl, ItemDialog as IItemDialog } from "./inputs/input-control";
-import { FieldValidate } from "maishu-wuzhui-helper";
 
 type BeforeSave<T> = (dataItem: T) => Promise<any>
 
@@ -55,7 +54,7 @@ export function createItemDialog<T>
             let elementType = element["type"];
             console.assert(elementType);
 
-            let props: React.ReactElement["props"];// = element.props;
+            let props: React.ReactElement["props"];
             let it = this;
             if (typeof elementType == "function") {
                 if (elementType.constructor == InputControl.constructor) {

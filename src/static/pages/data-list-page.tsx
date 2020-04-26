@@ -1,20 +1,21 @@
 import { BasePage } from "./base-page";
-import { DataSource, DataControlField, CustomField, GridViewCell, GridViewEditableCell, BoundField } from "maishu-wuzhui";
+import {
+    DataSource, DataControlField, CustomField, GridViewCell, GridViewEditableCell,
+    BoundField, GridViewCellControl, FieldValidate, createGridView,
+} from "maishu-wuzhui-helper";
 import React = require("react");
-import { FieldValidate, createGridView } from "maishu-wuzhui-helper";
 import { createItemDialog, Dialog } from "./item-dialog";
 import ReactDOM = require("react-dom");
 import { InputControl, InputControlProps } from "./inputs/input-control";
-import { GridViewCellControl } from "maishu-wuzhui";
 import { PageDataSource } from "./page-data-source";
 import { PageProps } from "maishu-chitu-react";
+import { buttonOnClick, confirm } from "maishu-ui-toolkit";
 
 interface BoundInputControlProps<T> extends InputControlProps<T> {
     boundField: BoundField<T>
 }
 
-let OperationColumnWidth = 140;
-let ScrollBarWidth = 18;
+
 
 /** 数据绑定列控件 */
 class BoundFieldControl<T> extends InputControl<T, BoundInputControlProps<T>>{
@@ -63,10 +64,13 @@ class BoundFieldControl<T> extends InputControl<T, BoundInputControlProps<T>>{
 }
 
 export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> extends BasePage<P, S> {
+    /** 操作列宽度 */
+    protected CommandColumnWidth = 140;
+    protected ScrollBarWidth = 18;
 
     abstract dataSource: DataSource<T>;
-    abstract itemName: string;
     abstract columns: DataControlField<T>[];
+    protected itemName?: string;
 
     //============================================
     // protected
@@ -74,48 +78,48 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
     protected headerFixed = false;
 
     /** 是否显示命令字段 */
-    protected showCommandField = true;
+    protected showCommandColumn = true;
 
     /** 对显示的数据进行转换 */
     protected translate?: (items: T[]) => T[];
     //============================================
 
+    protected deleteConfirmText: (dataItem: T) => string;
+
+
     private itemTable: HTMLTableElement;
     private dialog: Dialog<T>;
-    private _operationField: CustomField<T>;
+    private commandColumn: CustomField<T>;
 
     constructor(props: P) {
         super(props);
-    }
 
-    get operationField() {
-        return this._operationField;
-    }
-
-    componentDidMount() {
-        this.columns = this.columns || [];
-
-        if (this.showCommandField) {
+        if (this.showCommandColumn) {
             let it = this;
-            this._operationField = new CustomField<T>({
+            this.commandColumn = new CustomField<T>({
                 headerText: "操作",
-                headerStyle: { textAlign: "center", width: `${OperationColumnWidth}px` },
-                itemStyle: { textAlign: "center" },
+                headerStyle: { textAlign: "center", width: `${this.CommandColumnWidth}px` },
+                itemStyle: { textAlign: "center", width: `${this.CommandColumnWidth}px` },
                 createItemCell(dataItem: T) {
                     let cell = new GridViewCell();
                     ReactDOM.render(<>
-                        {it.getEditButton(dataItem)}
-                        {it.getDeleteButton(dataItem)}
+                        {it.leftCommands(dataItem)}
+                        {it.editButton(dataItem)}
+                        {it.deleteButton(dataItem)}
+                        {it.rightCommands(dataItem)}
                     </>, cell.element);
                     return cell;
                 }
             });
         }
+    }
 
+    componentDidMount() {
+        this.columns = this.columns || [];
         createGridView({
             element: this.itemTable,
             dataSource: this.dataSource,
-            columns: this.operationField ? [...this.columns, this._operationField] : this.columns,
+            columns: this.commandColumn ? [...this.columns, this.commandColumn] : this.columns,
             pageSize: this.pageSize,
             translate: this.translate,
             showHeader: this.headerFixed != true,
@@ -141,13 +145,13 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
         }
 
         this.dialog = createItemDialog(this.dataSource, this.itemName, editor);
-        let addButton = this.getAddButton();
-        let searchInput = this.getSearchControl();
+        let addButton = this.addButton();
+        let searchInput = this.searchControl();
         return [addButton, searchInput,];
     }
 
-    /** 页面添加按钮 */
-    protected getAddButton() {
+    /** 获取页面添加按钮 */
+    protected addButton() {
         let button = this.dataSource.canInsert ? <button key="btnAdd" className="btn btn-primary"
             onClick={() => this.dialog.show({} as T)}>
             <i className="icon-plus"></i>
@@ -157,8 +161,8 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
         return button;
     }
 
-    /** 页面编辑按钮 */
-    protected getEditButton(dataItem: T) {
+    /** 获取页面编辑按钮 */
+    protected editButton(dataItem: T) {
         if (!this.dataSource.canUpdate)
             return null;
 
@@ -172,7 +176,8 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
         </button>
     }
 
-    protected getDeleteButton(dataItem: T) {
+    /** 获取页面删除按钮 */
+    protected deleteButton(dataItem: T) {
         if (!this.dataSource.canDelete)
             return;
 
@@ -180,8 +185,16 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
         let options = ps.options || {} as typeof ps.options;
         let itemCanDelete = options.itemCanDelete || (() => true);
         return <button className="btn btn-minier btn-danger"
-            onClick={() => this.executeDelete(dataItem)}
-            disabled={!itemCanDelete(dataItem)}>
+            disabled={!itemCanDelete(dataItem)}
+            ref={e => {
+                if (!e) return;
+                if (e.getAttribute("button-on-click")) {
+                    return;
+                }
+
+                e.setAttribute("button-on-click", "true");
+                buttonOnClick(e, () => this.executeDelete(dataItem));
+            }}>
             <i className="icon-trash"></i>
         </button>
     }
@@ -191,22 +204,48 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
         this.dialog.show(dataItem);
     }
 
+    /** 执行删除操作 */
     protected executeDelete(dataItem: T) {
-        this.dataSource.delete(dataItem);
+        if (this.deleteConfirmText) {
+            let message = this.deleteConfirmText(dataItem);
+            return new Promise<any>((resolve, reject) => {
+                confirm({
+                    title: "请确认", message,
+                    confirm: async () => {
+                        return this.dataSource.delete(dataItem)
+                            .then(r => resolve(r))
+                            .catch(err => reject(err))
+                    },
+                    cancle: async () => {
+                        resolve();
+                    }
+                })
+            })
+        }
+        return this.dataSource.delete(dataItem);
     }
 
-    protected getSearchControl() {
+    /** 获取页面搜索栏 */
+    protected searchControl() {
         let dataSource = this.dataSource as PageDataSource<T>;
         let search = dataSource.options ? dataSource.options.search : null;
         let searchInput = search ? <>
             <input type="text" className="form-control pull-left" placeholder={search.placeholder || ""} style={{ width: 300 }}></input>
-            <button className="btn btn-primary btn-sm  pull-left">
+            <button className="btn btn-primary btn-sm">
                 <i className="icon-search"></i>
                 <span>搜索</span>
             </button>
         </> : null;
 
         return searchInput;
+    }
+
+    protected rightCommands(dataItem: T): JSX.Element[] {
+        return [];
+    }
+
+    protected leftCommands(dataItem: T): JSX.Element[] {
+        return [];
     }
 
     render() {
@@ -223,14 +262,14 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
                                         return;
 
                                     e.style.width = col.itemStyle["width"];
-                                    if (this.operationField == null && i == columns.length - 1) {
-                                        e.style.width = `calc(${e.style.width} + ${ScrollBarWidth}px)`
+                                    if (this.commandColumn == null && i == columns.length - 1) {
+                                        e.style.width = `calc(${e.style.width} + ${this.ScrollBarWidth}px)`
                                     }
 
                                 }}>{col.headerText}</th>
                             )}
-                            {this.operationField ? <th style={{ width: OperationColumnWidth + ScrollBarWidth }}>
-                                {this._operationField.headerText}
+                            {this.commandColumn ? <th style={{ width: this.CommandColumnWidth + this.ScrollBarWidth }}>
+                                {this.commandColumn.headerText}
                             </th> : null}
                         </tr>
                     </thead>
@@ -252,9 +291,4 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
     }
 }
 
-interface DataCommandProps<T> {
-    dataSource: DataSource<T>,
-    dataItem: T,
-    dialog: Dialog<T>
-}
 

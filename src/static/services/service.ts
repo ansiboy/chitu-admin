@@ -1,6 +1,6 @@
 import { Service as ChiTuSerivce, AjaxOptions } from 'maishu-chitu-service'
 import config = require("json!websiteConfig");
-import p = require("path");
+import { pathContact } from 'maishu-toolkit';
 
 export let urlParams: { appKey?: string, token?: string } = {};
 if (location.search)
@@ -18,7 +18,7 @@ export function stationPath(path: string) {
 
     let context: RequireContext = contexts[contextName];
     if (context != null && context.config != null && context.config.baseUrl != null) {
-        return p.join(context.config.baseUrl, path);
+        return pathContact(context.config.baseUrl, path);
     }
     return path;
 }

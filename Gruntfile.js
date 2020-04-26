@@ -1,29 +1,52 @@
+function modifyVersion() {
+    const package = require("./package.json");
+
+    let version = package.version || "1.0.0";
+    let arr = version.split(".");
+    arr[arr.length - 1] = (Number.parseInt(arr[arr.length - 1]) + 1).toString();
+    version = arr.join(".");
+    package.version = version;
+
+    const fs = require('fs');
+    let data = JSON.stringify(package, null, 4);
+    fs.writeFileSync("package.json", data, "utf8");
+};
+modifyVersion();
+
 const webpack_es6 = require('./webpack.config.js');
 
 let webpack_es6_min = Object.assign({}, webpack_es6, {
-    output: Object.assign({}, webpack_es6.output, { filename: "index.min.js" }),
+    output: Object.assign({}, webpack_es6.output, { filename: "static.min.js" }),
     mode: 'production',
 })
 
 let webpack_es5 = Object.assign({}, webpack_es6, {
     entry: __dirname + "/out-es5/static/index.js",//已多次提及的唯一入口文件
-    output: Object.assign({}, webpack_es6.output, { filename: "index.es5.js" }),
+    output: Object.assign({}, webpack_es6.output, { filename: "static.es5.js" }),
 })
 
 let webpack_es5_min = Object.assign({}, webpack_es5, {
-    output: Object.assign({}, webpack_es6.output, { filename: "index.es5.min.js" }),
+    output: Object.assign({}, webpack_es6.output, { filename: "static.es5.min.js" }),
     mode: 'production',
 })
 
+let externals = ["json!websiteConfig",
+    "text!admin_style_default",
+    'react', 'react-dom', 'less', 'lessjs',
+    'maishu-chitu', 'maishu-chitu-react', 'maishu-dilu',
+    'maishu-services-sdk', 'maishu-toolkit', 'maishu-ui-toolkit',
+    'maishu-wuzhui', 'maishu-wuzhui-helper',
+]
 let webpack_startup = Object.assign({}, webpack_es5, {
     entry: __dirname + "/out/static/startup.js",
     output: Object.assign({}, webpack_es6.output, { filename: "startup.js" }),
+    externals
 })
 
 let webpack_startup_min = Object.assign({}, webpack_es5, {
     entry: __dirname + "/out/static/startup.js",
     output: Object.assign({}, webpack_es6.output, { filename: "startup.min.js" }),
-    mode: 'production',
+    mode: 'production', externals
 })
 
 function modifyVersion() {

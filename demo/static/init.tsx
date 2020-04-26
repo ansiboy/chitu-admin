@@ -2,9 +2,15 @@ import { InitArguments } from "../../out/static/index";
 import React = require("react");
 
 export default function (args: InitArguments) {
-    // args.mainMaster.setMenu(
-    //     { name: "Temp", path: "#temp", icon: "icon-dashboard" }
-    // )
+    args.mainMaster.setMenu(
+        {
+            id: "temp", name: "Temp", path: "#temp", icon: "icon-dashboard",
+            children: [
+                { id: "home-index", name: "Home", path: "#home/index", parentId: "temp" }
+            ]
+        },
+        { id: "temp1", name: "Temp1", path: "#temp" }
+    )
     args.mainMaster.setToolbar(
         <ul className="toolbar">
             <li className="light-blue pull-right" onClick={() => this.logout()}>

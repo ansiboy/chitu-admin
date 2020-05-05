@@ -29,8 +29,9 @@ export function commonjsToAmd(originalCode: string) {
             .filter(o => o.object.type == "Identifier" && o.object.name == "exports")[0];
     }
 
+    console.assert(g.improts != null);
     // 没有 import 和 exports
-    let importsCount = program.body.filter(o => o.type == "ImportDeclaration").length;
+    let importsCount = program.body.filter(o => o.type == "ImportDeclaration").length + g.improts.length;
     if (importsCount == 0 && exportsNode == null) {
         return originalCode;
     }
@@ -40,22 +41,9 @@ export function commonjsToAmd(originalCode: string) {
     // import "exports";
     let exportsImport = Nodecreator.createImportDeclaration("exports", "exports");
     program.body.unshift(...[requireImport, exportsImport]);
-
-    // import "empty.less" 转换为 import "less!empty"
-    program.body.filter(o => o.type == "ImportDeclaration").forEach((s: babel.types.ImportDeclaration) => {
-        if (s.source == null || s.source.value == null)
-            return;
-
-        if (s.source.value.endsWith(".less") && s.source.value.startsWith("less!") == false) {
-            let path = s.source.value.substr(0, s.source.value.length - ".less".length);
-            s.source.value = `less!${path}`;
-        }
-        else if (s.source.value.endsWith(".scss")) {
-            let path = s.source.value;
-            s.source.value = `css!${path}`;
-        }
-    });
-
+    if (g.improts.length > 0) {
+        program.body.unshift(...g.improts);
+    }
 
     let options = {
         plugins: [
@@ -138,15 +126,28 @@ abstract class NodeConverter {
  */
 class RequireToImport extends NodeConverter {
 
+    improts: ImportDeclaration[] = [];
+
     transform(node: Node) {
         if (node == null)
             return null;
 
-        if (node.type == "VariableDeclaration") {
-            return this.processVariableDeclaration(node);
-        }
-        else if (node.type == "ExpressionStatement") {
-            return this.processRequireStatement(node);
+        if (node.type == "CallExpression" && node.callee.type == "Identifier" && node.callee.name == "require" &&
+            node.arguments.length == 1 && node.arguments[0].type == "StringLiteral") {
+            let moduleName = node.arguments[0].value;
+
+            if ((moduleName.endsWith(".scss") && !moduleName.startsWith("css!")) ||
+                (moduleName.endsWith(".css") && !moduleName.startsWith("css!"))) {
+                moduleName = `css!${node.arguments[0].value}`;
+                node.arguments[0].value = moduleName;
+            }
+            else if (moduleName.endsWith(".less") && !moduleName.startsWith("less!")) {
+                moduleName = `less!${node.arguments[0].value}`;
+                node.arguments[0].value = moduleName;
+            }
+
+            let s = this.createImportDeclaration(moduleName);
+            this.improts.push(s);
         }
 
         return super.transform(node);
@@ -190,7 +191,9 @@ class RequireToImport extends NodeConverter {
             node.expression.arguments.length == 1 && node.expression.arguments[0].type == "StringLiteral") {
             let moduleName = node.expression.arguments[0].value;
             let s = this.createImportDeclaration(moduleName);
-            return s;
+            this.improts.push(s);
+
+            return node;
         }
 
         return super.transform(node);

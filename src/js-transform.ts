@@ -12,7 +12,7 @@ import { errors } from "./errors";
  * 将 commonjs 代码转换为 amd
  * @param originalCode commonjs 代码
  */
-export function commonjsToAmd(originalCode: string) {
+export function commonjsToAmd(originalCode: string) {debugger
     let ast = babel.parseSync(originalCode, { plugins: ["@babel/transform-react-jsx"] }) as Node;
     let g = new RequireToImport();
     ast = g.transform(ast);

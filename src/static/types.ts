@@ -208,8 +208,6 @@ export interface PermissionConfig {
 
 export declare type WebsiteConfig = {
 	requirejs?: RequireConfig,
-	firstPanelWidth?: number,
-	secondPanelWidth?: number,
 	menuItems?: SimpleMenuItem[],
 	gateway?: string,
 }

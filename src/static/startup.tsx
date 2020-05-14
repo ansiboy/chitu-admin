@@ -9,6 +9,7 @@ import * as ui from "maishu-ui-toolkit";
 import { Less } from "maishu-ui-toolkit";
 import { Page } from "maishu-chitu";
 import { pathContact } from "maishu-toolkit";
+import websiteConfig = require("json!websiteConfig");
 
 export default async function startup(requirejs: RequireJS) {
 
@@ -37,7 +38,8 @@ export default async function startup(requirejs: RequireJS) {
 
     let service = app.createService(MyService);
     let config = await service.config();
-    loadDefaultStyle(requirejs, config.firstPanelWidth, config.secondPanelWidth);
+    // loadDefaultStyle(requirejs, config.firstPanelWidth, config.secondPanelWidth);
+    Less.renderByRequireJS("admin_style_default");
     console.assert(config.menuItems != null);
 
     let masterPages = await createMasterPages(app);
@@ -75,20 +77,20 @@ function renderElement(componentClass: React.ComponentClass, props: any, contain
     })
 }
 
-/** 加载样式文件 */
-function loadDefaultStyle(req: RequireJS, firstPanelWidth?: number, secondPanelWidth?: number) {
-    req(['text!admin_style_default'], str => {
-        if (firstPanelWidth) {
-            str = str + `\r\n@firstPanelWidth: ${firstPanelWidth}px;`
-        }
+// /** 加载样式文件 */
+// function loadDefaultStyle(req: RequireJS, firstPanelWidth?: number, secondPanelWidth?: number) {
+//     req(['text!admin_style_default'], str => {
+//         if (firstPanelWidth) {
+//             str = str + `\r\n@firstPanelWidth: ${firstPanelWidth}px;`
+//         }
 
-        if (secondPanelWidth) {
-            str = str + `\r\n@secondPanelWidth: ${secondPanelWidth}px;`
-        }
+//         if (secondPanelWidth) {
+//             str = str + `\r\n@secondPanelWidth: ${secondPanelWidth}px;`
+//         }
 
-        Less.renderByText(str, { name: "admin_style_default" });
-    })
-}
+//         Less.renderByText(str, { name: "admin_style_default" });
+//     })
+// }
 
 
 

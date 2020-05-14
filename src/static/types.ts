@@ -189,7 +189,10 @@ export type SimpleMenuItem = {
 	path?: string;
 	icon?: string;
 	children?: SimpleMenuItem[];
+	/** 允许使用该菜单的角色 */
 	roleIds?: string[],
+	/** 允许使用该菜单的用户 */
+	userId?: string,
 	sortNumber?: number,
 	parentId?: string,
 	hidden?: boolean,

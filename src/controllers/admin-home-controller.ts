@@ -238,8 +238,6 @@ export class HomeController extends Controller {
 
 let defaultConfig: WebsiteConfig = {
     requirejs: {},
-    firstPanelWidth: 130,
-    secondPanelWidth: 130,
     menuItems: []
 }
 

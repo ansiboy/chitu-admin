@@ -1,6 +1,6 @@
 {
     "name": "maishu-chitu-admin",
-    "version": "2.116.118",
+    "version": "2.116.120",
     "scripts": {
         "build": "grunt",
         "start": "grunt open"
@@ -27,7 +27,7 @@
         "maishu-requirejs-plugins": "^1.2.0",
         "maishu-toolkit": "^1.0.0",
         "maishu-ui-toolkit": "^1.7.0",
-        "maishu-wuzhui": "^1.16.14",
+        "maishu-wuzhui": "^1.17.18",
         "maishu-wuzhui-helper": "^1.8.37",
         "react": "^16.12.0",
         "react-dom": "^16.12.0",

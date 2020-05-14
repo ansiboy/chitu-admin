@@ -275,7 +275,7 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
                     </thead>
                 </table>
                 <div style={{
-                    height: "calc(100% - 160px)", width: 'calc(100% - 300px)',
+                    height: "calc(100% - 160px)", width: 'calc(100% - 244px)',
                     position: 'absolute', overflowY: "scroll", overflowX: "hidden"
                 }}>
                     <table ref={e => this.itemTable = e || this.itemTable}>

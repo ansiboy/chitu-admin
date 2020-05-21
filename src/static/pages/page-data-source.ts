@@ -1,6 +1,6 @@
 import { DataSource, DataSourceArguments, DataSourceSelectResult } from "maishu-wuzhui-helper";
 
-type PageDataSourceArguments<T> = DataSourceArguments<T> & {
+export type PageDataSourceArguments<T> = DataSourceArguments<T> & {
     search?: {
         placeholder?: string,
         execute: (searchText: string) => Promise<DataSourceSelectResult<T>>,

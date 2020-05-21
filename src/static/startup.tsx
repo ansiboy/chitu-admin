@@ -9,9 +9,8 @@ import * as ui from "maishu-ui-toolkit";
 import { Less } from "maishu-ui-toolkit";
 import { Page } from "maishu-chitu";
 import { pathContact } from "maishu-toolkit";
-import websiteConfig = require("json!websiteConfig");
 
-export default async function startup(requirejs: RequireJS) {
+export default async function startup(requirejs: IRequireJS) {
 
     console.assert(requirejs != null);
 
@@ -38,7 +37,6 @@ export default async function startup(requirejs: RequireJS) {
 
     let service = app.createService(MyService);
     let config = await service.config();
-    // loadDefaultStyle(requirejs, config.firstPanelWidth, config.secondPanelWidth);
     Less.renderByRequireJS("admin_style_default");
     console.assert(config.menuItems != null);
 
@@ -77,32 +75,14 @@ function renderElement(componentClass: React.ComponentClass, props: any, contain
     })
 }
 
-// /** 加载样式文件 */
-// function loadDefaultStyle(req: RequireJS, firstPanelWidth?: number, secondPanelWidth?: number) {
-//     req(['text!admin_style_default'], str => {
-//         if (firstPanelWidth) {
-//             str = str + `\r\n@firstPanelWidth: ${firstPanelWidth}px;`
-//         }
-
-//         if (secondPanelWidth) {
-//             str = str + `\r\n@secondPanelWidth: ${secondPanelWidth}px;`
-//         }
-
-//         Less.renderByText(str, { name: "admin_style_default" });
-//     })
-// }
-
-
-
 export type InitArguments = {
     app: Application,
     mainMaster: MainMasterPage,
-    requirejs: RequireJS
+    requirejs: IRequireJS
 }
 
 export class Application extends chitu_react.Application {
-    private requirejs: RequireJS;
-    constructor(requirejs: RequireJS, simpleContainer: HTMLElement, mainContainer: HTMLElement, blankContainer: HTMLElement) {
+    constructor(requirejs: IRequireJS, simpleContainer: HTMLElement, mainContainer: HTMLElement, blankContainer: HTMLElement) {
         super({
             container: {
                 simple: simpleContainer,
@@ -111,8 +91,7 @@ export class Application extends chitu_react.Application {
             }
         })
 
-        this.requirejs = requirejs;
-        this.error.add((sender, error, page) => errorHandle(error));
+        this.error.add((sender, error) => errorHandle(error));
 
         this.pageCreated.add((sender, page) => this.onPageCreated(page))
     }
@@ -147,7 +126,7 @@ export class Application extends chitu_react.Application {
 
 }
 
-export interface RequireJS {
+export interface IRequireJS {
     (modules: string[], success?: (arg0: any, arg1: any) => void, err?: (err) => void);
     ({ context: string }, modules: string[], success?: (arg0: any, arg1: any) => void, err?: (err) => void);
 }

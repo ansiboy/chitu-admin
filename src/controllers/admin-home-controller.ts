@@ -241,7 +241,7 @@ let defaultConfig: WebsiteConfig = {
     menuItems: []
 }
 
-let node_modules = 'node_modules';
+let node_modules = '/node_modules';
 let lib = 'lib';
 let defaultShim = {
     "react-dom": {

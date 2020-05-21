@@ -1,8 +1,9 @@
 import websiteConfig from "json!websiteConfig";
 import { Less } from "maishu-ui-toolkit";
+import { pathContact } from "maishu-toolkit";
 
-let context = websiteConfig.requirejs != null ? websiteConfig.requirejs.context : null;
-let req = requirejs.config({ context: context });
+let contextName = websiteConfig.requirejs != null ? websiteConfig.requirejs.context : null;
+let req = requirejs.config({ context: contextName });
 
 /** 对 requirejs 进行封装，方便使用 */
 export class RequireJS {
@@ -19,6 +20,14 @@ export class RequireJS {
         })
     }
     loadLess(stationPath: string) {
-        Less.renderByRequireJS(stationPath, { contextName: context });
+        Less.renderByRequireJS(stationPath, { contextName: contextName });
+    }
+    websitePath(stationPath: string) {
+        let contexts = requirejs.exec("contexts");
+        let context = contexts[contextName];
+        if (context != null && context.config != null && context.config.baseUrl != null) {
+            return pathContact(context.config.baseUrl, stationPath);
+        }
+        return stationPath;
     }
 }

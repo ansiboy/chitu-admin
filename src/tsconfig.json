@@ -8,6 +8,7 @@
         "declaration": true,
         "sourceMap": false,
         "jsx": "react",
-        "baseUrl": "./"
+        "baseUrl": "./",
+        "esModuleInterop": true,
     }
 }

@@ -1,7 +1,8 @@
 import { BasePage } from "./base-page";
 import {
     DataSource, DataControlField, CustomField, GridViewCell, GridViewEditableCell,
-    BoundField, GridViewCellControl, FieldValidate, createGridView,
+    BoundField, GridViewCellControl, FieldValidate, createGridView, boundField, BoundFieldParams,
+    dateTimeField, CheckboxListFieldParams, checkboxListField
 } from "maishu-wuzhui-helper";
 import React = require("react");
 import { createItemDialog, Dialog } from "./item-dialog";
@@ -14,8 +15,6 @@ import { buttonOnClick, confirm } from "maishu-ui-toolkit";
 interface BoundInputControlProps<T> extends InputControlProps<T> {
     boundField: BoundField<T>
 }
-
-
 
 /** 数据绑定列控件 */
 class BoundFieldControl<T> extends InputControl<T, BoundInputControlProps<T>>{
@@ -63,7 +62,11 @@ class BoundFieldControl<T> extends InputControl<T, BoundInputControlProps<T>>{
     }
 }
 
-export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> extends BasePage<P, S> {
+export interface DataListPageState {
+    tableSize?: { width: number, height: number }
+}
+
+export abstract class DataListPage<T, P extends PageProps = PageProps, S extends DataListPageState = DataListPageState> extends BasePage<P, S> {
     /** 操作列宽度 */
     protected CommandColumnWidth = 140;
     protected ScrollBarWidth = 18;
@@ -112,6 +115,42 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
                 }
             });
         }
+
+        window.addEventListener("resize", () => {
+            let height = window.innerHeight - 160;
+            let width = window.innerWidth - 80;
+            let firstMenuPanel = document.getElementsByClassName("first")[0] as HTMLElement;
+            let secondMenuPanel = document.getElementsByClassName("second")[0] as HTMLElement;
+            if (firstMenuPanel) {
+                width = width - firstMenuPanel.offsetWidth;
+            }
+            if (secondMenuPanel) {
+                width = width - secondMenuPanel.offsetWidth;
+            }
+
+            let tableSize: DataListPageState["tableSize"];
+            if (this.state != null) {
+                tableSize = this.state.tableSize;
+            }
+            if (tableSize == null || tableSize.height != height || tableSize.width != width) {
+                this.setState({ tableSize: { width, height } });
+            }
+        })
+    }
+
+    calcTableSize() {
+        let height = window.innerHeight - 160;
+        let width = window.innerWidth - 40;
+        let firstMenuPanel = document.getElementsByClassName("first")[0] as HTMLElement;
+        let secondMenuPanel = document.getElementsByClassName("second")[0] as HTMLElement;
+        if (firstMenuPanel) {
+            width = width - firstMenuPanel.offsetWidth;
+        }
+        if (secondMenuPanel) {
+            width = width - secondMenuPanel.offsetWidth;
+        }
+
+        return { width, height };
     }
 
     componentDidMount() {
@@ -147,12 +186,12 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
         this.dialog = createItemDialog(this.dataSource, this.itemName, editor);
         let addButton = this.addButton();
         let searchInput = this.searchControl();
-        return [addButton, searchInput,];
+        return [searchInput, addButton,];
     }
 
     /** 获取页面添加按钮 */
     protected addButton() {
-        let button = this.dataSource.canInsert ? <button key="btnAdd" className="btn btn-primary"
+        let button = this.dataSource.canInsert ? <button key="btnAdd" className="btn btn-primary btn-sm"
             onClick={() => this.dialog.show({} as T)}>
             <i className="icon-plus"></i>
             <span>添加</span>
@@ -230,7 +269,7 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
         let dataSource = this.dataSource as PageDataSource<T>;
         let search = dataSource.options ? dataSource.options.search : null;
         let searchInput = search ? <>
-            <input type="text" className="form-control pull-left" placeholder={search.placeholder || ""} style={{ width: 300 }}></input>
+            <input type="text" className="form-control pull-left input-sm" placeholder={search.placeholder || ""} style={{ width: 300 }}></input>
             <button className="btn btn-primary btn-sm">
                 <i className="icon-search"></i>
                 <span>搜索</span>
@@ -249,35 +288,33 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
     }
 
     render() {
+        let tableSize = this.state ? this.state.tableSize : this.calcTableSize();
         if (this.headerFixed) {
             let columns = this.columns || [];
             return <>
-                <table className="table table-striped table-bordered table-hover" style={{ margin: 0 }}>
-                    <thead>
-                        <tr>
-                            {columns.map((col, i) =>
-                                <th key={i} ref={e => {
-                                    if (!e) return;
-                                    if (!col.itemStyle)
-                                        return;
+                <div style={{ height: `${tableSize.height}px`, width: `${tableSize.width}px`, overflowY: "scroll", overflowX: "hidden" }}>
+                    <table className="table table-striped table-bordered table-hover" style={{ margin: 0 }}>
+                        <thead>
+                            <tr>
+                                {columns.map((col, i) =>
+                                    <th key={i} ref={e => {
+                                        if (!e) return;
+                                        if (!col.itemStyle)
+                                            return;
 
-                                    e.style.width = col.itemStyle["width"];
-                                    if (this.commandColumn == null && i == columns.length - 1) {
-                                        e.style.width = `calc(${e.style.width} + ${this.ScrollBarWidth}px)`
-                                    }
+                                        e.style.width = col.itemStyle["width"];
+                                        if (this.commandColumn == null && i == columns.length - 1) {
+                                            e.style.width = `calc(${e.style.width} + ${this.ScrollBarWidth}px)`
+                                        }
 
-                                }}>{col.headerText}</th>
-                            )}
-                            {this.commandColumn ? <th style={{ width: this.CommandColumnWidth + this.ScrollBarWidth }}>
-                                {this.commandColumn.headerText}
-                            </th> : null}
-                        </tr>
-                    </thead>
-                </table>
-                <div style={{
-                    height: "calc(100% - 160px)", width: 'calc(100% - 244px)',
-                    position: 'absolute', overflowY: "scroll", overflowX: "hidden"
-                }}>
+                                    }}>{col.headerText}</th>
+                                )}
+                                {this.commandColumn ? <th style={{ width: this.CommandColumnWidth + this.ScrollBarWidth }}>
+                                    {this.commandColumn.headerText}
+                                </th> : null}
+                            </tr>
+                        </thead>
+                    </table>
                     <table ref={e => this.itemTable = e || this.itemTable}>
 
                     </table>
@@ -289,6 +326,17 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S = {}> e
 
         </table>
     }
-}
 
+    boundField(params: BoundFieldParams<T>) {
+        return boundField(params);
+    }
+
+    dateTimeField(params: BoundFieldParams<T>) {
+        return dateTimeField(params);
+    }
+
+    checkboxListField<S>(params: CheckboxListFieldParams<T, S>): BoundField<T> {
+        return checkboxListField(params)
+    }
+}
 

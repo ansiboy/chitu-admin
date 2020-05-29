@@ -1,15 +1,17 @@
-import { startServer, VirtualDirectory, getLogger } from 'maishu-node-mvc'
+import { startServer, VirtualDirectory } from 'maishu-node-mvc'
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
 import { Settings, ServerContextData } from './settings';
-import { registerStation, PROJECT_NAME } from './global';
+import { registerStation, STATIC, CONTROLLERS, LIB } from './global';
 import { createDatabaseIfNotExists, getConnectionManager, createConnection, ConnectionOptions } from "maishu-node-data";
 
 
 export { Settings, ServerContextData } from "./settings";
 export { WebsiteConfig, PermissionConfig, PermissionConfigItem, SimpleMenuItem, RequireConfig } from "./static/types";
 export { StationInfo } from "./global";
+export { currentAppId, currentUserId } from "./decoders";
+export { commonjsToAmd } from "./js-transform";
 
 export async function start(settings: Settings) {
 
@@ -33,28 +35,14 @@ export async function start(settings: Settings) {
 
     rootDirectory = new VirtualDirectory(__dirname, ...rootPhysicalPaths);
 
-    let staticRootDirectory = rootDirectory.getDirectory("static");
-    let controllerDirectory = rootDirectory.getDirectory("controllers");
-    staticRootDirectory.addVirtualDirectory("lib", path.join(__dirname, "../lib"), "merge");
+    let staticRootDirectory = rootDirectory.getDirectory(STATIC);
+    let controllerDirectory = rootDirectory.getDirectory(CONTROLLERS);
+    staticRootDirectory.addVirtualDirectory(LIB, path.join(__dirname, "../lib"), "merge");
 
     console.assert(staticRootDirectory != null);
     console.assert(controllerDirectory != null);
 
-    let virtualPaths = {};
-
-    virtualPaths = Object.assign(settings.virtualPaths || {}, virtualPaths);
-    if (virtualPaths["node_modules"] == null) {
-        let cwd = process.cwd();
-        let logger = getLogger(PROJECT_NAME, settings.logLevel);
-        logger.info(`cwd path:${cwd}`);
-        let node_modules = path.join(cwd, "node_modules");
-        if (!node_modules)
-            throw errors.pathNotExists(node_modules);
-
-        logger.info(`node modules path is ${node_modules}.`);
-        virtualPaths["node_modules"] = node_modules;
-    }
-
+    let virtualPaths = settings.virtualPaths;
     for (let key in virtualPaths) {
         let physicalPath = virtualPaths[key];
         if (/\.[a-zA-Z]+$/.test(physicalPath)) {    // 如果名称是文件名 *.abc
@@ -88,12 +76,16 @@ export async function start(settings: Settings) {
         }
     }
 
+    settings.commonjsToAmd = settings.commonjsToAmd || [];
+    settings.commonjsToAmd.push("\\S*/static/\\S*.js")
+
 
     let serverContextData: ServerContextData = {
         staticRoot: staticRootDirectory,
         rootDirectory: rootDirectory,
         station: settings.station,
         websiteConfig: settings.websiteConfig,
+        commonjsToAmd: settings.commonjsToAmd,
     };
 
     serverContextData = Object.assign(settings.serverContextData || {}, serverContextData);

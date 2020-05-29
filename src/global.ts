@@ -4,6 +4,11 @@ import IO = require("socket.io-client");
 import { getLogger } from "maishu-node-mvc";
 
 export const PROJECT_NAME = "chitu-admin";
+export const STATIC = "static";
+export const CONTROLLERS = "controllers"
+export const LIB = "lib";
+export const NODE_MODULES = "node_modules";
+
 export interface StationInfo {
     path: string,
     ip: string,

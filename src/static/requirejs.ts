@@ -6,8 +6,8 @@ let contextName = websiteConfig.requirejs != null ? websiteConfig.requirejs.cont
 let req = requirejs.config({ context: contextName });
 
 /** 对 requirejs 进行封装，方便使用 */
-export class RequireJS {
-    loadjs(modules: string[]): Promise<any[]> {
+export class Requirejs {
+    static loadjs(modules: string[]): Promise<any[]> {
         return new Promise<any[]>((resolove, reject) => {
             req(modules,
                 function (...args: any[]) {
@@ -19,10 +19,10 @@ export class RequireJS {
             )
         })
     }
-    loadLess(stationPath: string) {
+    static loadLess(stationPath: string) {
         Less.renderByRequireJS(stationPath, { contextName: contextName });
     }
-    websitePath(stationPath: string) {
+    static websitePath(stationPath: string) {
         let contexts = requirejs.exec("contexts");
         let context = contexts[contextName];
         if (context != null && context.config != null && context.config.baseUrl != null) {

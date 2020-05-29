@@ -10,7 +10,7 @@ import { Less } from "maishu-ui-toolkit";
 import { Page } from "maishu-chitu";
 import { pathContact } from "maishu-toolkit";
 
-export default async function startup(requirejs: IRequireJS) {
+export default async function startup(requirejs: RequireJS) {
 
     console.assert(requirejs != null);
 
@@ -78,11 +78,11 @@ function renderElement(componentClass: React.ComponentClass, props: any, contain
 export type InitArguments = {
     app: Application,
     mainMaster: MainMasterPage,
-    requirejs: IRequireJS
+    requirejs: RequireJS
 }
 
 export class Application extends chitu_react.Application {
-    constructor(requirejs: IRequireJS, simpleContainer: HTMLElement, mainContainer: HTMLElement, blankContainer: HTMLElement) {
+    constructor(requirejs: RequireJS, simpleContainer: HTMLElement, mainContainer: HTMLElement, blankContainer: HTMLElement) {
         super({
             container: {
                 simple: simpleContainer,
@@ -126,7 +126,7 @@ export class Application extends chitu_react.Application {
 
 }
 
-export interface IRequireJS {
+export interface RequireJS {
     (modules: string[], success?: (arg0: any, arg1: any) => void, err?: (err) => void);
     ({ context: string }, modules: string[], success?: (arg0: any, arg1: any) => void, err?: (err) => void);
 }

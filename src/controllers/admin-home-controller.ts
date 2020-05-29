@@ -9,7 +9,7 @@ import { commonjsToAmd } from "../js-transform";
 import { StatusCode, StatusCodes } from "maishu-chitu-service";
 import { errors } from "../errors";
 import JSON5 = require("json5");
-
+import * as T from "maishu-toolkit";
 /** 
  * Home 控制器 
  */
@@ -144,31 +144,9 @@ export class HomeController extends Controller {
         return r;
     }
 
-    @action((virtualPath) => {
-        if (virtualPath.startsWith("/")) {
-            virtualPath = virtualPath.substr(1);
-        }
-
-        //===========================================================================
-        // maishu 开头的库，在没有打包或转化前，都是 commonjs
-        let maishStaticOutput = /maishu-\S+\/static\/\S+/;
-
-        let requiredConvertToAMD = maishStaticOutput.exec(virtualPath) != null;
-        //===========================================================================
-        if (virtualPath.startsWith("lib") || (virtualPath.startsWith("node_modules") && !requiredConvertToAMD)) {
-            return null;
-        }
-
-        let arr = virtualPath.split(".");
-        if (arr.length == 2 && arr[1] == "js") {
-            return { "_": arr[0] }
-        }
-
-        return null;
-    })
+    @action("*.js")
     commonjsToAmd(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
         console.assert(data != null);
-
 
         if (data["_"] == "clientjs_init") {
             return this.initjs(context);
@@ -192,26 +170,28 @@ export class HomeController extends Controller {
             return this.content(`File '${jsFileVirtualPath}' or '${jsxFileVirtualPath}' not found.`, StatusCode.NotFound);
         }
 
-
-        let buffer = fs.readFileSync(filePhysicalPath);
-        let originalCode = buffer.toString();
+        let convertToAmd: boolean = false;
+        let toAmd = context.data.commonjsToAmd || [];
+        for (let i = 0; i < toAmd.length; i++) {
+            let regex = new RegExp(toAmd[i]);
+            if (regex.test(filePhysicalPath)) {
+                convertToAmd = true;
+                break;
+            }
+        }
 
         //===========================================================================
-        // maishu 开头的库，在没有打包或转化前，都是 commonjs
-        // let maishStaticOutput = /maishu-\S+\/static\/\S+/;
-
-        // let requiredConvertToAMD = maishStaticOutput.exec(filePath);
+        let buffer = fs.readFileSync(filePhysicalPath);
+        let originalCode = buffer.toString();
+        if (convertToAmd == false) {
+            let content = `/** MVC Action: commonjsToAmd, source file is ${filePhysicalPath} */ \r\n` + originalCode;
+            return this.content(content, { physicalPath: filePhysicalPath });
+        }
         //===========================================================================
 
         let content: string = null;
-        // /** lib 或者 node_modules 文件夹的 js ，默认支持 adm */
-        // if (filePath.startsWith("lib") || filePath.startsWith("node_modules") && !requiredConvertToAMD) {
-        //     content = `/** MVC Action: commonjsToAmd, source file is ${filePath} */ \r\n` + originalCode;
-        // }
-        // else {
         let code = commonjsToAmd(originalCode);
         content = `/** MVC Action: commonjsToAmd, transform to javascript amd, source file is ${filePhysicalPath} */ \r\n` + code;
-        // }
 
         return this.content(content, { physicalPath: filePhysicalPath });
     }

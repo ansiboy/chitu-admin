@@ -10,6 +10,7 @@ import { Less } from "maishu-ui-toolkit";
 import { Page } from "maishu-chitu";
 import { pathContact } from "maishu-toolkit";
 
+let app: Application | null = null;
 export default async function startup(requirejs: RequireJS) {
 
     console.assert(requirejs != null);
@@ -28,7 +29,7 @@ export default async function startup(requirejs: RequireJS) {
         }
     }
 
-    let app = new Application(
+    app = new Application(
         requirejs,
         document.getElementById('simple-master'),
         document.getElementById('main-master'),
@@ -41,7 +42,7 @@ export default async function startup(requirejs: RequireJS) {
     console.assert(config.menuItems != null);
 
     let masterPages = await createMasterPages(app);
-    masterPages.default.setMenu(...config.menuItems);
+    // masterPages.default.setMenu(...config.menuItems);
 
     requirejs(["clientjs_init.js"], function (initModule) {
         console.assert(masterPages.default != null);
@@ -91,7 +92,7 @@ export class Application extends chitu_react.Application {
             }
         })
 
-        this.error.add((sender, error) => errorHandle(error));
+        this.error.add((sender, error) => errorHandle(error, this));
 
         this.pageCreated.add((sender, page) => this.onPageCreated(page))
     }
@@ -127,18 +128,22 @@ export class Application extends chitu_react.Application {
 }
 
 export interface RequireJS {
-    (modules: string[], success?: (arg0: any, arg1: any) => void, err?: (err) => void);
-    ({ context: string }, modules: string[], success?: (arg0: any, arg1: any) => void, err?: (err) => void);
+    (modules: string[], success?: (arg0: any, arg1: any) => void, err?: (err) => void): any;
+    (arg: { context: string }, modules: string[], success?: (arg0: any, arg1: any) => void, err?: (err: Error) => void);
 }
 
 
-let errorMessages = {
+let errorMessages: { [key: string]: string } = {
     "726": "没有权限访问"
 }
 
-export function errorHandle(error: Error) {
+export function errorHandle(error: Error, app?: Application) {
     error.message = errorMessages[error.name] || error.message;
-
+    if (error.name == "718" && app != null) {
+        // app.redirect("login");
+        location.hash = "#login";
+        return;
+    }
     ui.alert({
         title: "错误",
         message: error.message

@@ -1,4 +1,5 @@
-export let errors = {
+import { Errors } from "maishu-toolkit";
+export let errors = Object.assign(new Errors(), {
     elementNotExistsWithName(name: string) {
         let msg = `Element with name ${name} is not exists.`
         let error = new Error(msg)
@@ -85,5 +86,21 @@ export let errors = {
     unknonwResourceName(resourceName: string) {
         let msg = `Resource name '${resourceName}' is unknown.`
         return new Error(msg)
+    },
+    settingItemNull<T>(name: keyof T) {
+        let msg = `Setting item '${name}' is null.`;
+        return new Error(msg);
+    },
+    notAbsolutePath(path: string) {
+        let msg = `Path "${path}" is not a absolute path.`;
+        return new Error(msg);
+    },
+    pathNotExists(path: string) {
+        let msg = `Path "${path}" is not exists.`;
+        return new Error(msg);
+    },
+    fileNotExists(path: string) {
+        let msg = `File "${path}" is not exists.`;
+        return new Error(msg);
     }
-}
+})

@@ -62,8 +62,15 @@ export abstract class Service extends ChiTuSerivce {
         return r;
     }
 
-    localUrl(path: string) {
-        return stationPath(path);
+    localServiceUrl(path: string) {
+        let hash = location.hash;
+        if (hash != null && hash.indexOf(":") > 0) {
+            hash = hash.substr(1);
+            let arr = hash.split(":");
+            let r = pathContact(arr[0], path);
+            return r;
+        }
+        return path;
     }
 
     get applicationId() {

@@ -10,5 +10,6 @@
         "jsx": "react",
         "baseUrl": "./",
         "esModuleInterop": true,
+        "strict": false
     }
 }

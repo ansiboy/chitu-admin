@@ -77,8 +77,8 @@ export async function start(settings: Settings) {
     }
 
     settings.commonjsToAmd = settings.commonjsToAmd || [];
-    settings.commonjsToAmd.push("\\S*/static/\\S*.js")
-
+    settings.commonjsToAmd.push(`\\S*/${STATIC}/\\S*.js`);
+    settings.commonjsToAmd.push(`\\S*/maishu-\\S*/out/\\S*.js`);
 
     let serverContextData: ServerContextData = {
         staticRoot: staticRootDirectory,
@@ -91,7 +91,7 @@ export async function start(settings: Settings) {
     serverContextData = Object.assign(settings.serverContextData || {}, serverContextData);
     // await createDatabase(settings, rootDirectory);
 
-    startServer({
+    let r = startServer({
         port: settings.port,
         staticRootDirectory: staticRootDirectory,
         controllerDirectory,
@@ -105,7 +105,11 @@ export async function start(settings: Settings) {
         registerStation(serverContextData, settings);
     }
 
-    return { rootDirectory }
+    return Object.assign(r, {
+        rootDirectory: Object.assign(rootDirectory, {
+            static: staticRootDirectory, controller: controllerDirectory
+        })
+    });
 }
 
 

@@ -6,10 +6,9 @@ import { ServerContextData } from "../settings";
 import { WebsiteConfig } from "../static/types";
 import { PROJECT_NAME } from "../global";
 import { commonjsToAmd } from "../js-transform";
-import { StatusCode, StatusCodes } from "maishu-chitu-service";
 import { errors } from "../errors";
 import JSON5 = require("json5");
-import * as T from "maishu-toolkit";
+
 /** 
  * Home 控制器 
  */
@@ -162,12 +161,13 @@ export class HomeController extends Controller {
         let jsFileVirtualPath = filePath + ".js";
         let jsxFileVirtualPath = filePath + ".jsx";
 
-        let filePhysicalPath = context.data.staticRoot.getFile(jsFileVirtualPath);
+        let filePhysicalPath = context.data.staticRoot.getFile(jsFileVirtualPath, false);
         if (filePhysicalPath == null)
-            filePhysicalPath = context.data.staticRoot.getFile(jsxFileVirtualPath);
+            filePhysicalPath = context.data.staticRoot.getFile(jsxFileVirtualPath, false);
 
         if (filePhysicalPath == null) {
-            return this.content(`File '${jsFileVirtualPath}' or '${jsxFileVirtualPath}' not found.`, StatusCode.NotFound);
+            let error = new Error(`File '${jsFileVirtualPath}' or '${jsxFileVirtualPath}' not found, search in ${context.data.staticRoot.getPhysicalPaths()}.`);
+            throw error;
         }
 
         let convertToAmd: boolean = false;

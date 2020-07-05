@@ -14,10 +14,16 @@
     margin-right: 0px;
 }
 
-.main .pagination {
+.main .pagination,
+.modal .pagination {
     margin  : 0;
     position: relative;
     top     : 3px;
+    float   : right;
+}
+
+.modal .pagingBar .total {
+    float: left;
 }
 
 ul.pagination {
@@ -69,6 +75,19 @@ ul.pagination {
 
 td button {
     margin-right: 4px;
+    width       : unset;
+}
+
+.tabbable button {
+    width: unset;
+}
+
+.btn {
+    width: unset;
+}
+
+.btn.btn-block {
+    width: 100%;
 }
 
 td button:last-child {

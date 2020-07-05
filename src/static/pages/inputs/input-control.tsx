@@ -1,8 +1,12 @@
 import React = require("react");
-import { FieldValidate } from "maishu-wuzhui-helper";
+// import { FieldValidate } from "maishu-wuzhui-helper";
+import { BoundFieldParams } from "maishu-wuzhui-helper";
 
-export interface InputControlProps<T> extends FieldValidate {
+// type FieldValidate = BoundFieldParams<any>["validateRules"][0];
+
+export interface InputControlProps<T> {
     dataField: keyof T,
+    validateRules: BoundFieldParams<any>["validateRules"]
 }
 
 export interface InputControlState {

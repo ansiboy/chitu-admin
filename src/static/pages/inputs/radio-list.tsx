@@ -1,4 +1,4 @@
-import { DataSource } from "maishu-wuzhui-helper"
+import { DataSource, BoundFieldParams } from "maishu-wuzhui-helper"
 import React = require("react")
 import { InputControl } from "./input-control";
 import { rules } from "maishu-dilu";
@@ -10,6 +10,7 @@ interface RadioFieldProps<T, S> {
     dataSource: DataSource<S>,
     nameField: Extract<keyof S, string>,
     valueField: Extract<keyof S, string>,
+    validateRules: BoundFieldParams<any>["validateRules"],
 }
 
 interface RadioFieldState {

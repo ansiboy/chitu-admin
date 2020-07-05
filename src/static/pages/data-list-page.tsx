@@ -1,7 +1,7 @@
 import { BasePage } from "./base-page";
 import {
     DataSource, DataControlField, CustomField, GridViewCell, GridViewEditableCell,
-    BoundField, GridViewCellControl, FieldValidate, createGridView, boundField, BoundFieldParams,
+    BoundField, GridViewCellControl, createGridView, boundField, BoundFieldParams,
     dateTimeField, CheckboxListFieldParams, checkboxListField
 } from "maishu-wuzhui-helper";
 import React = require("react");
@@ -97,25 +97,6 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S extends
     constructor(props: P) {
         super(props);
 
-        if (this.showCommandColumn) {
-            let it = this;
-            this.commandColumn = new CustomField<T>({
-                headerText: "操作",
-                headerStyle: { textAlign: "center", width: `${this.CommandColumnWidth}px` },
-                itemStyle: { textAlign: "center", width: `${this.CommandColumnWidth}px` },
-                createItemCell(dataItem: T) {
-                    let cell = new GridViewCell();
-                    ReactDOM.render(<>
-                        {it.leftCommands(dataItem)}
-                        {it.editButton(dataItem)}
-                        {it.deleteButton(dataItem)}
-                        {it.rightCommands(dataItem)}
-                    </>, cell.element);
-                    return cell;
-                }
-            });
-        }
-
         window.addEventListener("resize", () => {
             let height = window.innerHeight - 160;
             let width = window.innerWidth - 80;
@@ -155,6 +136,25 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S extends
 
     componentDidMount() {
         this.columns = this.columns || [];
+
+        if (this.showCommandColumn) {
+            let it = this;
+            this.commandColumn = new CustomField<T>({
+                headerText: "操作",
+                headerStyle: { textAlign: "center", width: `${this.CommandColumnWidth}px` },
+                itemStyle: { textAlign: "center", width: `${this.CommandColumnWidth}px` },
+                createItemCell(dataItem: T, cellElement) {
+                    let cell = new GridViewCell(cellElement);
+                    ReactDOM.render(<>
+                        {it.leftCommands(dataItem)}
+                        {it.editButton(dataItem)}
+                        {it.deleteButton(dataItem)}
+                        {it.rightCommands(dataItem)}
+                    </>, cell.element);
+                    return cell;
+                }
+            });
+        }
         createGridView({
             element: this.itemTable,
             dataSource: this.dataSource,
@@ -171,7 +171,7 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S extends
                 <div key={i} className="form-group clearfix input-control">
                     <label>{col.headerText}</label>
                     <BoundFieldControl boundField={col as BoundField<any>} dataField={(col as BoundField<any>).dataField}
-                        validateRules={(col as FieldValidate).validateRules} />
+                        validateRules={(col as BoundField<T>).validateRules} />
                 </div>
             )}
         </>

@@ -1,4 +1,4 @@
-import { startServer, VirtualDirectory } from 'maishu-node-mvc'
+import { startServer, VirtualDirectory, createVirtualDirecotry } from 'maishu-node-mvc'
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
@@ -33,28 +33,32 @@ export async function start(settings: Settings) {
             throw errors.pathNotExists(rootPhysicalPaths[i]);
     }
 
-    rootDirectory = new VirtualDirectory(__dirname, ...rootPhysicalPaths);
+    rootDirectory = createVirtualDirecotry(__dirname, ...rootPhysicalPaths);//new VirtualDirectory(__dirname); //
 
-    let staticRootDirectory = rootDirectory.getDirectory(STATIC);
-    let controllerDirectory = rootDirectory.getDirectory(CONTROLLERS);
-    staticRootDirectory.addVirtualDirectory(LIB, path.join(__dirname, "../lib"), "merge");
+    let staticRootDirectory = rootDirectory.findDirectory(`/${STATIC}`);
+    let controllerDirectory = rootDirectory.findDirectory(`/${CONTROLLERS}`);
+    staticRootDirectory.addPath(`/${LIB}`, path.join(__dirname, "../lib"));
 
     console.assert(staticRootDirectory != null);
     console.assert(controllerDirectory != null);
 
     let virtualPaths = settings.virtualPaths;
-    for (let key in virtualPaths) {
-        let physicalPath = virtualPaths[key];
-        if (/\.[a-zA-Z]+$/.test(physicalPath)) {    // 如果名称是文件名 *.abc
-            staticRootDirectory.addVirtualFile(key, physicalPath)
-        }
-        else {
-            staticRootDirectory.addVirtualDirectory(key, physicalPath, "merge");
-        }
+    for (let virtualPath in virtualPaths) {
+        let physicalPath = virtualPaths[virtualPath];
+        // if (/\.[a-zA-Z]+$/.test(physicalPath)) {    // 如果名称是文件名 *.abc
+        //     staticRootDirectory.addVirtualFile(key, physicalPath)
+        // }
+        // else {
+        //     staticRootDirectory.addVirtualDirectory(key, physicalPath, "merge");
+        // }
+        if (virtualPath[0] != "/")
+            virtualPath = "/" + virtualPath;
+
+        staticRootDirectory.addPath(virtualPath, physicalPath)
     }
 
     //处理数据库文件
-    let childFiles = rootDirectory.getChildFiles();
+    let childFiles = rootDirectory.files();
     let entitiesPhysicalPath = childFiles["entities.js"];
     if (settings.db != null && entitiesPhysicalPath != null) {
         let connectionManager = getConnectionManager();
@@ -86,6 +90,7 @@ export async function start(settings: Settings) {
         station: settings.station,
         websiteConfig: settings.websiteConfig,
         commonjsToAmd: settings.commonjsToAmd,
+
     };
 
     serverContextData = Object.assign(settings.serverContextData || {}, serverContextData);
@@ -99,17 +104,19 @@ export async function start(settings: Settings) {
         bindIP: settings.bindIP,
         headers: settings.headers,
         serverContextData: serverContextData,
+
     });
 
     if (settings.station != null) {
         registerStation(serverContextData, settings);
     }
 
-    return Object.assign(r, {
-        rootDirectory: Object.assign(rootDirectory, {
-            static: staticRootDirectory, controller: controllerDirectory
-        })
-    });
+    // return Object.assign(r, {
+    //     rootDirectory: Object.assign(rootDirectory, {
+    //         static: staticRootDirectory, controller: controllerDirectory
+    //     })
+    // });
+    return r;
 }
 
 

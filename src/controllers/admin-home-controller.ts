@@ -36,7 +36,7 @@ export class HomeController extends Controller {
             }
         })`;
 
-        let initJSPath = context.data.staticRoot.getFile("init.js")
+        let initJSPath = context.data.staticRoot.findFile("init.js")
         if (initJSPath && fs.existsSync(initJSPath)) {
             let buffer = fs.readFileSync(initJSPath);
             initJS = buffer.toString();
@@ -55,7 +55,7 @@ export class HomeController extends Controller {
         console.assert(context.data.staticRoot != null);
 
         let clientFiles = [];
-        let staticDir = context.data.rootDirectory.getDirectory("static");
+        let staticDir = context.data.rootDirectory.findDirectory("static");
         if (staticDir == null) {
             let logger = getLogger(PROJECT_NAME);
             logger.warn("Static directory is not exists.");
@@ -65,13 +65,13 @@ export class HomeController extends Controller {
         let stack: VirtualDirectory[] = [staticDir];
         while (stack.length > 0) {
             let dir = stack.pop();
-            let filesDic = dir.getChildFiles();
+            let filesDic = dir.files();
             let files = Object.getOwnPropertyNames(filesDic)
-                .map(n => path.join(dir.getVirtualPath().substr("static/".length), n));
+                .map(n => path.join(dir.virtualPath.substr("static/".length), n));
 
             clientFiles.push(...files);
 
-            let childrenDic = dir.getChildDirectories();
+            let childrenDic = dir.directories();
             for (let name in childrenDic) {
 
                 if (name == "node_modules" || name == "lib")
@@ -104,7 +104,7 @@ export class HomeController extends Controller {
         let staticConfigPath: string;
 
         if (data.websiteConfig == null) {
-            staticConfigPath = data.rootDirectory.getFile("website-config.js"); //path.join(data.rootDirectory, "website-config.js");
+            staticConfigPath = data.rootDirectory.findFile("website-config.js"); //path.join(data.rootDirectory, "website-config.js");
         }
         else {
             config = data.websiteConfig;
@@ -161,12 +161,12 @@ export class HomeController extends Controller {
         let jsFileVirtualPath = filePath + ".js";
         let jsxFileVirtualPath = filePath + ".jsx";
 
-        let filePhysicalPath = context.data.staticRoot.getFile(jsFileVirtualPath, false);
+        let filePhysicalPath = context.data.staticRoot.findFile(jsFileVirtualPath);
         if (filePhysicalPath == null)
-            filePhysicalPath = context.data.staticRoot.getFile(jsxFileVirtualPath, false);
+            filePhysicalPath = context.data.staticRoot.findFile(jsxFileVirtualPath);
 
         if (filePhysicalPath == null) {
-            let error = new Error(`File '${jsFileVirtualPath}' or '${jsxFileVirtualPath}' not found, search in ${context.data.staticRoot.getPhysicalPaths()}.`);
+            let error = new Error(`File '${jsFileVirtualPath}' or '${jsxFileVirtualPath}' not found, search in ${context.data.staticRoot.physicalPath}.`);
             throw error;
         }
 
@@ -202,9 +202,9 @@ export class HomeController extends Controller {
         let jsonFilePath = data["_"] + ".json";
         let json5FilePath = data["_"] + ".json5";
 
-        let filePhysicalPath = context.data.rootDirectory.getFile(jsonFilePath);
+        let filePhysicalPath = context.data.rootDirectory.findFile(jsonFilePath);
         if (filePhysicalPath == null)
-            filePhysicalPath = context.data.rootDirectory.getFile(json5FilePath);
+            filePhysicalPath = context.data.rootDirectory.findFile(json5FilePath);
 
         if (fs.existsSync(filePhysicalPath) == false)
             throw errors.fileNotExists(`${jsonFilePath} or ${json5FilePath}`);

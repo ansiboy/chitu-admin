@@ -21,7 +21,7 @@ export interface Settings<T = any> extends MVCSettings {
     bindIP?: string,
     virtualPaths?: { [path: string]: string },
     headers?: NodeMVCConfig["headers"],
-    actionFilters?: NodeMVCConfig["requestFilters"],
+    // actionFilters?: NodeMVCConfig["requestFilters"],
     logLevel?: LogLevel,
     station?: {
         // 网关地址

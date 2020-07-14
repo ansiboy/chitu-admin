@@ -136,15 +136,19 @@ class RequireToImport extends NodeConverter {
             node.arguments.length == 1 && node.arguments[0].type == "StringLiteral") {
             let moduleName = node.arguments[0].value;
 
-            if ((moduleName.endsWith(".scss") && !moduleName.startsWith("css!")) ||
-                (moduleName.endsWith(".css") && !moduleName.startsWith("css!"))) {
+            // && !moduleName.startsWith("css!")) ||
+            // (moduleName.endsWith(".css") && !moduleName.startsWith("css!")) ||
+            // (moduleName.endsWith(".less") && !moduleName.startsWith("css!"))
+
+
+            if ((moduleName.endsWith(".scss") || moduleName.endsWith(".css") || moduleName.endsWith(".less")) && !moduleName.startsWith("css!")) {
                 moduleName = `css!${node.arguments[0].value}`;
                 node.arguments[0].value = moduleName;
             }
-            else if (moduleName.endsWith(".less") && !moduleName.startsWith("less!")) {
-                moduleName = `less!${node.arguments[0].value}`;
-                node.arguments[0].value = moduleName;
-            }
+            // else if (moduleName.endsWith(".less") && !moduleName.startsWith("less!")) {
+            //     moduleName = `less!${node.arguments[0].value}`;
+            //     node.arguments[0].value = moduleName;
+            // }
 
             let s = this.createImportDeclaration(moduleName);
             this.improts.push(s);

@@ -7,6 +7,7 @@ import { registerStation, STATIC, CONTROLLERS, LIB } from './global';
 import { createDatabaseIfNotExists, getConnectionManager, createConnection, ConnectionOptions } from "maishu-node-data";
 import { StaticFileRequestProcessor } from '../../node-mvc/node_modules/maishu-node-web-server/out';
 import { createJavascriptFileProcessor } from './file-processors/javascript';
+import { createLessFileProcessor } from './file-processors/less';
 
 
 export { Settings, ServerContextData } from "./settings";
@@ -115,8 +116,11 @@ export async function start(settings: Settings) {
 
     let p = server.requestProcessors.filter(o => o instanceof StaticFileRequestProcessor)[0] as StaticFileRequestProcessor;
     if (p) {
-        let f = createJavascriptFileProcessor(staticRootDirectory, settings.commonjsToAmd);
-        p.fileProcessors["js"] = f;
+        let jsProcessor = createJavascriptFileProcessor(staticRootDirectory, settings.commonjsToAmd);
+        p.fileProcessors["js"] = jsProcessor;
+
+        let lessProcessor = createLessFileProcessor(staticRootDirectory);
+        p.fileProcessors["less"] = lessProcessor;
     }
 
     return server;

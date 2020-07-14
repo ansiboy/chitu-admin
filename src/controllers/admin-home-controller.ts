@@ -143,58 +143,58 @@ export class HomeController extends Controller {
         return r;
     }
 
-    @action("*.js")
-    commonjsToAmd(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
-        console.assert(data != null);
+    // @action("*.js")
+    // commonjsToAmd(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
+    //     console.assert(data != null);
 
-        if (data["_"] == "clientjs_init") {
-            return this.initjs(context);
-        }
+    //     if (data["_"] == "clientjs_init") {
+    //         return this.initjs(context);
+    //     }
 
-        let filePath = data["_"] as string;
-        console.assert(filePath != null);
-        if (filePath[0] == '/') {
-            filePath = filePath.substr(1);
-        }
+    //     let filePath = data["_"] as string;
+    //     console.assert(filePath != null);
+    //     if (filePath[0] == '/') {
+    //         filePath = filePath.substr(1);
+    //     }
 
 
-        let jsFileVirtualPath = filePath + ".js";
-        let jsxFileVirtualPath = filePath + ".jsx";
+    //     let jsFileVirtualPath = filePath + ".js";
+    //     let jsxFileVirtualPath = filePath + ".jsx";
 
-        let filePhysicalPath = context.data.staticRoot.findFile(jsFileVirtualPath);
-        if (filePhysicalPath == null)
-            filePhysicalPath = context.data.staticRoot.findFile(jsxFileVirtualPath);
+    //     let filePhysicalPath = context.data.staticRoot.findFile(jsFileVirtualPath);
+    //     if (filePhysicalPath == null)
+    //         filePhysicalPath = context.data.staticRoot.findFile(jsxFileVirtualPath);
 
-        if (filePhysicalPath == null) {
-            let error = new Error(`File '${jsFileVirtualPath}' or '${jsxFileVirtualPath}' not found, search in ${context.data.staticRoot.physicalPath}.`);
-            throw error;
-        }
+    //     if (filePhysicalPath == null) {
+    //         let error = new Error(`File '${jsFileVirtualPath}' or '${jsxFileVirtualPath}' not found, search in ${context.data.staticRoot.physicalPath}.`);
+    //         throw error;
+    //     }
 
-        let convertToAmd: boolean = false;
-        let toAmd = context.data.commonjsToAmd || [];
-        for (let i = 0; i < toAmd.length; i++) {
-            let regex = new RegExp(toAmd[i]);
-            if (regex.test(filePhysicalPath)) {
-                convertToAmd = true;
-                break;
-            }
-        }
+    //     let convertToAmd: boolean = false;
+    //     let toAmd = context.data.commonjsToAmd || [];
+    //     for (let i = 0; i < toAmd.length; i++) {
+    //         let regex = new RegExp(toAmd[i]);
+    //         if (regex.test(filePhysicalPath)) {
+    //             convertToAmd = true;
+    //             break;
+    //         }
+    //     }
 
-        //===========================================================================
-        let buffer = fs.readFileSync(filePhysicalPath);
-        let originalCode = buffer.toString();
-        if (convertToAmd == false) {
-            let content = `/** MVC Action: commonjsToAmd, source file is ${filePhysicalPath} */ \r\n` + originalCode;
-            return this.content(content, { physicalPath: filePhysicalPath });
-        }
-        //===========================================================================
+    //     //===========================================================================
+    //     let buffer = fs.readFileSync(filePhysicalPath);
+    //     let originalCode = buffer.toString();
+    //     if (convertToAmd == false) {
+    //         let content = `/** MVC Action: commonjsToAmd, source file is ${filePhysicalPath} */ \r\n` + originalCode;
+    //         return this.content(content, { physicalPath: filePhysicalPath });
+    //     }
+    //     //===========================================================================
 
-        let content: string = null;
-        let code = commonjsToAmd(originalCode);
-        content = `/** MVC Action: commonjsToAmd, transform to javascript amd, source file is ${filePhysicalPath} */ \r\n` + code;
+    //     let content: string = null;
+    //     let code = commonjsToAmd(originalCode);
+    //     content = `/** MVC Action: commonjsToAmd, transform to javascript amd, source file is ${filePhysicalPath} */ \r\n` + code;
 
-        return this.content(content, { physicalPath: filePhysicalPath });
-    }
+    //     return this.content(content, { physicalPath: filePhysicalPath });
+    // }
 
     /** 将 json5 文件转换为标准的 json */
     @action("*.json", "*.json5")

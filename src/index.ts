@@ -5,6 +5,8 @@ import fs = require("fs");
 import { Settings, ServerContextData } from './settings';
 import { registerStation, STATIC, CONTROLLERS, LIB } from './global';
 import { createDatabaseIfNotExists, getConnectionManager, createConnection, ConnectionOptions } from "maishu-node-data";
+import { StaticFileRequestProcessor } from '../../node-mvc/node_modules/maishu-node-web-server/out';
+import { createJavascriptFileProcessor } from './file-processors/javascript';
 
 
 export { Settings, ServerContextData } from "./settings";
@@ -96,7 +98,7 @@ export async function start(settings: Settings) {
     serverContextData = Object.assign(settings.serverContextData || {}, serverContextData);
     // await createDatabase(settings, rootDirectory);
 
-    let r = startServer({
+    let server = startServer({
         port: settings.port,
         staticRootDirectory: staticRootDirectory,
         controllerDirectory,
@@ -111,12 +113,13 @@ export async function start(settings: Settings) {
         registerStation(serverContextData, settings);
     }
 
-    // return Object.assign(r, {
-    //     rootDirectory: Object.assign(rootDirectory, {
-    //         static: staticRootDirectory, controller: controllerDirectory
-    //     })
-    // });
-    return r;
+    let p = server.requestProcessors.filter(o => o instanceof StaticFileRequestProcessor)[0] as StaticFileRequestProcessor;
+    if (p) {
+        let f = createJavascriptFileProcessor(staticRootDirectory, settings.commonjsToAmd);
+        p.fileProcessors["js"] = f;
+    }
+
+    return server;
 }
 
 

@@ -8,6 +8,7 @@ import { createDatabaseIfNotExists, getConnectionManager, createConnection, Conn
 import { StaticFileRequestProcessor } from '../../node-mvc/node_modules/maishu-node-web-server/out';
 import { createJavascriptFileProcessor } from './file-processors/javascript';
 import { createLessFileProcessor } from './file-processors/less';
+import { pathConcat } from 'maishu-node-web-server';
 
 
 export { Settings, ServerContextData } from "./settings";
@@ -119,7 +120,7 @@ export async function start(settings: Settings) {
         let jsProcessor = createJavascriptFileProcessor(staticRootDirectory, settings.commonjsToAmd);
         p.fileProcessors["js"] = jsProcessor;
 
-        let lessProcessor = createLessFileProcessor(staticRootDirectory);
+        let lessProcessor = createLessFileProcessor(pathConcat(__dirname, "../src/static"));
         p.fileProcessors["less"] = lessProcessor;
     }
 

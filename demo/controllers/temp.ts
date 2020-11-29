@@ -1,4 +1,4 @@
-import { controller, action, routeData } from "maishu-node-mvc";
+import { controller, action, routeData } from "maishu-node-web-server-mvc";
 
 /**
  * Temp 控制器

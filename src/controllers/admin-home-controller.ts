@@ -1,4 +1,4 @@
-import { controller, action, Controller, getLogger, serverContext, ServerContext, VirtualDirectory, routeData } from "maishu-node-mvc";
+import { controller, action, Controller, getLogger, serverContext, ServerContext, routeData } from "maishu-node-web-server-mvc";
 import path = require("path");
 import fs = require("fs");
 import os = require("os");
@@ -8,6 +8,7 @@ import { PROJECT_NAME } from "../global";
 import { commonjsToAmd } from "../js-transform";
 import { errors } from "../errors";
 import JSON5 = require("json5");
+import { LogLevel, VirtualDirectory } from "maishu-node-web-server";
 
 /** 
  * Home 控制器 
@@ -57,7 +58,7 @@ export class HomeController extends Controller {
         let clientFiles = [];
         let staticDir = context.data.rootDirectory.findDirectory("static");
         if (staticDir == null) {
-            let logger = getLogger(PROJECT_NAME);
+            let logger = getLogger(PROJECT_NAME, context.logLevel);
             logger.warn("Static directory is not exists.");
             return clientFiles;
         }
@@ -96,10 +97,10 @@ export class HomeController extends Controller {
      */
     @action("/websiteConfig")
     websiteConfig(@serverContext context: ServerContext<ServerContextData>): WebsiteConfig {
-        return HomeController.getWebsiteConfig(context.data)
+        return HomeController.getWebsiteConfig(context.data, context.logLevel)
     }
 
-    static getWebsiteConfig(data: ServerContextData) {
+    static getWebsiteConfig(data: ServerContextData, logLevel: LogLevel) {
         let config = {} as WebsiteConfig;
         let staticConfigPath: string;
 
@@ -110,7 +111,7 @@ export class HomeController extends Controller {
             config = data.websiteConfig;
         }
 
-        let logger = getLogger(PROJECT_NAME);
+        let logger = getLogger(PROJECT_NAME, logLevel);
         if (staticConfigPath) {
             let mod = require(staticConfigPath);
             logger.info(`Website config is ${JSON.stringify(mod)}`);
@@ -229,7 +230,7 @@ let defaultShim = {
     }
 };
 let defaultPaths = {
-    css: `${lib}/css`,
+    css: `${node_modules}/maishu-requirejs-plugins/lib/css`,
     lessjs: `${node_modules}/less/dist/less`,
     less: `${lib}/require-less-0.1.5/less`,
     lessc: `${lib}/require-less-0.1.5/lessc`,

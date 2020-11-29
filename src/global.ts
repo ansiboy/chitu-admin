@@ -1,7 +1,7 @@
 import { Settings, ServerContextData } from "./settings";
 import { HomeController } from "./controllers/admin-home-controller";
 import IO = require("socket.io-client");
-import { getLogger } from "maishu-node-mvc";
+import { getLogger } from "maishu-node-web-server";
 
 export const PROJECT_NAME = "chitu-admin";
 export const STATIC = "static";
@@ -19,7 +19,7 @@ export function registerStation(data: ServerContextData, settings: Settings) {
 
     console.assert(data.station != null, "Station field is null");
 
-    let config = HomeController.getWebsiteConfig(data);
+    let config = HomeController.getWebsiteConfig(data, settings.logLevel);
 
     let logger = getLogger(PROJECT_NAME, settings.logLevel);
     if (config.requirejs != null) {

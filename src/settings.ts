@@ -1,7 +1,9 @@
-import { LogLevel, VirtualDirectory, Settings as MVCSettings } from "maishu-node-mvc";
-import { Settings as NodeMVCConfig } from 'maishu-node-mvc'
+// import { LogLevel, VirtualDirectory, Settings as MVCSettings } from "maishu-node-mvc";
+// import { Settings as NodeMVCConfig } from 'maishu-node-mvc'
 import { PermissionConfig, WebsiteConfig } from "./static/types";
 import { ConnectionConfig } from "mysql";
+import { VirtualDirectory, ProxyConfig, HeadersConfig, LogLevel } from "maishu-node-web-server";
+
 
 export type ServerContextData = {
     staticRoot: VirtualDirectory;
@@ -13,14 +15,14 @@ export type ServerContextData = {
     commonjsToAmd?: Settings["commonjsToAmd"]
 }
 
-export interface Settings<T = any> extends MVCSettings {
+export interface Settings<T = any> {
     port: number,
     rootPhysicalPath: string | string[],
-    sourceDirectory?: string,
-    proxy?: NodeMVCConfig["proxy"],
+    // sourceDirectory?: string,
+    proxy?: ProxyConfig["proxyTargets"],
     bindIP?: string,
     virtualPaths?: { [path: string]: string },
-    headers?: NodeMVCConfig["headers"],
+    headers?: HeadersConfig["headers"],
     // actionFilters?: NodeMVCConfig["requestFilters"],
     logLevel?: LogLevel,
     station?: {

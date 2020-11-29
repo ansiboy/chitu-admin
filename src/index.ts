@@ -1,21 +1,22 @@
-import { startServer, VirtualDirectory, createVirtualDirecotry } from 'maishu-node-mvc'
+import { pathConcat, VirtualDirectory, WebServer } from 'maishu-node-web-server'
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
 import { Settings, ServerContextData } from './settings';
 import { registerStation, STATIC, CONTROLLERS, LIB } from './global';
 import { createDatabaseIfNotExists, getConnectionManager, createConnection, ConnectionOptions } from "maishu-node-data";
-import { StaticFileRequestProcessor } from '../../node-mvc/node_modules/maishu-node-web-server/out';
-import { createJavascriptFileProcessor } from './file-processors/javascript';
-import { createLessFileProcessor } from './file-processors/less';
-import { pathConcat } from 'maishu-node-web-server';
-
+import { JavascriptTransform } from './file-processors/javascript';
+import { LessProcessor } from './file-processors/less';
+import { MVCRequestProcessor } from "maishu-node-web-server-mvc";
+import { ProxyRequestProcessor } from 'maishu-node-web-server/out/request-processors/proxy';
+import { StaticFileRequestProcessor } from 'maishu-node-web-server/out/request-processors/static-file';
 
 export { Settings, ServerContextData } from "./settings";
 export { WebsiteConfig, PermissionConfig, PermissionConfigItem, SimpleMenuItem, RequireConfig } from "./static/types";
 export { StationInfo } from "./global";
 export { currentAppId, currentUserId } from "./decoders";
 export { commonjsToAmd } from "./js-transform";
+
 
 export async function start(settings: Settings) {
 
@@ -37,28 +38,21 @@ export async function start(settings: Settings) {
             throw errors.pathNotExists(rootPhysicalPaths[i]);
     }
 
-    rootDirectory = createVirtualDirecotry(__dirname, ...rootPhysicalPaths);//new VirtualDirectory(__dirname); //
+    rootDirectory = mergeVirtualDirecotries(__dirname, ...rootPhysicalPaths);//new VirtualDirectory(__dirname);//
 
     let staticRootDirectory = rootDirectory.findDirectory(`/${STATIC}`);
     let controllerDirectory = rootDirectory.findDirectory(`/${CONTROLLERS}`);
-    staticRootDirectory.addPath(`/${LIB}`, path.join(__dirname, "../lib"));
-
+    staticRootDirectory.setPath(`/${LIB}`, path.join(__dirname, "../lib"));
     console.assert(staticRootDirectory != null);
     console.assert(controllerDirectory != null);
 
     let virtualPaths = settings.virtualPaths;
     for (let virtualPath in virtualPaths) {
         let physicalPath = virtualPaths[virtualPath];
-        // if (/\.[a-zA-Z]+$/.test(physicalPath)) {    // 如果名称是文件名 *.abc
-        //     staticRootDirectory.addVirtualFile(key, physicalPath)
-        // }
-        // else {
-        //     staticRootDirectory.addVirtualDirectory(key, physicalPath, "merge");
-        // }
         if (virtualPath[0] != "/")
             virtualPath = "/" + virtualPath;
 
-        staticRootDirectory.addPath(virtualPath, physicalPath)
+        staticRootDirectory.setPath(virtualPath, physicalPath)
     }
 
     //处理数据库文件
@@ -98,36 +92,82 @@ export async function start(settings: Settings) {
     };
 
     serverContextData = Object.assign(settings.serverContextData || {}, serverContextData);
-    // await createDatabase(settings, rootDirectory);
-
-    let server = startServer({
+    let server = new WebServer({
         port: settings.port,
-        staticRootDirectory: staticRootDirectory,
-        controllerDirectory,
-        proxy: settings.proxy,
         bindIP: settings.bindIP,
-        headers: settings.headers,
-        serverContextData: serverContextData,
+        websiteDirectory: staticRootDirectory,
+    })
 
+    var proxyProcessor = server.requestProcessors.filter(o => o instanceof ProxyRequestProcessor)[0] as ProxyRequestProcessor;
+    console.assert(proxyProcessor != null, "proxyProcessor is null.");
+    proxyProcessor.proxyTargets = settings.proxy;
+
+    var staticProcessor = server.requestProcessors.filter(o => o instanceof StaticFileRequestProcessor)[0] as StaticFileRequestProcessor;
+    console.assert(proxyProcessor != null, "staticProcessor is null.");
+    var staticProcessorIndex = server.requestProcessors.indexOf(staticProcessor);
+    server.requestProcessors.splice(staticProcessorIndex, 0, new LessProcessor());
+    staticProcessor.contentTypes[".less"] = "plain/text";
+
+    let mvcProcessor = new MVCRequestProcessor({
+        controllersDirectory: rootDirectory.findDirectory("controllers"),
+        serverContextData: serverContextData
     });
+    server.requestProcessors.unshift(mvcProcessor);
+    server.contentTransforms.push(new JavascriptTransform(settings.commonjsToAmd));
+
 
     if (settings.station != null) {
         registerStation(serverContextData, settings);
-    }
-
-    let p = server.requestProcessors.filter(o => o instanceof StaticFileRequestProcessor)[0] as StaticFileRequestProcessor;
-    if (p) {
-        let jsProcessor = createJavascriptFileProcessor(staticRootDirectory, settings.commonjsToAmd);
-        p.fileProcessors["js"] = jsProcessor;
-
-        let lessProcessor = createLessFileProcessor(pathConcat(__dirname, "../src/static"));
-        p.fileProcessors["less"] = lessProcessor;
     }
 
     return server;
 }
 
 
+export function mergeVirtualDirecotries(...physicalPaths: string[]) {
+    if (physicalPaths == null || physicalPaths.length == 0)
+        throw errors.argumentNull("physicalPaths");
 
+    let root = new VirtualDirectory(physicalPaths[0]);
+    if (physicalPaths.length == 1)
+        return root;
+
+    let dirStack = [...physicalPaths.filter((o, i) => i > 0).map(o => ({ physicalPath: o, virtualPath: "/" }))];
+    while (dirStack.length > 0) {
+        let item = dirStack.pop();
+        if (item == null)
+            continue;
+
+        let names = fs.readdirSync(item.physicalPath);
+        for (let i = 0; i < names.length; i++) {
+            let physicalPath = pathConcat(item.physicalPath, names[i]);
+            let virtualPath = pathConcat(item.virtualPath, names[i]);
+
+
+
+            if (fs.statSync(physicalPath).isFile()) {
+                root.setPath(virtualPath, physicalPath);
+            }
+            else if (fs.statSync(physicalPath).isDirectory()) {
+                dirStack.push({ physicalPath, virtualPath });
+            }
+
+            // if (fs.statSync(physicalPath).isDirectory()) {
+            //     var dir = root.findDirectory(virtualPath);
+            //     if (!dir) {
+            //         root.setPath(virtualPath, physicalPath);
+            //     }
+
+            //     dirStack.push({ physicalPath, virtualPath });
+            // }
+            // else {
+            //     root.setPath(virtualPath, physicalPath);
+            // }
+        }
+    }
+
+    return root;
+
+}
 
 

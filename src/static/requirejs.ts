@@ -1,6 +1,6 @@
 import websiteConfig from "json!websiteConfig";
 import { Less } from "maishu-ui-toolkit";
-import { pathContact } from "maishu-toolkit";
+import { pathConcat } from "maishu-toolkit";
 import { errors } from "./errors";
 
 let contextName = websiteConfig.requirejs != null ? websiteConfig.requirejs.context : null;
@@ -35,7 +35,7 @@ export class Requirejs {
         let contexts = requirejs.exec("contexts");
         let context = contexts[contextName];
         if (context != null && context.config != null && context.config.baseUrl != null) {
-            return pathContact(context.config.baseUrl, stationPath);
+            return pathConcat(context.config.baseUrl, stationPath);
         }
         return stationPath;
     }

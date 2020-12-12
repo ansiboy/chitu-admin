@@ -1,4 +1,4 @@
-import { pathConcat, VirtualDirectory, WebServer } from 'maishu-node-web-server'
+import { startServer, VirtualDirectory, StaticFileProcessor, pathConcat } from 'maishu-node-mvc';
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
@@ -6,10 +6,6 @@ import { Settings, ServerContextData } from './settings';
 import { registerStation, STATIC, CONTROLLERS, LIB } from './global';
 import { createDatabaseIfNotExists, getConnectionManager, createConnection, ConnectionOptions } from "maishu-node-data";
 import { JavascriptTransform } from './file-processors/javascript';
-import { LessProcessor } from './file-processors/less';
-import { MVCRequestProcessor } from "maishu-node-web-server-mvc";
-import { ProxyRequestProcessor } from 'maishu-node-web-server/out/request-processors/proxy';
-import { StaticFileRequestProcessor } from 'maishu-node-web-server/out/request-processors/static-file';
 
 export { Settings, ServerContextData } from "./settings";
 export { WebsiteConfig, PermissionConfig, PermissionConfigItem, SimpleMenuItem, RequireConfig } from "./static/types";
@@ -92,27 +88,16 @@ export async function start(settings: Settings) {
     };
 
     serverContextData = Object.assign(settings.serverContextData || {}, serverContextData);
-    let server = new WebServer({
+    let server = startServer({
         port: settings.port,
         bindIP: settings.bindIP,
-        websiteDirectory: staticRootDirectory,
+        rootDirectory: rootDirectory,
+        virtualPaths: settings.virtualPaths,
+        serverContextData,
     })
 
-    var proxyProcessor = server.requestProcessors.filter(o => o instanceof ProxyRequestProcessor)[0] as ProxyRequestProcessor;
-    console.assert(proxyProcessor != null, "proxyProcessor is null.");
-    proxyProcessor.proxyTargets = settings.proxy;
-
-    var staticProcessor = server.requestProcessors.filter(o => o instanceof StaticFileRequestProcessor)[0] as StaticFileRequestProcessor;
-    console.assert(proxyProcessor != null, "staticProcessor is null.");
-    var staticProcessorIndex = server.requestProcessors.indexOf(staticProcessor);
-    server.requestProcessors.splice(staticProcessorIndex, 0, new LessProcessor());
+    var staticProcessor = server.requestProcessors.filter(o => o instanceof StaticFileProcessor)[0] as StaticFileProcessor;
     staticProcessor.contentTypes[".less"] = "plain/text";
-
-    let mvcProcessor = new MVCRequestProcessor({
-        controllersDirectory: rootDirectory.findDirectory("controllers"),
-        serverContextData: serverContextData
-    });
-    server.requestProcessors.unshift(mvcProcessor);
     server.contentTransforms.push(new JavascriptTransform(settings.commonjsToAmd));
 
 

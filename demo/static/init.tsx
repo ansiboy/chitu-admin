@@ -9,7 +9,7 @@ export default function (args: InitArguments) {
                 { id: "home-index", name: "Home", path: "#home/index", parentId: "temp" }
             ]
         },
-        { id: "temp1", name: "Temp1", path: "#temp" }
+        { id: "temp1", name: "Temp1", path: "#modules/temp" }
     )
     args.mainMaster.setToolbar(
         <ul className="toolbar">

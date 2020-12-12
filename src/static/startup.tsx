@@ -8,7 +8,7 @@ import * as chitu_react from 'maishu-chitu-react';
 import * as ui from "maishu-ui-toolkit";
 import { Less } from "maishu-ui-toolkit";
 import { Page } from "maishu-chitu";
-import { pathContact } from "maishu-toolkit";
+import { pathConcat } from "maishu-toolkit";
 
 let app: Application | null = null;
 export default async function startup(requirejs: RequireJS) {
@@ -42,7 +42,7 @@ export default async function startup(requirejs: RequireJS) {
     console.assert(config.menuItems != null);
 
     let masterPages = await createMasterPages(app);
-    // masterPages.default.setMenu(...config.menuItems);
+    masterPages.default.setMenu(...config.menuItems);
 
     requirejs(["clientjs_init.js"], function (initModule) {
         console.assert(masterPages.default != null);
@@ -89,7 +89,9 @@ export class Application extends chitu_react.Application {
                 simple: simpleContainer,
                 default: mainContainer,
                 blank: blankContainer,
-            }
+            },
+            modulesPath: "/"
+
         })
 
         this.error.add((sender, error) => errorHandle(error, this));
@@ -121,7 +123,7 @@ export class Application extends chitu_react.Application {
     }
 
     private loadPageLess(lessFilePath: string, pageClassName: string, stationPath: string) {
-        let url = stationPath ? pathContact(stationPath, lessFilePath) : lessFilePath;
+        let url = stationPath ? pathConcat(stationPath, lessFilePath) : lessFilePath;
         Less.load(url, { wrapperClassName: pageClassName, name: pageClassName })
     }
 

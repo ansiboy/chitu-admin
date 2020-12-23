@@ -1,6 +1,6 @@
 {
     "name": "maishu-chitu-admin",
-    "version": "3.2.2",
+    "version": "3.2.36",
     "scripts": {
         "build": "grunt",
         "start": "grunt open"
@@ -23,7 +23,7 @@
         "maishu-chitu-service": "^1.20.0",
         "maishu-dilu": "^1.6.4",
         "maishu-node-data": "^1.2.8",
-        "maishu-node-mvc": "^2.6.5",
+        "maishu-node-mvc": "^2.7.80",
         "maishu-requirejs-plugins": "^1.2.0",
         "maishu-toolkit": "^1.6.1",
         "maishu-ui-toolkit": "^1.7.0",

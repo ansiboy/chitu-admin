@@ -34,7 +34,7 @@ export async function start(settings: Settings) {
             throw errors.pathNotExists(rootPhysicalPaths[i]);
     }
 
-    rootDirectory = mergeVirtualDirecotries(__dirname, ...rootPhysicalPaths);//new VirtualDirectory(__dirname);//
+    rootDirectory = mergeVirtualDirecotries(__dirname, ...rootPhysicalPaths);
 
     let staticRootDirectory = rootDirectory.findDirectory(`/${STATIC}`);
     let controllerDirectory = rootDirectory.findDirectory(`/${CONTROLLERS}`);

@@ -76,7 +76,7 @@ export class MainMasterPage extends MasterPage<State> {
             return;
         }
 
-        this.app.redirect("outer-page", { target: pagePath, resourceId: node.id });
+        this.app.redirect("modules/outer-page", { target: pagePath, resourceId: node.id });
     }
 
     private findMenuItemByResourceId(menuItems: MenuItem[], resourceId: string) {

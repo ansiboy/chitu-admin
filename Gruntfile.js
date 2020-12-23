@@ -107,7 +107,8 @@ module.exports = function (grunt) {
                             "chrome": "58",
                             "ie": "11"
                         }
-                    }]
+                    }],
+                    "@babel/preset-typescript"
                 ]
             },
             dist: {

@@ -133,9 +133,14 @@ export class HomeController extends Controller {
         if (data.station) {
             config.gateway = data.station.gateway;
         }
-        let r = Object.assign({}, defaultConfig, config);
+        let r = Object.assign({ requirejs: {}, menuItems: [] } as WebsiteConfig, config);
         r.requirejs.paths = Object.assign(defaultPaths, r.requirejs.paths || {});
         r.requirejs.shim = Object.assign(defaultShim, r.requirejs.shim || {});
+        if (data.station) {
+            r.requirejs.context = data.station.path;
+            r.requirejs.baseUrl = data.station.path;
+        }
+
         if (data.websiteConfig != null && data.websiteConfig.requirejs != null) {
             r.requirejs.shim = Object.assign(r.requirejs.shim || {}, data.websiteConfig.requirejs.shim || {});
             r.requirejs.paths = Object.assign(r.requirejs.paths, data.websiteConfig.requirejs.paths || {});
@@ -144,58 +149,6 @@ export class HomeController extends Controller {
         return r;
     }
 
-    // @action("*.js")
-    // commonjsToAmd(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
-    //     console.assert(data != null);
-
-    //     if (data["_"] == "clientjs_init") {
-    //         return this.initjs(context);
-    //     }
-
-    //     let filePath = data["_"] as string;
-    //     console.assert(filePath != null);
-    //     if (filePath[0] == '/') {
-    //         filePath = filePath.substr(1);
-    //     }
-
-
-    //     let jsFileVirtualPath = filePath + ".js";
-    //     let jsxFileVirtualPath = filePath + ".jsx";
-
-    //     let filePhysicalPath = context.data.staticRoot.findFile(jsFileVirtualPath);
-    //     if (filePhysicalPath == null)
-    //         filePhysicalPath = context.data.staticRoot.findFile(jsxFileVirtualPath);
-
-    //     if (filePhysicalPath == null) {
-    //         let error = new Error(`File '${jsFileVirtualPath}' or '${jsxFileVirtualPath}' not found, search in ${context.data.staticRoot.physicalPath}.`);
-    //         throw error;
-    //     }
-
-    //     let convertToAmd: boolean = false;
-    //     let toAmd = context.data.commonjsToAmd || [];
-    //     for (let i = 0; i < toAmd.length; i++) {
-    //         let regex = new RegExp(toAmd[i]);
-    //         if (regex.test(filePhysicalPath)) {
-    //             convertToAmd = true;
-    //             break;
-    //         }
-    //     }
-
-    //     //===========================================================================
-    //     let buffer = fs.readFileSync(filePhysicalPath);
-    //     let originalCode = buffer.toString();
-    //     if (convertToAmd == false) {
-    //         let content = `/** MVC Action: commonjsToAmd, source file is ${filePhysicalPath} */ \r\n` + originalCode;
-    //         return this.content(content, { physicalPath: filePhysicalPath });
-    //     }
-    //     //===========================================================================
-
-    //     let content: string = null;
-    //     let code = commonjsToAmd(originalCode);
-    //     content = `/** MVC Action: commonjsToAmd, transform to javascript amd, source file is ${filePhysicalPath} */ \r\n` + code;
-
-    //     return this.content(content, { physicalPath: filePhysicalPath });
-    // }
 
     /** 将 json5 文件转换为标准的 json */
     @action("*.json", "*.json5")
@@ -217,10 +170,17 @@ export class HomeController extends Controller {
 
 }
 
-let defaultConfig: WebsiteConfig = {
-    requirejs: {},
-    menuItems: []
-}
+
+// let defaultConfig: WebsiteConfig & { _requirejs: WebsiteConfig["requirejs"] } = {
+//     _requirejs: {},
+//     get requirejs() {
+//         return this._requirejs;
+//     },
+//     set requirejs(value) {
+//         this._requirejs = value;
+//     },
+//     menuItems: []
+// }
 
 let node_modules = '/node_modules';
 let lib = 'lib';

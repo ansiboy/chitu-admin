@@ -1,5 +1,6 @@
 import { Service } from './service'
 import { WebsiteConfig } from "../types";
+import { pathConcat } from "maishu-toolkit";
 
 // let clientFiles: string[];
 let stationClientFiles: { [stationPath: string]: string[] } = {};
@@ -11,7 +12,11 @@ export class MyService extends Service {
             return stationClientFiles[stationPath];
         }
 
-        stationClientFiles[stationPath] = await this.get<string[]>(`${stationPath}clientFiles`);
+        stationClientFiles[stationPath] = await this.get<string[]>(pathConcat(stationPath, `clientFiles`))
+            .catch(err => {
+                console.error(err);
+                return Promise.resolve([])
+            });
         return stationClientFiles[stationPath];
     }
 

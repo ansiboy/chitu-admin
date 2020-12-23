@@ -8,7 +8,6 @@ import * as chitu_react from 'maishu-chitu-react';
 import * as ui from "maishu-ui-toolkit";
 import { Less } from "maishu-ui-toolkit";
 import { Page } from "maishu-chitu";
-import { pathConcat } from "maishu-toolkit";
 
 let app: Application | null = null;
 export default async function startup(requirejs: RequireJS) {
@@ -100,32 +99,33 @@ export class Application extends chitu_react.Application {
     }
 
     private async onPageCreated(page: Page) {
-        let lessFilePath: string;
-        if (page.name.indexOf(":")) {
-            let arr = page.name.split(":");
-            lessFilePath = `modules/${arr[1]}.less`;
-        }
-        else {
-            lessFilePath = `modules/${page.name}.less`;
-        }
+        // let lessFilePath: string;
+        // if (page.name.indexOf(":")) {
+        //     let arr = page.name.split(":");
+        //     lessFilePath = `modules/${arr[1]}.less`;
+        // }
+        // else {
+        //     lessFilePath = `modules/${page.name}.less`;
+        // }
+
+        // lessFilePath = `${page.name}.less`;
 
         let pageClassName = page.name.split("/").filter(o => o != "").join("-");
-        pageClassName = pageClassName.split(":").join("-");
         page.element.className = `admin-page ${pageClassName}`;
 
-        let stationPath = getStationPath(page.name);
-        let myService = this.createService(MyService);
-        let files = await myService.files(stationPath);
-        let pageLessFiles = files.filter(o => o.startsWith("modules") && o.endsWith(".less"));
-        if (pageLessFiles.indexOf(lessFilePath) >= 0) {
-            this.loadPageLess(lessFilePath, pageClassName, stationPath);
-        }
+        // let stationPath = getStationPath(page.name);
+        // let myService = this.createService(MyService);
+        // let files = await myService.files(stationPath);
+        // let pageLessFiles = files.filter(o => o.startsWith("modules") && o.endsWith(".less"));
+        // if (pageLessFiles.indexOf(lessFilePath) >= 0) {
+        //     this.loadPageLess(lessFilePath, pageClassName, stationPath);
+        // }
     }
 
-    private loadPageLess(lessFilePath: string, pageClassName: string, stationPath: string) {
-        let url = stationPath ? pathConcat(stationPath, lessFilePath) : lessFilePath;
-        Less.load(url, { wrapperClassName: pageClassName, name: pageClassName })
-    }
+    // private loadPageLess(lessFilePath: string, pageClassName: string, stationPath: string) {
+    //     let url = stationPath ? pathConcat(stationPath, lessFilePath) : lessFilePath;
+    //     Less.load(url, { wrapperClassName: pageClassName, name: pageClassName })
+    // }
 
 }
 
@@ -143,7 +143,7 @@ export function errorHandle(error: Error, app?: Application) {
     error.message = errorMessages[error.name] || error.message;
     if (error.name == "718" && app != null) {
         // app.redirect("login");
-        location.hash = "#login";
+        location.hash = "#modules/login";
         return;
     }
     ui.alert({
@@ -152,22 +152,6 @@ export function errorHandle(error: Error, app?: Application) {
     })
 }
 
-function getStationPath(path: string) {
-    if (path.indexOf(":") >= 0) {
-        let arr = path.split(":");
-        let stationPath = arr[0];
-        if (stationPath.startsWith("/") == false) {
-            stationPath = "/" + stationPath;
-        }
-        if (stationPath.endsWith("/") == false) {
-            stationPath = stationPath + "/";
-        }
-
-        return stationPath;
-    }
-
-    return null;
-}
 
 
 

@@ -64,9 +64,9 @@ export abstract class Service extends ChiTuSerivce {
 
     localServiceUrl(path: string) {
         let hash = location.hash;
-        if (hash != null && hash.indexOf(":") > 0) {
+        if (hash != null && hash[0] == "/") {
             hash = hash.substr(1);
-            let arr = hash.split(":");
+            let arr = hash.split("/");
             let r = pathConcat(arr[0], path);
             return r;
         }

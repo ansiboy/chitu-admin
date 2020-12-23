@@ -1,5 +1,4 @@
 import { Settings, ServerContextData } from "./settings";
-import { HomeController } from "./controllers/admin-home-controller";
 import IO = require("socket.io-client");
 import { getLogger } from "maishu-node-web-server";
 
@@ -19,15 +18,15 @@ export function registerStation(data: ServerContextData, settings: Settings) {
 
     console.assert(data.station != null, "Station field is null");
 
-    let config = HomeController.getWebsiteConfig(data, settings.logLevel);
+    // let config = HomeController.getWebsiteConfig(data, settings.logLevel);
 
     let logger = getLogger(PROJECT_NAME, settings.logLevel);
-    if (config.requirejs != null) {
-        config.requirejs.context = data.station.path;
-    }
-    else {
-        logger.info("Requirejs field is null or empty.");
-    }
+    // if (config.requirejs != null) {
+    //     config.requirejs.context = data.station.path;
+    // }
+    // else {
+    //     logger.info("Requirejs field is null or empty.");
+    // }
 
     let s: StationInfo = {
         path: data.station.path,

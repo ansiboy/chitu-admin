@@ -1,4 +1,4 @@
-import React = require("react");
+import * as React from "react";;
 import { hideDialog, showDialog } from "maishu-ui-toolkit";
 import ReactDOM = require("react-dom");
 import { DataSource } from "maishu-wuzhui-helper";

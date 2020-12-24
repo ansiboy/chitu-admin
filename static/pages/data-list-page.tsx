@@ -4,7 +4,7 @@ import {
     BoundField, GridViewCellControl, createGridView, boundField, BoundFieldParams,
     dateTimeField, CheckboxListFieldParams, checkboxListField
 } from "maishu-wuzhui-helper";
-import React = require("react");
+import * as React from "react";;
 import { createItemDialog, Dialog } from "./item-dialog";
 import ReactDOM = require("react-dom");
 import { InputControl, InputControlProps } from "./inputs/input-control";

@@ -1,7 +1,7 @@
-import ReactDOM = require("react-dom");
+import * as ReactDOM from "react-dom";
 import { SimpleMasterPage } from "./masters/simple-master-page";
 import { MainMasterPage } from "./masters/main-master-page";
-import React = require("react");
+import * as React from "react";
 import { MasterPage } from "./masters/master-page";
 import * as chitu_react from 'maishu-chitu-react';
 import * as ui from "maishu-ui-toolkit";
@@ -10,14 +10,13 @@ import { Less } from "maishu-ui-toolkit";
 let app: Application | null = null;
 export default async function startup() {
 
-    console.assert(requirejs != null);
 
     async function createMasterPages(app: Application) {
         let mainProps: MainMasterPage["props"] = { app };
         let simplePorps: SimpleMasterPage["props"] = { app };
         let r = await Promise.all([
-            renderElement(SimpleMasterPage, simplePorps, document.getElementById('simple-master')),
-            renderElement(MainMasterPage, mainProps, document.getElementById('main-master')),
+            renderElement(SimpleMasterPage as any, simplePorps, document.getElementById('simple-master')),
+            renderElement(MainMasterPage as any, mainProps, document.getElementById('main-master')),
         ]);
 
         return {
@@ -27,7 +26,6 @@ export default async function startup() {
     }
 
     app = new Application(
-        requirejs,
         document.getElementById('simple-master'),
         document.getElementById('main-master'),
         document.getElementById('blank-master')
@@ -57,7 +55,7 @@ export type InitArguments = {
 }
 
 export class Application extends chitu_react.Application {
-    constructor(requirejs: RequireJS, simpleContainer: HTMLElement, mainContainer: HTMLElement, blankContainer: HTMLElement) {
+    constructor(simpleContainer: HTMLElement, mainContainer: HTMLElement, blankContainer: HTMLElement) {
         super({
             container: {
                 simple: simpleContainer,

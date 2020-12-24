@@ -1,5 +1,5 @@
 import { InitArguments } from "../../out/static/index";
-import React = require("react");
+import * as React from "react";
 
 export default function (args: InitArguments) {
     args.mainMaster.setMenu(

@@ -1,0 +1,8 @@
+{
+    "dependencies": {
+        "@babel/plugin-transform-modules-amd": "^7.12.1",
+        "maishu-nws-js": "file:../../nws-js",
+        "maishu-nws-mvc": "file:../../node-web-server-mvc",
+        "requirejs": "^2.3.6"
+    }
+}

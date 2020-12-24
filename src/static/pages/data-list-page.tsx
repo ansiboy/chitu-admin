@@ -256,7 +256,7 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S extends
                             .catch(err => reject(err))
                     },
                     cancle: async () => {
-                        resolve();
+                        resolve({});
                     }
                 })
             })

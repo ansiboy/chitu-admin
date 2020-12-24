@@ -15,8 +15,11 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}/out/main.js",
-            "cwd": "${workspaceFolder}/out"
+            "program": "node_modules/maishu-node-web-server/cli",
+            "args": [
+                "demo"
+            ],
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

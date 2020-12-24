@@ -24,6 +24,7 @@
         "maishu-dilu": "^1.6.4",
         "maishu-node-data": "^1.2.8",
         "maishu-node-mvc": "^2.6.5",
+        "maishu-node-web-server": "file:../node-web-server",
         "maishu-requirejs-plugins": "^1.2.0",
         "maishu-toolkit": "^1.6.1",
         "maishu-ui-toolkit": "^1.7.0",

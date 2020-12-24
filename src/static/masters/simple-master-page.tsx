@@ -1,5 +1,5 @@
 import { MasterPage } from "./master-page";
-import React = require("react");
+import * as React from "react";
 import { masterPageNames } from "./names";
 
 interface State {

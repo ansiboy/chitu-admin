@@ -20,11 +20,14 @@ let settings = {
                         }],
                     ],
                     plugins: [
-                        "@babel/plugin-transform-modules-amd"
+                        ["@babel/plugin-transform-modules-amd", { noInterop: true }]
                     ]
                 },
             },
             basePath: "static"
+        },
+        StaticFile: {
+            contentTypes: { ".less": "text/plain" }
         }
 
     }

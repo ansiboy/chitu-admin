@@ -1,4 +1,4 @@
-import React = require('react');
+import * as React from 'react';
 import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
 import { ValueStore } from 'maishu-chitu';

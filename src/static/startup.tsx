@@ -6,8 +6,6 @@ import { MasterPage } from "./masters/master-page";
 import * as chitu_react from 'maishu-chitu-react';
 import * as ui from "maishu-ui-toolkit";
 import { Less } from "maishu-ui-toolkit";
-import { Page } from "maishu-chitu";
-import { pathConcat } from "maishu-toolkit";
 
 let app: Application | null = null;
 export default async function startup() {
@@ -35,32 +33,9 @@ export default async function startup() {
         document.getElementById('blank-master')
     )
 
-    // let service = app.createService(MyService);
-    // let config = await service.config();
     Less.renderByRequireJS("admin_style_default");
-    // console.assert(config.menuItems != null);
-
-    let masterPages = await createMasterPages(app);
-    // masterPages.default.setMenu(...config.menuItems);
-
-    requirejs(["clientjs_init.js"], function (initModule) {
-        console.assert(masterPages.default != null);
-        if (initModule && typeof initModule.default == 'function') {
-            let args: InitArguments = {
-                app, mainMaster: masterPages.default, requirejs
-            };
-            let result = initModule.default(args) as Promise<any>;
-            if (result != null && result.then != null) {
-                result.then(() => {
-                    app.run();
-                })
-
-                return;
-            }
-        }
-
-        app.run();
-    })
+    createMasterPages(app);
+    app.run();
 }
 
 function renderElement(componentClass: React.ComponentClass, props: any, container: HTMLElement) {
@@ -89,8 +64,6 @@ export class Application extends chitu_react.Application {
                 default: mainContainer,
                 blank: blankContainer,
             },
-            modulesPath: "/"
-
         })
 
         this.error.add((sender, error) => errorHandle(error, this));
@@ -98,33 +71,6 @@ export class Application extends chitu_react.Application {
         // this.pageCreated.add((sender, page) => this.onPageCreated(page))
     }
 
-    // private async onPageCreated(page: Page) {
-    //     let lessFilePath: string;
-    //     if (page.name.indexOf(":")) {
-    //         let arr = page.name.split(":");
-    //         lessFilePath = `modules/${arr[1]}.less`;
-    //     }
-    //     else {
-    //         lessFilePath = `modules/${page.name}.less`;
-    //     }
-
-    //     let pageClassName = page.name.split("/").filter(o => o != "").join("-");
-    //     pageClassName = pageClassName.split(":").join("-");
-    //     page.element.className = `admin-page ${pageClassName}`;
-
-    //     let stationPath = getStationPath(page.name);
-    //     let myService = this.createService(MyService);
-    //     let files = await myService.files(stationPath);
-    //     let pageLessFiles = files.filter(o => o.startsWith("modules") && o.endsWith(".less"));
-    //     if (pageLessFiles.indexOf(lessFilePath) >= 0) {
-    //         this.loadPageLess(lessFilePath, pageClassName, stationPath);
-    //     }
-    // }
-
-    // private loadPageLess(lessFilePath: string, pageClassName: string, stationPath: string) {
-    //     let url = stationPath ? pathConcat(stationPath, lessFilePath) : lessFilePath;
-    //     Less.load(url, { wrapperClassName: pageClassName, name: pageClassName })
-    // }
 
 }
 
@@ -151,22 +97,7 @@ export function errorHandle(error: Error, app?: Application) {
     })
 }
 
-function getStationPath(path: string) {
-    if (path.indexOf(":") >= 0) {
-        let arr = path.split(":");
-        let stationPath = arr[0];
-        if (stationPath.startsWith("/") == false) {
-            stationPath = "/" + stationPath;
-        }
-        if (stationPath.endsWith("/") == false) {
-            stationPath = stationPath + "/";
-        }
-
-        return stationPath;
-    }
-
-    return null;
-}
 
 
 
+startup();

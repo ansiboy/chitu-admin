@@ -9,7 +9,6 @@
         "sourceMap": false,
         "jsx": "react",
         "baseUrl": "./",
-        "esModuleInterop": true,
         "strict": false
     }
 }

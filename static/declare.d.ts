@@ -18,8 +18,8 @@ type RequireContext = {
 	config: RequireConfig
 }
 
-interface RequireConfig {
 
+interface RequireConfig {
 	/**
 	* The root path to use for all module lookups.
 	*/

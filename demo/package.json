@@ -4,6 +4,7 @@
         "maishu-chitu-react": "^1.27.0",
         "maishu-chitu-service": "^1.21.0",
         "maishu-dilu": "^1.7.1",
+        "maishu-nws-chitu-admin": "file:..",
         "maishu-nws-js": "file:../../nws-js",
         "maishu-nws-mvc": "file:../../node-web-server-mvc",
         "maishu-requirejs-plugins": "^1.3.0",
@@ -13,5 +14,8 @@
         "react": "^17.0.1",
         "react-dom": "^17.0.1",
         "requirejs": "^2.3.6"
+    },
+    "devDependencies": {
+        "@babel/plugin-proposal-decorators": "^7.12.12"
     }
 }

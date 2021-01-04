@@ -2,15 +2,16 @@ import { BasePage } from "./base-page";
 import {
     DataSource, DataControlField, CustomField, GridViewCell, GridViewEditableCell,
     BoundField, GridViewCellControl, createGridView, boundField, BoundFieldParams,
-    dateTimeField, CheckboxListFieldParams, checkboxListField
+    dateTimeField, CheckboxListFieldParams, checkboxListField, GridView
 } from "maishu-wuzhui-helper";
 import * as React from "react";;
 import { createItemDialog, Dialog } from "./item-dialog";
-import ReactDOM = require("react-dom");
+import * as ReactDOM from "react-dom";
 import { InputControl, InputControlProps } from "./inputs/input-control";
 import { PageDataSource } from "./page-data-source";
 import { PageProps } from "maishu-chitu-react";
 import { buttonOnClick, confirm } from "maishu-ui-toolkit";
+import { FormValidator, rules } from "maishu-dilu";
 
 interface BoundInputControlProps<T> extends InputControlProps<T> {
     boundField: BoundField<T>
@@ -88,11 +89,16 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S extends
     //============================================
 
     protected deleteConfirmText: (dataItem: T) => string;
+    protected gridView: GridView<T>;
 
 
     private itemTable: HTMLTableElement;
     private dialog: Dialog<T>;
     private commandColumn: CustomField<T>;
+    private searchTextInput: HTMLInputElement;
+    private searchForm: HTMLElement;
+    private validator: FormValidator;
+
 
     constructor(props: P) {
         super(props);
@@ -155,7 +161,7 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S extends
                 }
             });
         }
-        createGridView({
+        this.gridView = createGridView({
             element: this.itemTable,
             dataSource: this.dataSource,
             columns: this.commandColumn ? [...this.columns, this.commandColumn] : this.columns,
@@ -264,17 +270,41 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S extends
         return this.dataSource.delete(dataItem);
     }
 
+    executeSearch() {
+        let dataSource = this.dataSource as PageDataSource<T>;
+        if (dataSource.options == null || dataSource.options.search == null || dataSource.options.search.execute == null)
+            return;
+
+        if (!this.validator) {
+            this.validator = new FormValidator(this.searchForm,
+                { name: "search-text", rules: [rules.required("请输入要瘦素的关键词")] }
+            );
+        }
+        else {
+            this.validator.clearErrors();
+        }
+
+        if (!this.validator.check()) {
+            return;
+        }
+
+        // dataSource.options.search.execute(this.searchTextInput.value);
+
+    }
+
     /** 获取页面搜索栏 */
     protected searchControl() {
         let dataSource = this.dataSource as PageDataSource<T>;
         let search = dataSource.options ? dataSource.options.search : null;
-        let searchInput = search ? <>
-            <input type="text" className="form-control pull-left input-sm" placeholder={search.placeholder || ""} style={{ width: 300 }}></input>
-            <button className="btn btn-primary btn-sm">
+        let searchInput = search ? <div ref={e => this.searchForm = e || this.searchForm}>
+            <span className="validationMessage search-text" style={{ position: "absolute", top: -25, display: "none" }}></span>
+            <input name="search-text" type="text" className="form-control pull-left input-sm" placeholder={search.placeholder || ""} style={{ width: 300 }}
+                ref={e => this.searchTextInput = e || this.searchTextInput}></input>
+            <button className="btn btn-primary btn-sm" onClick={() => this.executeSearch()}>
                 <i className="icon-search"></i>
                 <span>搜索</span>
             </button>
-        </> : null;
+        </div> : null;
 
         return searchInput;
     }

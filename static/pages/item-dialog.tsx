@@ -1,6 +1,6 @@
 import * as React from "react";;
 import { hideDialog, showDialog } from "maishu-ui-toolkit";
-import ReactDOM = require("react-dom");
+import * as ReactDOM from "react-dom";
 import { DataSource } from "maishu-wuzhui-helper";
 import { FormValidator } from "maishu-dilu";
 import { InputControl, ItemDialog as IItemDialog } from "./inputs/input-control";

@@ -26,6 +26,7 @@ let loadPlugin = function (w) {
     let staticDir = w.websiteDirectory.findDirectory("static");
     if (!staticDir) {
         w.websiteDirectory.setPath("static", path.join(__dirname, "static"));
+        staticDir = w.websiteDirectory.findDirectory("static");
     }
     else {
         /** @type {nws.VirtualDirectory[]} */

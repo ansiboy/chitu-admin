@@ -6,8 +6,13 @@ import { MasterPage } from "./masters/master-page";
 import * as chitu_react from 'maishu-chitu-react';
 import * as ui from "maishu-ui-toolkit";
 import { Less } from "maishu-ui-toolkit";
+import init from "./init";
+import { Application as IApplication } from "./init";
 
-export class Application extends chitu_react.Application {
+export class Application extends chitu_react.Application implements IApplication {
+    private _mainMaster: MainMasterPage;
+    private _simpleMaster: MasterPage<any>;
+
     constructor(simpleContainer: HTMLElement, mainContainer: HTMLElement, blankContainer: HTMLElement) {
         super({
             container: {
@@ -18,10 +23,16 @@ export class Application extends chitu_react.Application {
         })
 
         this.error.add((sender, error) => Application.errorHandle(error, this));
-        this.createMasterPages(this);
+        this.createMasterPages(this).then(o => {
+            this._mainMaster = o.default;
+            this._simpleMaster = o.simple;
+
+            init(this);
+
+            this.run();
+        });
         Less.renderByRequireJS("admin_style_default");
     }
-
 
     private async createMasterPages(app: Application) {
         let mainProps: MainMasterPage["props"] = { app };
@@ -35,6 +46,14 @@ export class Application extends chitu_react.Application {
             simple: r[0] as MasterPage<any>,
             default: r[1] as MainMasterPage
         }
+    }
+
+    get mainMaster() {
+        return this._mainMaster;
+    }
+
+    get simpleMaster() {
+        return this._simpleMaster;
     }
 
     private renderElement(componentClass: React.ComponentClass, props: any, container: HTMLElement) {
@@ -74,11 +93,10 @@ export class Application extends chitu_react.Application {
 
 
 
-let app: Application | null = null;
-app = new Application(
+export let app: Application | null = window["app"] = window["app"] || new Application(
     document.getElementById('simple-master'),
     document.getElementById('main-master'),
     document.getElementById('blank-master')
 )
 
-app.run();
+

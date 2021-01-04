@@ -3,7 +3,7 @@ import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
 import { ValueStore } from 'maishu-chitu';
 import { Resource } from '../models';
-import { SimpleMenuItem } from '../types';
+import { SimpleMenuItem, WebsiteConfig } from '../types';
 import { Application } from 'maishu-chitu-react';
 import { guid } from 'maishu-toolkit';
 
@@ -66,7 +66,6 @@ export class MainMasterPage extends MasterPage<State> {
 
         if (pagePath.startsWith("#")) {
             pagePath = pagePath.substr(1);
-            // this.app.redirect(pagePath, { resourceId: node.id });
             location.hash = pagePath;
             return;
         }
@@ -127,7 +126,7 @@ export class MainMasterPage extends MasterPage<State> {
         } as Resource
     }
 
-    setMenu(...menuItems: SimpleMenuItem[]) {
+    setMenu(menuItems: SimpleMenuItem[]) {
 
         let resources: Resource[] = [];
         menuItems.sort((a, b) => a.sortNumber < b.sortNumber ? -1 : 1);
@@ -161,6 +160,11 @@ export class MainMasterPage extends MasterPage<State> {
                 this.setState({ currentPageUrl: page.url })
                 this.setState({ resourceId: (page.data.resourceId || page.data.resource_id) as string })
             })
+        })
+
+        fetch("website-config.json").then(async (o) => {
+            let c: WebsiteConfig = await o.json();
+            this.setMenu(c.menuItems || []);
         })
     }
 
@@ -212,10 +216,6 @@ export class MainMasterPage extends MasterPage<State> {
             hideSecond = true;
         }
 
-        // return <div className={`${nodeClassName}`} ref={e => this.element = e || this.element}>
-
-        // </div >
-
         return <>
             <div className="first" style={{ display: hideFirst ? "none" : "" }}>
                 <ul className="list-group">
@@ -255,9 +255,6 @@ export class MainMasterPage extends MasterPage<State> {
 
     }
 }
-
-
-
 
 
 function translateToMenuItems(resources: Resource[]): MenuItem[] {

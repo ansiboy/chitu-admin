@@ -1,0 +1,11 @@
+{
+    "menuItems": [
+        {
+            "id": "B0670E92-5DBA-439B-8E0B-8734FE49A2CB",
+            "icon": "glyphicon glyphicon-plane",
+            "name": "货源",
+            "path": "#temp",
+            "roleIds": []
+        }
+    ]
+}

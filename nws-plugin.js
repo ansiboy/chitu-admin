@@ -1,4 +1,3 @@
-const { fstat } = require("fs");
 const nws = require("maishu-node-web-server");
 const { JavaScriptProcessor } = require("maishu-nws-js");
 const { pathConcat } = require("maishu-toolkit");
@@ -103,7 +102,9 @@ function setJSOptions(javaScriptProcessor) {
 
 /** @param {nws.StaticFileProcessor staticProcessor */
 function setStaticOptions(staticProcessor) {
-    staticProcessor.contentTypes[".less"] = "text/plain";
+    staticProcessor.options.contentTypes[".less"] = "text/plain";
+    staticProcessor.options.directoryPath = "static";
+
 }
 
 module.exports = { default: loadPlugin };

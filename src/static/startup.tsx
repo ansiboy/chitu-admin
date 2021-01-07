@@ -1,7 +1,7 @@
-import ReactDOM = require("react-dom");
+import * as ReactDOM from "react-dom";
 import { SimpleMasterPage } from "./masters/simple-master-page";
 import { MainMasterPage } from "./masters/main-master-page";
-import React = require("react");
+import * as React from "react";
 import { MasterPage } from "./masters/master-page";
 import { MyService } from "./services/my-service";
 import * as chitu_react from 'maishu-chitu-react';
@@ -88,9 +88,7 @@ export class Application extends chitu_react.Application {
                 simple: simpleContainer,
                 default: mainContainer,
                 blank: blankContainer,
-            },
-            modulesPath: "/"
-
+            }
         })
 
         this.error.add((sender, error) => errorHandle(error, this));
@@ -143,7 +141,7 @@ export function errorHandle(error: Error, app?: Application) {
     error.message = errorMessages[error.name] || error.message;
     if (error.name == "718" && app != null) {
         // app.redirect("login");
-        location.hash = "#modules/login";
+        location.hash = "#login";
         return;
     }
     ui.alert({

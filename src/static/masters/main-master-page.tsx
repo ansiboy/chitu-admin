@@ -1,4 +1,4 @@
-import React = require('react');
+import * as React from "react";
 import { MasterPage, MasterPageProps } from './master-page';
 import { masterPageNames } from './names';
 import { ValueStore } from 'maishu-chitu';
@@ -76,7 +76,7 @@ export class MainMasterPage extends MasterPage<State> {
             return;
         }
 
-        this.app.redirect("modules/outer-page", { target: pagePath, resourceId: node.id });
+        this.app.redirect("outer-page", { target: pagePath, resourceId: node.id });
     }
 
     private findMenuItemByResourceId(menuItems: MenuItem[], resourceId: string) {

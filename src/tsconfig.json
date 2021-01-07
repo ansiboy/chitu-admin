@@ -4,12 +4,14 @@
         "emitDecoratorMetadata": true,
         "module": "commonjs",
         "target": "ESNext",
-        "outDir": "../out",
-        "declaration": true,
+        "declaration": false,
         "sourceMap": false,
         "jsx": "react",
         "baseUrl": "./",
         "esModuleInterop": true,
         "strict": false
-    }
+    },
+    "exclude": [
+        "static"
+    ]
 }

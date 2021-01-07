@@ -1,4 +1,4 @@
-import React = require("react");
+import * as React from "react";
 import { PageProps } from "maishu-chitu-react";
 
 export abstract class BasePage<P extends PageProps = PageProps, S = {}> extends React.Component<P, S> {

@@ -1,4 +1,4 @@
-import React = require("react");
+import * as React from "react";
 import { Application } from "maishu-chitu-react";
 
 export interface MasterPageProps {

@@ -1,4 +1,4 @@
-import React = require("react");
+import * as React from "react";
 import { InputControl, InputControlProps } from "./input-control";
 import { rules } from "maishu-dilu";
 

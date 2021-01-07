@@ -1,4 +1,4 @@
-import { createParameterDecorator } from "maishu-node-web-server-mvc";
+import { createParameterDecorator } from "maishu-nws-mvc";
 
 export let currentAppId = createParameterDecorator(async (context, routeData) => {
     let name = "application-id";

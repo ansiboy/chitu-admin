@@ -1,4 +1,4 @@
-import { controller, action, Controller, getLogger, serverContext, ServerContext, routeData } from "maishu-node-web-server-mvc";
+import { controller, action, Controller, getLogger, serverContext, ServerContext, routeData } from "maishu-nws-mvc";
 import path = require("path");
 import fs = require("fs");
 import os = require("os");
@@ -37,7 +37,8 @@ export class HomeController extends Controller {
             }
         })`;
 
-        let initJSPath = context.data.staticRoot.findFile("init.js")
+        let staticRoot = context.rootDirectory.findDirectory("static");
+        let initJSPath = staticRoot.findFile("init.js")
         if (initJSPath && fs.existsSync(initJSPath)) {
             let buffer = fs.readFileSync(initJSPath);
             initJS = buffer.toString();
@@ -56,7 +57,7 @@ export class HomeController extends Controller {
         console.assert(context.data.staticRoot != null);
 
         let clientFiles = [];
-        let staticDir = context.data.rootDirectory.findDirectory("static");
+        let staticDir = context.rootDirectory.findDirectory("static");
         if (staticDir == null) {
             let logger = getLogger(PROJECT_NAME, context.logLevel);
             logger.warn("Static directory is not exists.");
@@ -97,19 +98,19 @@ export class HomeController extends Controller {
      */
     @action("/websiteConfig")
     websiteConfig(@serverContext context: ServerContext<ServerContextData>): WebsiteConfig {
-        return HomeController.getWebsiteConfig(context.data, context.logLevel)
+        return HomeController.getWebsiteConfig(context, context.logLevel)
     }
 
-    static getWebsiteConfig(data: ServerContextData, logLevel: LogLevel) {
+    static getWebsiteConfig(context: ServerContext<ServerContextData>, logLevel: LogLevel) {
         let config = {} as WebsiteConfig;
         let staticConfigPath: string;
-
-        if (data.websiteConfig == null) {
-            staticConfigPath = data.rootDirectory.findFile("website-config.js"); //path.join(data.rootDirectory, "website-config.js");
-        }
-        else {
-            config = data.websiteConfig;
-        }
+        let data = context.data || {} as any;
+        // if (data.websiteConfig == null) {
+        staticConfigPath = context.rootDirectory.findFile("website-config.js"); //path.join(data.rootDirectory, "website-config.js");
+        // }
+        // else {
+        //     config = data.websiteConfig;
+        // }
 
         let logger = getLogger(PROJECT_NAME, logLevel);
         if (staticConfigPath) {
@@ -120,7 +121,7 @@ export class HomeController extends Controller {
             }
             let modDefault = mod["default"] || {};
             if (typeof modDefault == "function") {
-                config = modDefault(data || {});
+                config = modDefault(context || {});
             }
             else {
                 config = modDefault;
@@ -150,23 +151,23 @@ export class HomeController extends Controller {
     }
 
 
-    /** 将 json5 文件转换为标准的 json */
-    @action("*.json", "*.json5")
-    toStandJson(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
-        let jsonFilePath = data["_"] + ".json";
-        let json5FilePath = data["_"] + ".json5";
+    // /** 将 json5 文件转换为标准的 json */
+    // @action("*.json", "*.json5")
+    // toStandJson(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
+    //     let jsonFilePath = data["_"] + ".json";
+    //     let json5FilePath = data["_"] + ".json5";
 
-        let filePhysicalPath = context.data.rootDirectory.findFile(jsonFilePath);
-        if (filePhysicalPath == null)
-            filePhysicalPath = context.data.rootDirectory.findFile(json5FilePath);
+    //     let filePhysicalPath = context.data.rootDirectory.findFile(jsonFilePath);
+    //     if (filePhysicalPath == null)
+    //         filePhysicalPath = context.data.rootDirectory.findFile(json5FilePath);
 
-        if (fs.existsSync(filePhysicalPath) == false)
-            throw errors.fileNotExists(`${jsonFilePath} or ${json5FilePath}`);
+    //     if (fs.existsSync(filePhysicalPath) == false)
+    //         throw errors.fileNotExists(`${jsonFilePath} or ${json5FilePath}`);
 
-        let b: Buffer[] = fs.readFileSync(filePhysicalPath);
-        let obj = JSON5.parse(b.toString());
-        return JSON.stringify(obj);
-    }
+    //     let b: Buffer[] = fs.readFileSync(filePhysicalPath);
+    //     let obj = JSON5.parse(b.toString());
+    //     return JSON.stringify(obj);
+    // }
 
 }
 

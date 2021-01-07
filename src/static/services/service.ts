@@ -1,5 +1,5 @@
 import { Service as ChiTuSerivce, AjaxOptions } from 'maishu-chitu-service'
-import config = require("json!websiteConfig");
+import * as config from "json!websiteConfig";
 import { pathConcat } from 'maishu-toolkit';
 
 export let urlParams: { appKey?: string, token?: string } = {};

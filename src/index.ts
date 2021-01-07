@@ -6,6 +6,7 @@ import { Settings, ServerContextData } from './settings';
 import { registerStation, STATIC, CONTROLLERS, LIB } from './global';
 import { createDatabaseIfNotExists, getConnectionManager, createConnection, ConnectionOptions } from "maishu-node-data";
 import { JavascriptTransform } from './file-processors/javascript';
+import { MVCRequestProcessor } from "maishu-nws-mvc";
 
 export { Settings, ServerContextData } from "./settings";
 export { WebsiteConfig, PermissionConfig, PermissionConfigItem, SimpleMenuItem, RequireConfig } from "./static/types";
@@ -91,15 +92,17 @@ export async function start(settings: Settings) {
     let server = startServer({
         port: settings.port,
         bindIP: settings.bindIP,
-        rootDirectory: rootDirectory,
         virtualPaths: settings.virtualPaths,
         serverContextData,
+        websiteDirectory: rootDirectory
     })
 
-    var staticProcessor = server.requestProcessors.filter(o => o instanceof StaticFileProcessor)[0] as StaticFileProcessor;
+    var staticProcessor = server.requestProcessors.find(StaticFileProcessor);
     staticProcessor.contentTypes[".less"] = "plain/text";
-    server.contentTransforms.push(new JavascriptTransform(settings.commonjsToAmd));
-
+    
+    // server.contentTransforms.push(new JavascriptTransform(settings.commonjsToAmd));
+    let mvcProcessor = server.requestProcessors.find(MVCRequestProcessor);
+    mvcProcessor.controllerDirectories = ["controllers"];
 
     if (settings.station != null) {
         registerStation(serverContextData, settings);

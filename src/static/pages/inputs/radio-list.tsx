@@ -1,5 +1,5 @@
 import { DataSource, BoundFieldParams } from "maishu-wuzhui-helper"
-import React = require("react")
+import * as React from "react";
 import { InputControl } from "./input-control";
 import { rules } from "maishu-dilu";
 

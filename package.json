@@ -1,6 +1,6 @@
 {
     "name": "maishu-chitu-admin",
-    "version": "3.2.36",
+    "version": "3.2.44",
     "scripts": {
         "build": "grunt",
         "start": "grunt open"
@@ -11,6 +11,7 @@
         "@babel/plugin-transform-react-jsx": "^7.8.3",
         "@babel/plugin-transform-typescript": "^7.8.3",
         "@babel/preset-env": "^7.4.4",
+        "@babel/preset-typescript": "^7.12.7",
         "@types/node-sass": "^4.11.0",
         "bootstrap": "^3.4.1",
         "cookie": "^0.4.0",
@@ -23,7 +24,9 @@
         "maishu-chitu-service": "^1.20.0",
         "maishu-dilu": "^1.6.4",
         "maishu-node-data": "^1.2.8",
-        "maishu-node-mvc": "^2.7.80",
+        "maishu-node-mvc": "^2.8.12",
+        "maishu-node-web-server": "^1.14.1",
+        "maishu-nws-mvc": "^1.3.2",
         "maishu-requirejs-plugins": "^1.2.0",
         "maishu-toolkit": "^1.6.1",
         "maishu-ui-toolkit": "^1.7.0",

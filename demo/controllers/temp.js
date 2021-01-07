@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const maishu_node_web_server_mvc_1 = require("maishu-node-web-server-mvc");
+const maishu_nws_mvc_1 = require("maishu-nws-mvc");
 /**
  * Temp 控制器
  */
@@ -30,13 +30,13 @@ let TempController = class TempController {
     }
 };
 __decorate([
-    maishu_node_web_server_mvc_1.action(),
-    __param(0, maishu_node_web_server_mvc_1.routeData),
+    maishu_nws_mvc_1.action(),
+    __param(0, maishu_nws_mvc_1.routeData),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], TempController.prototype, "index", null);
 TempController = __decorate([
-    maishu_node_web_server_mvc_1.controller("demo/temp")
+    maishu_nws_mvc_1.controller("demo/temp")
 ], TempController);
 exports.default = TempController;

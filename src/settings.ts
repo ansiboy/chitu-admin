@@ -2,7 +2,7 @@
 // import { Settings as NodeMVCConfig } from 'maishu-node-mvc'
 import { PermissionConfig, WebsiteConfig } from "./static/types";
 import { ConnectionConfig } from "mysql";
-import { VirtualDirectory, ProxyConfig, LogLevel } from "maishu-node-web-server";
+import { VirtualDirectory, ProxyProcessor, LogLevel } from "maishu-node-web-server";
 
 
 export type ServerContextData = {
@@ -19,7 +19,7 @@ export interface Settings<T = any> {
     port: number,
     rootPhysicalPath: string | string[],
     // sourceDirectory?: string,
-    proxy?: ProxyConfig["proxyTargets"],
+    proxy?: ProxyProcessor["options"]["proxyTargets"],
     bindIP?: string,
     virtualPaths?: { [path: string]: string },
     // actionFilters?: NodeMVCConfig["requestFilters"],

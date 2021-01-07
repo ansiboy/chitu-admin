@@ -1,5 +1,5 @@
 import { InitArguments } from "../../out/static/index";
-import React = require("react");
+import * as React from "react";
 
 export default function (args: InitArguments) {
     args.mainMaster.setMenu(
@@ -9,7 +9,7 @@ export default function (args: InitArguments) {
                 { id: "home-index", name: "Home", path: "#home/index", parentId: "temp" }
             ]
         },
-        { id: "temp1", name: "Temp1", path: "#modules/temp" }
+        { id: "temp1", name: "Temp1", path: "#temp" }
     )
     args.mainMaster.setToolbar(
         <ul className="toolbar">

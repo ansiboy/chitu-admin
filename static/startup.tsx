@@ -7,7 +7,7 @@ import { MyService } from "./services/my-service";
 import * as chitu_react from 'maishu-chitu-react';
 import * as ui from "maishu-ui-toolkit";
 import { Page } from "maishu-chitu";
-import "./admin_style_default.less";
+import "./content/admin_style_default.less";
 
 let app: Application | null = null;
 export default async function startup(requirejs: RequireJS) {
@@ -42,7 +42,7 @@ export default async function startup(requirejs: RequireJS) {
     let masterPages = await createMasterPages(app);
     masterPages.default.setMenu(...config.menuItems);
 
-    requirejs(["clientjs_init.js"], function (initModule) {
+    requirejs(["init.js"], function (initModule) {
         console.assert(masterPages.default != null);
         if (initModule && typeof initModule.default == 'function') {
             let args: InitArguments = {

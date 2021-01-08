@@ -12,10 +12,8 @@ var HomeController_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 const maishu_nws_mvc_1 = require("maishu-nws-mvc");
 const path = require("path");
-const fs = require("fs");
 const os = require("os");
 const global_1 = require("../global");
-const js_transform_1 = require("../js-transform");
 /**
  * Home 控制器
  */
@@ -26,26 +24,30 @@ let HomeController = HomeController_1 = class HomeController extends maishu_nws_
     index() {
         return 'Hello World';
     }
-    /**
-     * 客户端初始化脚本
-     */
-    initjs(context) {
-        let initJS = `define([],function(){
-            return {
-                default: function(){
-                    
-                }
-            }
-        })`;
-        let staticRoot = context.rootDirectory.findDirectory("static");
-        let initJSPath = staticRoot.findFile("init.js");
-        if (initJSPath && fs.existsSync(initJSPath)) {
-            let buffer = fs.readFileSync(initJSPath);
-            initJS = buffer.toString();
-            initJS = js_transform_1.commonjsToAmd(initJS);
-        }
-        return initJS;
-    }
+    // /** 
+    //  * 客户端初始化脚本 
+    //  */
+    // @action("/clientjs_init.js")
+    // initjs(@serverContext context: ServerContext<ServerContextData>) {
+    //     let initJS = `define([],function(){
+    //         return {
+    //             default: function(){
+    //             }
+    //         }
+    //     })`;
+    //     let staticRoot = context.rootDirectory.findDirectory("static");
+    //     let initJSPath = staticRoot.findFile("init.js");
+    //     let inttTSPath = staticRoot.findFile("init.ts");
+    //     let initTSXPath = staticRoot.findFile("init.tsx");
+    //     if (initJSPath && fs.existsSync(initJSPath)) {
+    //         let buffer = fs.readFileSync(initJSPath);
+    //         initJS = buffer.toString();
+    //         initJS = commonjsToAmd(initJS);
+    //     }
+    //     else if (initJSPath) {
+    //     }
+    //     return initJS;
+    // }
     /**
      * 获取客户端文件
      * @param settings 设置，由系统注入。
@@ -89,14 +91,10 @@ let HomeController = HomeController_1 = class HomeController extends maishu_nws_
     }
     static getWebsiteConfig(context, logLevel) {
         let config = {};
-        let staticConfigPath;
         let data = context.data || {};
         // if (data.websiteConfig == null) {
-        staticConfigPath = context.rootDirectory.findFile("website-config.js"); //path.join(data.rootDirectory, "website-config.js");
-        // }
-        // else {
-        //     config = data.websiteConfig;
-        // }
+        let staticConfigPath = context.rootDirectory.findFile("website-config.js");
+        let jsonStaticConfigPath = context.rootDirectory.findFile("website-config.json");
         let logger = maishu_nws_mvc_1.getLogger(global_1.PROJECT_NAME, logLevel);
         if (staticConfigPath) {
             let mod = require(staticConfigPath);
@@ -111,6 +109,9 @@ let HomeController = HomeController_1 = class HomeController extends maishu_nws_
             else {
                 config = modDefault;
             }
+        }
+        else if (jsonStaticConfigPath) {
+            config = require(jsonStaticConfigPath);
         }
         else {
             logger.warn(`Website config file  is not exists.`);
@@ -135,10 +136,6 @@ let HomeController = HomeController_1 = class HomeController extends maishu_nws_
 __decorate([
     maishu_nws_mvc_1.action()
 ], HomeController.prototype, "index", null);
-__decorate([
-    maishu_nws_mvc_1.action("/clientjs_init.js"),
-    __param(0, maishu_nws_mvc_1.serverContext)
-], HomeController.prototype, "initjs", null);
 __decorate([
     maishu_nws_mvc_1.action("/clientFiles"),
     __param(0, maishu_nws_mvc_1.serverContext)

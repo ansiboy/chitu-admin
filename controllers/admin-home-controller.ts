@@ -9,7 +9,7 @@ import { commonjsToAmd } from "../js-transform";
 import { errors } from "../errors";
 import JSON5 = require("json5");
 import { LogLevel, VirtualDirectory } from "maishu-node-web-server";
-
+import { } from "maishu-node-mvc";
 /** 
  * Home 控制器 
  */
@@ -24,29 +24,35 @@ export class HomeController extends Controller {
         return 'Hello World'
     }
 
-    /** 
-     * 客户端初始化脚本 
-     */
-    @action("/clientjs_init.js")
-    initjs(@serverContext context: ServerContext<ServerContextData>) {
-        let initJS = `define([],function(){
-            return {
-                default: function(){
+    // /** 
+    //  * 客户端初始化脚本 
+    //  */
+    // @action("/clientjs_init.js")
+    // initjs(@serverContext context: ServerContext<ServerContextData>) {
+    //     let initJS = `define([],function(){
+    //         return {
+    //             default: function(){
                     
-                }
-            }
-        })`;
+    //             }
+    //         }
+    //     })`;
 
-        let staticRoot = context.rootDirectory.findDirectory("static");
-        let initJSPath = staticRoot.findFile("init.js")
-        if (initJSPath && fs.existsSync(initJSPath)) {
-            let buffer = fs.readFileSync(initJSPath);
-            initJS = buffer.toString();
-            initJS = commonjsToAmd(initJS);
-        }
+    //     let staticRoot = context.rootDirectory.findDirectory("static");
+    //     let initJSPath = staticRoot.findFile("init.js");
+    //     let inttTSPath = staticRoot.findFile("init.ts");
+    //     let initTSXPath = staticRoot.findFile("init.tsx");
 
-        return initJS;
-    }
+    //     if (initJSPath && fs.existsSync(initJSPath)) {
+    //         let buffer = fs.readFileSync(initJSPath);
+    //         initJS = buffer.toString();
+    //         initJS = commonjsToAmd(initJS);
+    //     }
+    //     else if (initJSPath) {
+
+    //     }
+
+    //     return initJS;
+    // }
 
     /**
      * 获取客户端文件
@@ -103,14 +109,11 @@ export class HomeController extends Controller {
 
     static getWebsiteConfig(context: ServerContext<ServerContextData>, logLevel: LogLevel) {
         let config = {} as WebsiteConfig;
-        let staticConfigPath: string;
+
         let data = context.data || {} as any;
         // if (data.websiteConfig == null) {
-        staticConfigPath = context.rootDirectory.findFile("website-config.js"); //path.join(data.rootDirectory, "website-config.js");
-        // }
-        // else {
-        //     config = data.websiteConfig;
-        // }
+        let staticConfigPath = context.rootDirectory.findFile("website-config.js");
+        let jsonStaticConfigPath = context.rootDirectory.findFile("website-config.json");
 
         let logger = getLogger(PROJECT_NAME, logLevel);
         if (staticConfigPath) {
@@ -126,6 +129,9 @@ export class HomeController extends Controller {
             else {
                 config = modDefault;
             }
+        }
+        else if (jsonStaticConfigPath) {
+            config = require(jsonStaticConfigPath);
         }
         else {
             logger.warn(`Website config file  is not exists.`)

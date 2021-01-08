@@ -1,4 +1,4 @@
-import { startServer, VirtualDirectory, StaticFileProcessor, pathConcat } from 'maishu-node-mvc';
+import { startServer, VirtualDirectory, StaticFileProcessor, pathConcat, JavaScriptProcessor } from 'maishu-node-mvc';
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
@@ -19,7 +19,6 @@ export async function start(settings: Settings) {
     if (!settings.rootPhysicalPath)
         throw errors.settingItemNull<Settings>("rootPhysicalPath");
 
-    let rootDirectory: VirtualDirectory = new VirtualDirectory(__dirname);
     let rootPhysicalPaths: string[];
     if (typeof settings.rootPhysicalPath == "string")
         rootPhysicalPaths = [settings.rootPhysicalPath];
@@ -34,15 +33,16 @@ export async function start(settings: Settings) {
             throw errors.pathNotExists(rootPhysicalPaths[i]);
     }
 
-    // rootDirectory = mergeVirtualDirecotries(__dirname, ...rootPhysicalPaths);
-
-    let staticRootDirectory = rootDirectory.findDirectory(`/${STATIC}`);
-    console.assert(staticRootDirectory != null);
-    let staticPhysicalPaths = rootPhysicalPaths.map(o => path.join(o, "static"));
-    mergeVirtualDirecotries(rootDirectory, ...staticPhysicalPaths);
-
+    let rootDirectory: VirtualDirectory = new VirtualDirectory(__dirname);
     let controllerDirectory = rootDirectory.findDirectory(`/${CONTROLLERS}`);
-    staticRootDirectory.setPath(`/${LIB}`, path.join(__dirname, "../lib"));
+    let staticRootDirectory = rootDirectory.findDirectory(`/${STATIC}`);
+
+    mergeVirtualDirecotries(staticRootDirectory, path.join(rootPhysicalPaths[0], "static"));
+    mergeVirtualDirecotries(controllerDirectory, path.join(rootPhysicalPaths[0], "controllers"));
+
+    console.assert(staticRootDirectory != null);
+
+    staticRootDirectory.setPath(`/${LIB}`, path.join(__dirname, "lib"));
     console.assert(staticRootDirectory != null);
     console.assert(controllerDirectory != null);
 
@@ -116,7 +116,7 @@ export function mergeVirtualDirecotries(root: VirtualDirectory, ...physicalPaths
     if (physicalPaths == null || physicalPaths.length == 0)
         return root;
 
-    let dirStack = [...physicalPaths.filter((o, i) => i > 0).map(o => ({ physicalPath: o, virtualPath: "/" }))];
+    let dirStack = [...physicalPaths.map(o => ({ physicalPath: o, virtualPath: "/" }))];
     while (dirStack.length > 0) {
         let item = dirStack.pop();
         if (item == null)
@@ -124,6 +124,9 @@ export function mergeVirtualDirecotries(root: VirtualDirectory, ...physicalPaths
 
         let names = fs.readdirSync(item.physicalPath);
         for (let i = 0; i < names.length; i++) {
+            if (names[i] == "node_modules")
+                continue;
+
             let physicalPath = pathConcat(item.physicalPath, names[i]);
             let virtualPath = pathConcat(item.virtualPath, names[i]);
 

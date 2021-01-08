@@ -1,4 +1,4 @@
-import { InitArguments } from "../../out/static/index";
+import { InitArguments } from "../../static/index";
 import * as React from "react";
 
 export default function (args: InitArguments) {

@@ -25,7 +25,6 @@ function start(settings) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!settings.rootPhysicalPath)
             throw errors_1.errors.settingItemNull("rootPhysicalPath");
-        let rootDirectory = new maishu_node_mvc_1.VirtualDirectory(__dirname);
         let rootPhysicalPaths;
         if (typeof settings.rootPhysicalPath == "string")
             rootPhysicalPaths = [settings.rootPhysicalPath];
@@ -38,12 +37,14 @@ function start(settings) {
                 throw errors_1.errors.pathNotExists(rootPhysicalPaths[i]);
         }
         // rootDirectory = mergeVirtualDirecotries(__dirname, ...rootPhysicalPaths);
-        let staticRootDirectory = rootDirectory.findDirectory(`/${global_1.STATIC}`);
-        console.assert(staticRootDirectory != null);
-        let staticPhysicalPaths = rootPhysicalPaths.map(o => path.join(o, "static"));
-        mergeVirtualDirecotries(rootDirectory, ...staticPhysicalPaths);
+        let rootDirectory = new maishu_node_mvc_1.VirtualDirectory(__dirname);
         let controllerDirectory = rootDirectory.findDirectory(`/${global_1.CONTROLLERS}`);
-        staticRootDirectory.setPath(`/${global_1.LIB}`, path.join(__dirname, "../lib"));
+        let staticRootDirectory = rootDirectory.findDirectory(`/${global_1.STATIC}`);
+        mergeVirtualDirecotries(staticRootDirectory, path.join(rootPhysicalPaths[0], "static"));
+        mergeVirtualDirecotries(controllerDirectory, path.join(rootPhysicalPaths[0], "controllers"));
+        console.assert(staticRootDirectory != null);
+        // let staticPhysicalPaths = rootPhysicalPaths.map(o => path.join(o, "static"));
+        staticRootDirectory.setPath(`/${global_1.LIB}`, path.join(__dirname, "lib"));
         console.assert(staticRootDirectory != null);
         console.assert(controllerDirectory != null);
         let virtualPaths = settings.virtualPaths;
@@ -104,13 +105,15 @@ function mergeVirtualDirecotries(root, ...physicalPaths) {
     // let root = new VirtualDirectory(physicalPaths[0]);
     if (physicalPaths == null || physicalPaths.length == 0)
         return root;
-    let dirStack = [...physicalPaths.filter((o, i) => i > 0).map(o => ({ physicalPath: o, virtualPath: "/" }))];
+    let dirStack = [...physicalPaths.map(o => ({ physicalPath: o, virtualPath: "/" }))];
     while (dirStack.length > 0) {
         let item = dirStack.pop();
         if (item == null)
             continue;
         let names = fs.readdirSync(item.physicalPath);
         for (let i = 0; i < names.length; i++) {
+            if (names[i] == "node_modules")
+                continue;
             let physicalPath = maishu_node_mvc_1.pathConcat(item.physicalPath, names[i]);
             let virtualPath = maishu_node_mvc_1.pathConcat(item.virtualPath, names[i]);
             if (fs.statSync(physicalPath).isFile()) {

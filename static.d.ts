@@ -1,1 +1,1 @@
-export * from "./out/static/index";
+export * from "./static/index";

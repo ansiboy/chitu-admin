@@ -1,4 +1,4 @@
-const { commonjsToAmd } = require("../out/js-transform");
+const { commonjsToAmd } = require("../js-transform");
 
 describe('commonjsToAmd', function () {
 

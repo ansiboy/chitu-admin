@@ -12,7 +12,6 @@ export type ServerContextData = {
     station: Settings["station"],
     // requirejs?: WebsiteConfig["requirejs"],
     websiteConfig?: WebsiteConfig,
-    commonjsToAmd?: Settings["commonjsToAmd"]
 }
 
 export interface Settings<T = any> {
@@ -34,9 +33,5 @@ export interface Settings<T = any> {
     serverContextData?: T,
     db?: ConnectionConfig,
     websiteConfig?: WebsiteConfig,
-    /**
-     * 一组正则 js 文件名匹配的表达式，用于匹配 JS 是否有 commonjs 转换 amd
-     */
-    commonjsToAmd?: string[]
 }
 

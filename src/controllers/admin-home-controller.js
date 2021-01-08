@@ -184,7 +184,7 @@ let defaultShim = {
     }
 };
 let defaultPaths = {
-    css: `${node_modules}/maishu-requirejs-plugins/lib/css`,
+    css: `${node_modules}/maishu-requirejs-plugins/src/css`,
     lessjs: `${node_modules}/less/dist/less`,
     less: `${lib}/require-less-0.1.5/less`,
     lessc: `${lib}/require-less-0.1.5/lessc`,

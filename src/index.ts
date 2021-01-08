@@ -5,7 +5,6 @@ import fs = require("fs");
 import { Settings, ServerContextData } from './settings';
 import { registerStation, STATIC, CONTROLLERS, LIB } from './global';
 import { createDatabaseIfNotExists, getConnectionManager, createConnection, ConnectionOptions } from "maishu-node-data";
-import { JavascriptTransform } from './file-processors/javascript';
 import { MVCRequestProcessor } from "maishu-nws-mvc";
 
 export { Settings, ServerContextData } from "./settings";
@@ -75,17 +74,11 @@ export async function start(settings: Settings) {
         }
     }
 
-    settings.commonjsToAmd = settings.commonjsToAmd || [];
-    settings.commonjsToAmd.push(`\\S*/${STATIC}/\\S*.js`);
-    settings.commonjsToAmd.push(`\\S*/maishu-\\S*/out/\\S*.js`);
-
     let serverContextData: ServerContextData = {
         staticRoot: staticRootDirectory,
         rootDirectory: rootDirectory,
         station: settings.station,
         websiteConfig: settings.websiteConfig,
-        commonjsToAmd: settings.commonjsToAmd,
-
     };
 
     serverContextData = Object.assign(settings.serverContextData || {}, serverContextData);
@@ -99,8 +92,7 @@ export async function start(settings: Settings) {
 
     var staticProcessor = server.requestProcessors.find(StaticFileProcessor);
     staticProcessor.contentTypes[".less"] = "plain/text";
-    
-    // server.contentTransforms.push(new JavascriptTransform(settings.commonjsToAmd));
+
     let mvcProcessor = server.requestProcessors.find(MVCRequestProcessor);
     mvcProcessor.controllerDirectories = ["controllers"];
 

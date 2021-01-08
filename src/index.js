@@ -60,15 +60,11 @@ async function start(settings) {
             }
         }
     }
-    settings.commonjsToAmd = settings.commonjsToAmd || [];
-    settings.commonjsToAmd.push(`\\S*/${global_1.STATIC}/\\S*.js`);
-    settings.commonjsToAmd.push(`\\S*/maishu-\\S*/out/\\S*.js`);
     let serverContextData = {
         staticRoot: staticRootDirectory,
         rootDirectory: rootDirectory,
         station: settings.station,
         websiteConfig: settings.websiteConfig,
-        commonjsToAmd: settings.commonjsToAmd,
     };
     serverContextData = Object.assign(settings.serverContextData || {}, serverContextData);
     let server = maishu_node_mvc_1.startServer({
@@ -80,7 +76,6 @@ async function start(settings) {
     });
     var staticProcessor = server.requestProcessors.find(maishu_node_mvc_1.StaticFileProcessor);
     staticProcessor.contentTypes[".less"] = "plain/text";
-    // server.contentTransforms.push(new JavascriptTransform(settings.commonjsToAmd));
     let mvcProcessor = server.requestProcessors.find(maishu_nws_mvc_1.MVCRequestProcessor);
     mvcProcessor.controllerDirectories = ["controllers"];
     if (settings.station != null) {

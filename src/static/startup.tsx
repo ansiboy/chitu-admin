@@ -6,8 +6,8 @@ import { MasterPage } from "./masters/master-page";
 import { MyService } from "./services/my-service";
 import * as chitu_react from 'maishu-chitu-react';
 import * as ui from "maishu-ui-toolkit";
-import { Less } from "maishu-ui-toolkit";
 import { Page } from "maishu-chitu";
+import "./admin_style_default.less";
 
 let app: Application | null = null;
 export default async function startup(requirejs: RequireJS) {
@@ -18,8 +18,8 @@ export default async function startup(requirejs: RequireJS) {
         let mainProps: MainMasterPage["props"] = { app };
         let simplePorps: SimpleMasterPage["props"] = { app };
         let r = await Promise.all([
-            renderElement(SimpleMasterPage, simplePorps, document.getElementById('simple-master')),
-            renderElement(MainMasterPage, mainProps, document.getElementById('main-master')),
+            renderElement(SimpleMasterPage as any, simplePorps, document.getElementById('simple-master')),
+            renderElement(MainMasterPage as any, mainProps, document.getElementById('main-master')),
         ]);
 
         return {
@@ -37,7 +37,6 @@ export default async function startup(requirejs: RequireJS) {
 
     let service = app.createService(MyService);
     let config = await service.config();
-    Less.renderByRequireJS("admin_style_default");
     console.assert(config.menuItems != null);
 
     let masterPages = await createMasterPages(app);
@@ -97,33 +96,10 @@ export class Application extends chitu_react.Application {
     }
 
     private async onPageCreated(page: Page) {
-        // let lessFilePath: string;
-        // if (page.name.indexOf(":")) {
-        //     let arr = page.name.split(":");
-        //     lessFilePath = `modules/${arr[1]}.less`;
-        // }
-        // else {
-        //     lessFilePath = `modules/${page.name}.less`;
-        // }
-
-        // lessFilePath = `${page.name}.less`;
-
         let pageClassName = page.name.split("/").filter(o => o != "").join("-");
         page.element.className = `admin-page ${pageClassName}`;
 
-        // let stationPath = getStationPath(page.name);
-        // let myService = this.createService(MyService);
-        // let files = await myService.files(stationPath);
-        // let pageLessFiles = files.filter(o => o.startsWith("modules") && o.endsWith(".less"));
-        // if (pageLessFiles.indexOf(lessFilePath) >= 0) {
-        //     this.loadPageLess(lessFilePath, pageClassName, stationPath);
-        // }
     }
-
-    // private loadPageLess(lessFilePath: string, pageClassName: string, stationPath: string) {
-    //     let url = stationPath ? pathConcat(stationPath, lessFilePath) : lessFilePath;
-    //     Less.load(url, { wrapperClassName: pageClassName, name: pageClassName })
-    // }
 
 }
 

@@ -1,11 +1,9 @@
-import { startServer, VirtualDirectory, StaticFileProcessor, pathConcat, JavaScriptProcessor } from 'maishu-node-mvc';
+import { startServer, VirtualDirectory, StaticFileProcessor, pathConcat, MVCRequestProcessor } from 'maishu-node-mvc';
 import { errors } from './errors';
 import path = require('path')
 import fs = require("fs");
 import { Settings, ServerContextData } from './settings';
 import { registerStation, STATIC, CONTROLLERS, LIB } from './global';
-import { createDatabaseIfNotExists, getConnectionManager, createConnection, ConnectionOptions } from "maishu-node-data";
-import { MVCRequestProcessor } from "maishu-nws-mvc";
 
 export { Settings, ServerContextData } from "./settings";
 export { WebsiteConfig, PermissionConfig, PermissionConfigItem, SimpleMenuItem, RequireConfig } from "./static/types";
@@ -33,12 +31,24 @@ export async function start(settings: Settings) {
             throw errors.pathNotExists(rootPhysicalPaths[i]);
     }
 
-    let rootDirectory: VirtualDirectory = new VirtualDirectory(__dirname);
+    let rootDirectory: VirtualDirectory = new VirtualDirectory(rootPhysicalPaths[0]);
     let controllerDirectory = rootDirectory.findDirectory(`/${CONTROLLERS}`);
     let staticRootDirectory = rootDirectory.findDirectory(`/${STATIC}`);
 
-    mergeVirtualDirecotries(staticRootDirectory, path.join(rootPhysicalPaths[0], "static"));
-    mergeVirtualDirecotries(controllerDirectory, path.join(rootPhysicalPaths[0], "controllers"));
+    if (staticRootDirectory != null)
+        mergeVirtualDirecotries(staticRootDirectory, path.join(__dirname, "static"));
+    else {
+        rootDirectory.setPath("static", path.join(__dirname, "static"));
+        staticRootDirectory = rootDirectory.findDirectory(`/${STATIC}`);
+    }
+
+    if (controllerDirectory) {
+        mergeVirtualDirecotries(controllerDirectory, path.join(__dirname, "controllers"));
+    }
+    else {
+        rootDirectory.setPath("controllers", path.join(__dirname, "controllers"));
+        controllerDirectory = rootDirectory.findDirectory(`/${CONTROLLERS}`);
+    }
 
     console.assert(staticRootDirectory != null);
 
@@ -56,27 +66,27 @@ export async function start(settings: Settings) {
     }
 
     //处理数据库文件
-    let childFiles = rootDirectory.files();
-    let entitiesPhysicalPath = childFiles["entities.js"];
-    if (settings.db != null && entitiesPhysicalPath != null) {
-        let connectionManager = getConnectionManager();
+    // let childFiles = rootDirectory.files();
+    // let entitiesPhysicalPath = childFiles["entities.js"];
+    // if (settings.db != null && entitiesPhysicalPath != null) {
+    //     let connectionManager = getConnectionManager();
 
-        await createDatabaseIfNotExists(settings.db);
-        if (!connectionManager.has(settings.db.database)) {
-            let entities = [entitiesPhysicalPath];
-            let dbOptions = Object.assign({
-                type: "mysql", synchronize: true, logging: false,
-                connectTimeout: 3000, entities, name: settings.db.database,
-                username: settings.db.user, password: settings.db.password
-            } as ConnectionOptions, settings.db);
-            let conn = await createConnection(dbOptions);
-            let mod = require(entitiesPhysicalPath);
-            if (typeof mod.default == "function") {
-                mod.default(conn);
-            }
+    //     await createDatabaseIfNotExists(settings.db);
+    //     if (!connectionManager.has(settings.db.database)) {
+    //         let entities = [entitiesPhysicalPath];
+    //         let dbOptions = Object.assign({
+    //             type: "mysql", synchronize: true, logging: false,
+    //             connectTimeout: 3000, entities, name: settings.db.database,
+    //             username: settings.db.user, password: settings.db.password
+    //         } as ConnectionOptions, settings.db);
+    //         let conn = await createConnection(dbOptions);
+    //         let mod = require(entitiesPhysicalPath);
+    //         if (typeof mod.default == "function") {
+    //             mod.default(conn);
+    //         }
 
-        }
-    }
+    //     }
+    // }
 
     let serverContextData: ServerContextData = {
         staticRoot: staticRootDirectory,
@@ -91,7 +101,8 @@ export async function start(settings: Settings) {
         bindIP: settings.bindIP,
         virtualPaths: settings.virtualPaths,
         serverContextData,
-        websiteDirectory: rootDirectory
+        websiteDirectory: rootDirectory,
+        proxy: settings.proxy,
     })
 
     var staticProcessor = server.requestProcessors.find(StaticFileProcessor);

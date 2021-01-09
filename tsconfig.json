@@ -12,7 +12,7 @@
     },
     "exclude": [
         "./static",
-        "./static.d.ts",
+        "static.ts",
         "demo"
     ]
 }

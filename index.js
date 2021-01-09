@@ -14,8 +14,6 @@ const errors_1 = require("./errors");
 const path = require("path");
 const fs = require("fs");
 const global_1 = require("./global");
-const maishu_node_data_1 = require("maishu-node-data");
-const maishu_nws_mvc_1 = require("maishu-nws-mvc");
 var decoders_1 = require("./decoders");
 exports.currentAppId = decoders_1.currentAppId;
 exports.currentUserId = decoders_1.currentUserId;
@@ -36,14 +34,23 @@ function start(settings) {
             if (!fs.existsSync(rootPhysicalPaths[i]))
                 throw errors_1.errors.pathNotExists(rootPhysicalPaths[i]);
         }
-        // rootDirectory = mergeVirtualDirecotries(__dirname, ...rootPhysicalPaths);
-        let rootDirectory = new maishu_node_mvc_1.VirtualDirectory(__dirname);
+        let rootDirectory = new maishu_node_mvc_1.VirtualDirectory(rootPhysicalPaths[0]);
         let controllerDirectory = rootDirectory.findDirectory(`/${global_1.CONTROLLERS}`);
         let staticRootDirectory = rootDirectory.findDirectory(`/${global_1.STATIC}`);
-        mergeVirtualDirecotries(staticRootDirectory, path.join(rootPhysicalPaths[0], "static"));
-        mergeVirtualDirecotries(controllerDirectory, path.join(rootPhysicalPaths[0], "controllers"));
+        if (staticRootDirectory != null)
+            mergeVirtualDirecotries(staticRootDirectory, path.join(__dirname, "static"));
+        else {
+            rootDirectory.setPath("static", path.join(__dirname, "static"));
+            staticRootDirectory = rootDirectory.findDirectory(`/${global_1.STATIC}`);
+        }
+        if (controllerDirectory) {
+            mergeVirtualDirecotries(controllerDirectory, path.join(__dirname, "controllers"));
+        }
+        else {
+            rootDirectory.setPath("controllers", path.join(__dirname, "controllers"));
+            controllerDirectory = rootDirectory.findDirectory(`/${global_1.CONTROLLERS}`);
+        }
         console.assert(staticRootDirectory != null);
-        // let staticPhysicalPaths = rootPhysicalPaths.map(o => path.join(o, "static"));
         staticRootDirectory.setPath(`/${global_1.LIB}`, path.join(__dirname, "lib"));
         console.assert(staticRootDirectory != null);
         console.assert(controllerDirectory != null);
@@ -55,25 +62,25 @@ function start(settings) {
             staticRootDirectory.setPath(virtualPath, physicalPath);
         }
         //处理数据库文件
-        let childFiles = rootDirectory.files();
-        let entitiesPhysicalPath = childFiles["entities.js"];
-        if (settings.db != null && entitiesPhysicalPath != null) {
-            let connectionManager = maishu_node_data_1.getConnectionManager();
-            yield maishu_node_data_1.createDatabaseIfNotExists(settings.db);
-            if (!connectionManager.has(settings.db.database)) {
-                let entities = [entitiesPhysicalPath];
-                let dbOptions = Object.assign({
-                    type: "mysql", synchronize: true, logging: false,
-                    connectTimeout: 3000, entities, name: settings.db.database,
-                    username: settings.db.user, password: settings.db.password
-                }, settings.db);
-                let conn = yield maishu_node_data_1.createConnection(dbOptions);
-                let mod = require(entitiesPhysicalPath);
-                if (typeof mod.default == "function") {
-                    mod.default(conn);
-                }
-            }
-        }
+        // let childFiles = rootDirectory.files();
+        // let entitiesPhysicalPath = childFiles["entities.js"];
+        // if (settings.db != null && entitiesPhysicalPath != null) {
+        //     let connectionManager = getConnectionManager();
+        //     await createDatabaseIfNotExists(settings.db);
+        //     if (!connectionManager.has(settings.db.database)) {
+        //         let entities = [entitiesPhysicalPath];
+        //         let dbOptions = Object.assign({
+        //             type: "mysql", synchronize: true, logging: false,
+        //             connectTimeout: 3000, entities, name: settings.db.database,
+        //             username: settings.db.user, password: settings.db.password
+        //         } as ConnectionOptions, settings.db);
+        //         let conn = await createConnection(dbOptions);
+        //         let mod = require(entitiesPhysicalPath);
+        //         if (typeof mod.default == "function") {
+        //             mod.default(conn);
+        //         }
+        //     }
+        // }
         let serverContextData = {
             staticRoot: staticRootDirectory,
             rootDirectory: rootDirectory,
@@ -86,11 +93,12 @@ function start(settings) {
             bindIP: settings.bindIP,
             virtualPaths: settings.virtualPaths,
             serverContextData,
-            websiteDirectory: rootDirectory
+            websiteDirectory: rootDirectory,
+            proxy: settings.proxy,
         });
         var staticProcessor = server.requestProcessors.find(maishu_node_mvc_1.StaticFileProcessor);
         staticProcessor.contentTypes[".less"] = "plain/text";
-        let mvcProcessor = server.requestProcessors.find(maishu_nws_mvc_1.MVCRequestProcessor);
+        let mvcProcessor = server.requestProcessors.find(maishu_node_mvc_1.MVCRequestProcessor);
         mvcProcessor.controllerDirectories = ["controllers"];
         if (settings.station != null) {
             global_1.registerStation(serverContextData, settings);

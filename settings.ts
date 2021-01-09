@@ -1,8 +1,7 @@
 // import { LogLevel, VirtualDirectory, Settings as MVCSettings } from "maishu-node-mvc";
 // import { Settings as NodeMVCConfig } from 'maishu-node-mvc'
 import { PermissionConfig, WebsiteConfig } from "./static/types";
-import { ConnectionConfig } from "mysql";
-import { VirtualDirectory, ProxyProcessor, LogLevel } from "maishu-node-web-server";
+import { VirtualDirectory, ProxyProcessor, LogLevel } from "maishu-node-mvc";
 
 
 export type ServerContextData = {
@@ -31,7 +30,7 @@ export interface Settings<T = any> {
         permissions?: PermissionConfig
     },
     serverContextData?: T,
-    db?: ConnectionConfig,
+    // db?: ConnectionConfig,
     websiteConfig?: WebsiteConfig,
 }
 

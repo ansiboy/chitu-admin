@@ -1,5 +1,4 @@
 import { Service as ChiTuSerivce, AjaxOptions } from 'maishu-chitu-service'
-import * as config from "json!websiteConfig";
 import { pathConcat } from 'maishu-toolkit';
 
 export let urlParams: { appKey?: string, token?: string } = {};
@@ -8,20 +7,20 @@ if (location.search)
 
 let protocol = location.protocol;
 
-/** 站点路径 */
-export function stationPath(path: string) {
-    console.assert(requirejs != null);
-    let contexts = requirejs.exec("contexts");
-    let contextName: string;
-    if (config.requirejs)
-        contextName = config.requirejs.context;
+// /** 站点路径 */
+// export function stationPath(path: string) {
+//     console.assert(requirejs != null);
+//     let contexts = requirejs.exec("contexts");
+//     let contextName: string;
+//     if (config.requirejs)
+//         contextName = config.requirejs.context;
 
-    let context: RequireContext = contexts[contextName];
-    if (context != null && context.config != null && context.config.baseUrl != null) {
-        return pathConcat(context.config.baseUrl, path);
-    }
-    return path;
-}
+//     let context: RequireContext = contexts[contextName];
+//     if (context != null && context.config != null && context.config.baseUrl != null) {
+//         return pathConcat(context.config.baseUrl, path);
+//     }
+//     return path;
+// }
 
 export abstract class Service extends ChiTuSerivce {
 

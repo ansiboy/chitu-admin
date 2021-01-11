@@ -1,15 +1,10 @@
-import { controller, action, Controller, getLogger, serverContext, ServerContext, routeData } from "maishu-nws-mvc";
+import { controller, action, Controller, getLogger, serverContext, ServerContext } from "maishu-node-mvc";
 import path = require("path");
-import fs = require("fs");
 import os = require("os");
 import { ServerContextData } from "../settings";
 import { WebsiteConfig } from "../static/types";
 import { PROJECT_NAME } from "../global";
-import { commonjsToAmd } from "../js-transform";
-import { errors } from "../errors";
-import JSON5 = require("json5");
 import { LogLevel, VirtualDirectory } from "maishu-node-web-server";
-import { } from "maishu-node-mvc";
 /** 
  * Home 控制器 
  */

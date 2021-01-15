@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.commonjsToAmd = void 0;
 const babel = require("@babel/core");
 const errors_1 = require("./errors");
 /**

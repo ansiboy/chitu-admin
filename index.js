@@ -9,32 +9,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.mergeVirtualDirecotries = exports.start = exports.commonjsToAmd = exports.currentUserId = exports.currentAppId = void 0;
 const maishu_node_mvc_1 = require("maishu-node-mvc");
 const errors_1 = require("./errors");
 const path = require("path");
 const fs = require("fs");
 const global_1 = require("./global");
 var decoders_1 = require("./decoders");
-exports.currentAppId = decoders_1.currentAppId;
-exports.currentUserId = decoders_1.currentUserId;
+Object.defineProperty(exports, "currentAppId", { enumerable: true, get: function () { return decoders_1.currentAppId; } });
+Object.defineProperty(exports, "currentUserId", { enumerable: true, get: function () { return decoders_1.currentUserId; } });
 var js_transform_1 = require("./js-transform");
-exports.commonjsToAmd = js_transform_1.commonjsToAmd;
+Object.defineProperty(exports, "commonjsToAmd", { enumerable: true, get: function () { return js_transform_1.commonjsToAmd; } });
 function start(settings) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!settings.rootPhysicalPath)
-            throw errors_1.errors.settingItemNull("rootPhysicalPath");
-        let rootPhysicalPaths;
-        if (typeof settings.rootPhysicalPath == "string")
-            rootPhysicalPaths = [settings.rootPhysicalPath];
-        else
-            rootPhysicalPaths = settings.rootPhysicalPath;
-        for (let i = 0; i < rootPhysicalPaths.length; i++) {
-            if (!path.isAbsolute(rootPhysicalPaths[i]))
-                throw errors_1.errors.notAbsolutePath(rootPhysicalPaths[i]);
-            if (!fs.existsSync(rootPhysicalPaths[i]))
-                throw errors_1.errors.pathNotExists(rootPhysicalPaths[i]);
-        }
-        let rootDirectory = new maishu_node_mvc_1.VirtualDirectory(rootPhysicalPaths[0]);
+        if (!settings.rootDirectory)
+            throw errors_1.errors.settingItemNull("rootDirectory");
+        // let rootPhysicalPaths: string[];
+        // if (typeof settings.rootPhysicalPath == "string")
+        //     rootPhysicalPaths = [settings.rootPhysicalPath];
+        // else
+        //     rootPhysicalPaths = settings.rootPhysicalPath;
+        // for (let i = 0; i < rootPhysicalPaths.length; i++) {
+        //     if (!path.isAbsolute(rootPhysicalPaths[i]))
+        //         throw errors.notAbsolutePath(rootPhysicalPaths[i]);
+        //     if (!fs.existsSync(rootPhysicalPaths[i]))
+        //         throw errors.pathNotExists(rootPhysicalPaths[i]);
+        // }
+        let rootDirectory = settings.rootDirectory; //new VirtualDirectory(rootPhysicalPaths[0]);
         let controllerDirectory = rootDirectory.findDirectory(`/${global_1.CONTROLLERS}`);
         let staticRootDirectory = rootDirectory.findDirectory(`/${global_1.STATIC}`);
         if (staticRootDirectory != null)

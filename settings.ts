@@ -15,7 +15,8 @@ export type ServerContextData = {
 
 export interface Settings<T = any> {
     port: number,
-    rootPhysicalPath: string | string[],
+    // rootPhysicalPath: string | string[],
+    rootDirectory: VirtualDirectory,
     // sourceDirectory?: string,
     proxy?: ProxyProcessor["options"]["proxyTargets"],
     bindIP?: string,

@@ -10,14 +10,15 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 var HomeController_1;
 Object.defineProperty(exports, "__esModule", { value: true });
-const maishu_nws_mvc_1 = require("maishu-nws-mvc");
+exports.HomeController = void 0;
+const maishu_node_mvc_1 = require("maishu-node-mvc");
 const path = require("path");
 const os = require("os");
 const global_1 = require("../global");
 /**
  * Home 控制器
  */
-let HomeController = HomeController_1 = class HomeController extends maishu_nws_mvc_1.Controller {
+let HomeController = HomeController_1 = class HomeController extends maishu_node_mvc_1.Controller {
     /**
      * Index 页面，用于测试
      */
@@ -57,7 +58,7 @@ let HomeController = HomeController_1 = class HomeController extends maishu_nws_
         let clientFiles = [];
         let staticDir = context.rootDirectory.findDirectory("static");
         if (staticDir == null) {
-            let logger = maishu_nws_mvc_1.getLogger(global_1.PROJECT_NAME, context.logLevel);
+            let logger = maishu_node_mvc_1.getLogger(global_1.PROJECT_NAME, context.logLevel);
             logger.warn("Static directory is not exists.");
             return clientFiles;
         }
@@ -95,7 +96,7 @@ let HomeController = HomeController_1 = class HomeController extends maishu_nws_
         // if (data.websiteConfig == null) {
         let staticConfigPath = context.rootDirectory.findFile("website-config.js");
         let jsonStaticConfigPath = context.rootDirectory.findFile("website-config.json");
-        let logger = maishu_nws_mvc_1.getLogger(global_1.PROJECT_NAME, logLevel);
+        let logger = maishu_node_mvc_1.getLogger(global_1.PROJECT_NAME, logLevel);
         if (staticConfigPath) {
             let mod = require(staticConfigPath);
             logger.info(`Website config is ${JSON.stringify(mod)}`);
@@ -134,18 +135,18 @@ let HomeController = HomeController_1 = class HomeController extends maishu_nws_
     }
 };
 __decorate([
-    maishu_nws_mvc_1.action()
+    maishu_node_mvc_1.action()
 ], HomeController.prototype, "index", null);
 __decorate([
-    maishu_nws_mvc_1.action("/clientFiles"),
-    __param(0, maishu_nws_mvc_1.serverContext)
+    maishu_node_mvc_1.action("/clientFiles"),
+    __param(0, maishu_node_mvc_1.serverContext)
 ], HomeController.prototype, "getClientFiles", null);
 __decorate([
-    maishu_nws_mvc_1.action("/websiteConfig"),
-    __param(0, maishu_nws_mvc_1.serverContext)
+    maishu_node_mvc_1.action("/websiteConfig"),
+    __param(0, maishu_node_mvc_1.serverContext)
 ], HomeController.prototype, "websiteConfig", null);
 HomeController = HomeController_1 = __decorate([
-    maishu_nws_mvc_1.controller("/")
+    maishu_node_mvc_1.controller("/")
 ], HomeController);
 exports.HomeController = HomeController;
 // let defaultConfig: WebsiteConfig & { _requirejs: WebsiteConfig["requirejs"] } = {

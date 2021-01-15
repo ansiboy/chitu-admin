@@ -14,24 +14,24 @@ export { commonjsToAmd } from "./js-transform";
 
 export async function start(settings: Settings) {
 
-    if (!settings.rootPhysicalPath)
-        throw errors.settingItemNull<Settings>("rootPhysicalPath");
+    if (!settings.rootDirectory)
+        throw errors.settingItemNull<Settings>("rootDirectory");
 
-    let rootPhysicalPaths: string[];
-    if (typeof settings.rootPhysicalPath == "string")
-        rootPhysicalPaths = [settings.rootPhysicalPath];
-    else
-        rootPhysicalPaths = settings.rootPhysicalPath;
+    // let rootPhysicalPaths: string[];
+    // if (typeof settings.rootPhysicalPath == "string")
+    //     rootPhysicalPaths = [settings.rootPhysicalPath];
+    // else
+    //     rootPhysicalPaths = settings.rootPhysicalPath;
 
-    for (let i = 0; i < rootPhysicalPaths.length; i++) {
-        if (!path.isAbsolute(rootPhysicalPaths[i]))
-            throw errors.notAbsolutePath(rootPhysicalPaths[i]);
+    // for (let i = 0; i < rootPhysicalPaths.length; i++) {
+    //     if (!path.isAbsolute(rootPhysicalPaths[i]))
+    //         throw errors.notAbsolutePath(rootPhysicalPaths[i]);
 
-        if (!fs.existsSync(rootPhysicalPaths[i]))
-            throw errors.pathNotExists(rootPhysicalPaths[i]);
-    }
+    //     if (!fs.existsSync(rootPhysicalPaths[i]))
+    //         throw errors.pathNotExists(rootPhysicalPaths[i]);
+    // }
 
-    let rootDirectory: VirtualDirectory = new VirtualDirectory(rootPhysicalPaths[0]);
+    let rootDirectory: VirtualDirectory = settings.rootDirectory; //new VirtualDirectory(rootPhysicalPaths[0]);
     let controllerDirectory = rootDirectory.findDirectory(`/${CONTROLLERS}`);
     let staticRootDirectory = rootDirectory.findDirectory(`/${STATIC}`);
 

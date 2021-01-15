@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.currentUserId = exports.currentAppId = void 0;
 const maishu_nws_mvc_1 = require("maishu-nws-mvc");
 exports.currentAppId = maishu_nws_mvc_1.createParameterDecorator((context, routeData) => __awaiter(void 0, void 0, void 0, function* () {
     let name = "application-id";

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.registerStation = exports.NODE_MODULES = exports.LIB = exports.CONTROLLERS = exports.STATIC = exports.PROJECT_NAME = void 0;
 const IO = require("socket.io-client");
 const maishu_node_web_server_1 = require("maishu-node-web-server");
 exports.PROJECT_NAME = "chitu-admin";

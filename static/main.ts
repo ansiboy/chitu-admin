@@ -15,4 +15,12 @@ fetch(configUrl).then(async response => {
     }
 });
 
+let load: Function = requirejs.load;
+requirejs.load = function (context, id, url: string) {
+    if (url.endsWith(".js") == false) {
+        url = url + ".js";
+    }
+    load.apply(this, [context, id, url]);
+}
+
 

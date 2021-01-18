@@ -1,6 +1,6 @@
 {
     "name": "maishu-chitu-admin",
-    "version": "3.3.0",
+    "version": "3.5.4",
     "scripts": {
         "build": "grunt",
         "start": "grunt open"
@@ -24,7 +24,7 @@
         "maishu-chitu-service": "^1.21.0",
         "maishu-dilu": "^1.6.4",
         "maishu-node-data": "^1.2.8",
-        "maishu-node-mvc": "^2.9.1",
+        "maishu-node-mvc": "^2.12.0",
         "maishu-node-web-server": "^1.15.0",
         "maishu-requirejs-plugins": "^1.3.0",
         "maishu-toolkit": "^1.6.1",
@@ -63,15 +63,5 @@
         "webpack": "^4.41.4",
         "webpack-cli": "^3.3.10"
     },
-    "files": [
-        "dist/*",
-        "lib/*",
-        "out/*",
-        "out-es5/*",
-        "src/*",
-        "types/*",
-        "index.*",
-        "static.*"
-    ],
     "main": "index.js"
 }

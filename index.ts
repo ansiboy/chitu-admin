@@ -14,6 +14,9 @@ export { commonjsToAmd } from "./js-transform";
 
 export async function start(settings: Settings) {
 
+    if (typeof settings["rootPhysicalPath"] == "string")
+        settings.rootDirectory = new VirtualDirectory(settings["rootPhysicalPath"]);
+
     if (!settings.rootDirectory)
         throw errors.settingItemNull<Settings>("rootDirectory");
 
@@ -65,29 +68,6 @@ export async function start(settings: Settings) {
         staticRootDirectory.setPath(virtualPath, physicalPath)
     }
 
-    //处理数据库文件
-    // let childFiles = rootDirectory.files();
-    // let entitiesPhysicalPath = childFiles["entities.js"];
-    // if (settings.db != null && entitiesPhysicalPath != null) {
-    //     let connectionManager = getConnectionManager();
-
-    //     await createDatabaseIfNotExists(settings.db);
-    //     if (!connectionManager.has(settings.db.database)) {
-    //         let entities = [entitiesPhysicalPath];
-    //         let dbOptions = Object.assign({
-    //             type: "mysql", synchronize: true, logging: false,
-    //             connectTimeout: 3000, entities, name: settings.db.database,
-    //             username: settings.db.user, password: settings.db.password
-    //         } as ConnectionOptions, settings.db);
-    //         let conn = await createConnection(dbOptions);
-    //         let mod = require(entitiesPhysicalPath);
-    //         if (typeof mod.default == "function") {
-    //             mod.default(conn);
-    //         }
-
-    //     }
-    // }
-
     let serverContextData: ServerContextData = {
         staticRoot: staticRootDirectory,
         rootDirectory: rootDirectory,
@@ -103,6 +83,7 @@ export async function start(settings: Settings) {
         serverContextData,
         websiteDirectory: rootDirectory,
         proxy: settings.proxy,
+        headers: settings.headers,
     })
 
     var staticProcessor = server.requestProcessors.find(StaticFileProcessor);

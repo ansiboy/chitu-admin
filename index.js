@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mergeVirtualDirecotries = exports.start = exports.commonjsToAmd = exports.currentUserId = exports.currentAppId = void 0;
+exports.mergeVirtualDirecotries = exports.start = void 0;
 const maishu_node_mvc_1 = require("maishu-node-mvc");
 const errors_1 = require("./errors");
 const path = require("path");
@@ -22,6 +22,8 @@ var js_transform_1 = require("./js-transform");
 Object.defineProperty(exports, "commonjsToAmd", { enumerable: true, get: function () { return js_transform_1.commonjsToAmd; } });
 function start(settings) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (typeof settings["rootPhysicalPath"] == "string")
+            settings.rootDirectory = new maishu_node_mvc_1.VirtualDirectory(settings["rootPhysicalPath"]);
         if (!settings.rootDirectory)
             throw errors_1.errors.settingItemNull("rootDirectory");
         // let rootPhysicalPaths: string[];
@@ -62,26 +64,6 @@ function start(settings) {
                 virtualPath = "/" + virtualPath;
             staticRootDirectory.setPath(virtualPath, physicalPath);
         }
-        //处理数据库文件
-        // let childFiles = rootDirectory.files();
-        // let entitiesPhysicalPath = childFiles["entities.js"];
-        // if (settings.db != null && entitiesPhysicalPath != null) {
-        //     let connectionManager = getConnectionManager();
-        //     await createDatabaseIfNotExists(settings.db);
-        //     if (!connectionManager.has(settings.db.database)) {
-        //         let entities = [entitiesPhysicalPath];
-        //         let dbOptions = Object.assign({
-        //             type: "mysql", synchronize: true, logging: false,
-        //             connectTimeout: 3000, entities, name: settings.db.database,
-        //             username: settings.db.user, password: settings.db.password
-        //         } as ConnectionOptions, settings.db);
-        //         let conn = await createConnection(dbOptions);
-        //         let mod = require(entitiesPhysicalPath);
-        //         if (typeof mod.default == "function") {
-        //             mod.default(conn);
-        //         }
-        //     }
-        // }
         let serverContextData = {
             staticRoot: staticRootDirectory,
             rootDirectory: rootDirectory,
@@ -96,6 +78,7 @@ function start(settings) {
             serverContextData,
             websiteDirectory: rootDirectory,
             proxy: settings.proxy,
+            headers: settings.headers,
         });
         var staticProcessor = server.requestProcessors.find(maishu_node_mvc_1.StaticFileProcessor);
         staticProcessor.contentTypes[".less"] = "plain/text";

@@ -32,7 +32,7 @@ export class TextInput<T> extends InputControl<T, InputFieldProps<T>, InputField
         let { dataField, placeholder, dataType } = this.props;
         let { value } = this.state;
 
-        return <input name={name || dataField as string} className="form-control"
+        return <input name={dataField as string} className="form-control"
             placeholder={placeholder} type={this.props.type}
             value={value || ""}
             ref={e => this.input = e || this.input}

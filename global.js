@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerStation = exports.NODE_MODULES = exports.LIB = exports.CONTROLLERS = exports.STATIC = exports.PROJECT_NAME = void 0;
 const IO = require("socket.io-client");
-const maishu_node_web_server_1 = require("maishu-node-web-server");
+const maishu_node_mvc_1 = require("maishu-node-mvc");
 exports.PROJECT_NAME = "chitu-admin";
 exports.STATIC = "static";
 exports.CONTROLLERS = "controllers";
@@ -11,7 +11,7 @@ exports.NODE_MODULES = "node_modules";
 function registerStation(data, settings) {
     console.assert(data.station != null, "Station field is null");
     // let config = HomeController.getWebsiteConfig(data, settings.logLevel);
-    let logger = maishu_node_web_server_1.getLogger(exports.PROJECT_NAME, settings.logLevel);
+    let logger = maishu_node_mvc_1.getLogger(exports.PROJECT_NAME, settings.logLevel);
     // if (config.requirejs != null) {
     //     config.requirejs.context = data.station.path;
     // }

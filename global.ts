@@ -1,6 +1,6 @@
 import { Settings, ServerContextData } from "./settings";
 import IO = require("socket.io-client");
-import { getLogger } from "maishu-node-web-server";
+import { getLogger } from "maishu-node-mvc";
 
 export const PROJECT_NAME = "chitu-admin";
 export const STATIC = "static";

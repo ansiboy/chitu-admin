@@ -1,10 +1,10 @@
-import { controller, action, Controller, getLogger, serverContext, ServerContext } from "maishu-node-mvc";
+import { controller, action, Controller, getLogger, serverContext, ServerContext, LogLevel, VirtualDirectory } from "maishu-node-mvc";
 import path = require("path");
 import os = require("os");
 import { ServerContextData } from "../settings";
 import { WebsiteConfig } from "../static/types";
 import { PROJECT_NAME } from "../global";
-import { LogLevel, VirtualDirectory } from "maishu-node-web-server";
+
 /** 
  * Home 控制器 
  */
@@ -27,7 +27,7 @@ export class HomeController extends Controller {
     //     let initJS = `define([],function(){
     //         return {
     //             default: function(){
-                    
+
     //             }
     //         }
     //     })`;

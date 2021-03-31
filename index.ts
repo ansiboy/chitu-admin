@@ -10,8 +10,6 @@ export { Settings, ServerContextData } from "./settings";
 export { WebsiteConfig, PermissionConfig, PermissionConfigItem, SimpleMenuItem, RequireConfig } from "./static/types";
 export { StationInfo } from "./global";
 export { currentAppId, currentUserId } from "./decoders";
-export { commonjsToAmd } from "./js-transform";
-
 
 export async function start(settings: Settings) {
 

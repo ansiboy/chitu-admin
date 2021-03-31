@@ -28,6 +28,9 @@ export function registerStation(data: ServerContextData, settings: Settings) {
     //     logger.info("Requirejs field is null or empty.");
     // }
 
+    if (data.station == null)
+        return;
+
     let s: StationInfo = {
         path: data.station.path,
         ip: settings.bindIP || "127.0.0.1",
@@ -38,11 +41,11 @@ export function registerStation(data: ServerContextData, settings: Settings) {
     let socket = IO(`http://${data.station.gateway}`);
     socket.on("connect", () => {
         logger.info("Socket client connected.");
-        let data = JSON.stringify(Object.assign(s, { permissions: settings.station.permissions }));
+        let data = JSON.stringify(Object.assign(s, { permissions: settings.station?.permissions }));
         socket.emit("registerStation", data);
     })
 
-    socket.on("error", (err) => {
+    socket.on("error", (err: Error) => {
         logger.error(err);
     })
 

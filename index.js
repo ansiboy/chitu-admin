@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mergeVirtualDirecotries = exports.start = exports.commonjsToAmd = exports.currentUserId = exports.currentAppId = void 0;
+exports.mergeVirtualDirecotries = exports.start = exports.currentUserId = exports.currentAppId = void 0;
 const maishu_node_mvc_1 = require("maishu-node-mvc");
 const errors_1 = require("./errors");
 const path = require("path");
@@ -19,8 +19,6 @@ const maishu_admin_scaffold_1 = require("maishu-admin-scaffold");
 var decoders_1 = require("./decoders");
 Object.defineProperty(exports, "currentAppId", { enumerable: true, get: function () { return decoders_1.currentAppId; } });
 Object.defineProperty(exports, "currentUserId", { enumerable: true, get: function () { return decoders_1.currentUserId; } });
-var js_transform_1 = require("./js-transform");
-Object.defineProperty(exports, "commonjsToAmd", { enumerable: true, get: function () { return js_transform_1.commonjsToAmd; } });
 function start(settings) {
     return __awaiter(this, void 0, void 0, function* () {
         if (typeof settings["rootPhysicalPath"] == "string")

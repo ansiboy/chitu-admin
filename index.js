@@ -9,12 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mergeVirtualDirecotries = exports.start = void 0;
+exports.mergeVirtualDirecotries = exports.start = exports.commonjsToAmd = exports.currentUserId = exports.currentAppId = void 0;
 const maishu_node_mvc_1 = require("maishu-node-mvc");
 const errors_1 = require("./errors");
 const path = require("path");
 const fs = require("fs");
 const global_1 = require("./global");
+const maishu_admin_scaffold_1 = require("maishu-admin-scaffold");
 var decoders_1 = require("./decoders");
 Object.defineProperty(exports, "currentAppId", { enumerable: true, get: function () { return decoders_1.currentAppId; } });
 Object.defineProperty(exports, "currentUserId", { enumerable: true, get: function () { return decoders_1.currentUserId; } });
@@ -53,7 +54,8 @@ function start(settings) {
             rootDirectory.setPath("controllers", path.join(__dirname, "controllers"));
             controllerDirectory = rootDirectory.findDirectory(`/${global_1.CONTROLLERS}`);
         }
-        console.assert(staticRootDirectory != null);
+        if (staticRootDirectory == null)
+            throw errors_1.errors.staticDirectoryNotExists();
         staticRootDirectory.setPath(`/${global_1.LIB}`, path.join(__dirname, "lib"));
         console.assert(staticRootDirectory != null);
         console.assert(controllerDirectory != null);
@@ -64,6 +66,8 @@ function start(settings) {
                 virtualPath = "/" + virtualPath;
             staticRootDirectory.setPath(virtualPath, physicalPath);
         }
+        let scVirtualPaths = maishu_admin_scaffold_1.getVirtualPaths("static", path.join(__dirname, "static"));
+        virtualPaths = Object.assign(scVirtualPaths, virtualPaths);
         let serverContextData = {
             staticRoot: staticRootDirectory,
             rootDirectory: rootDirectory,
@@ -74,12 +78,12 @@ function start(settings) {
         let server = maishu_node_mvc_1.startServer({
             port: settings.port,
             bindIP: settings.bindIP,
-            virtualPaths: settings.virtualPaths,
+            virtualPaths: virtualPaths,
             serverContextData,
             websiteDirectory: rootDirectory,
             proxy: settings.proxy,
             headers: settings.headers,
-        });
+        }, "mvc");
         var staticProcessor = server.requestProcessors.find(maishu_node_mvc_1.StaticFileProcessor);
         staticProcessor.contentTypes[".less"] = "plain/text";
         let mvcProcessor = server.requestProcessors.find(maishu_node_mvc_1.MVCRequestProcessor);

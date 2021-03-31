@@ -4,6 +4,7 @@ import path = require('path')
 import fs = require("fs");
 import { Settings, ServerContextData } from './settings';
 import { registerStation, STATIC, CONTROLLERS, LIB } from './global';
+import { getVirtualPaths } from "maishu-admin-scaffold";
 
 export { Settings, ServerContextData } from "./settings";
 export { WebsiteConfig, PermissionConfig, PermissionConfigItem, SimpleMenuItem, RequireConfig } from "./static/types";
@@ -14,8 +15,8 @@ export { commonjsToAmd } from "./js-transform";
 
 export async function start(settings: Settings) {
 
-    if (typeof settings["rootPhysicalPath"] == "string")
-        settings.rootDirectory = new VirtualDirectory(settings["rootPhysicalPath"]);
+    if (typeof (settings as any)["rootPhysicalPath"] == "string")
+        settings.rootDirectory = new VirtualDirectory((settings as any)["rootPhysicalPath"]);
 
     if (!settings.rootDirectory)
         throw errors.settingItemNull<Settings>("rootDirectory");
@@ -53,7 +54,8 @@ export async function start(settings: Settings) {
         controllerDirectory = rootDirectory.findDirectory(`/${CONTROLLERS}`);
     }
 
-    console.assert(staticRootDirectory != null);
+    if (staticRootDirectory == null)
+        throw errors.staticDirectoryNotExists();
 
     staticRootDirectory.setPath(`/${LIB}`, path.join(__dirname, "lib"));
     console.assert(staticRootDirectory != null);
@@ -68,6 +70,9 @@ export async function start(settings: Settings) {
         staticRootDirectory.setPath(virtualPath, physicalPath)
     }
 
+    let scVirtualPaths = getVirtualPaths("static", path.join(__dirname, "static"));
+    virtualPaths = Object.assign(scVirtualPaths, virtualPaths);
+
     let serverContextData: ServerContextData = {
         staticRoot: staticRootDirectory,
         rootDirectory: rootDirectory,
@@ -79,12 +84,12 @@ export async function start(settings: Settings) {
     let server = startServer({
         port: settings.port,
         bindIP: settings.bindIP,
-        virtualPaths: settings.virtualPaths,
+        virtualPaths: virtualPaths,
         serverContextData,
         websiteDirectory: rootDirectory,
         proxy: settings.proxy,
         headers: settings.headers,
-    })
+    }, "mvc")
 
     var staticProcessor = server.requestProcessors.find(StaticFileProcessor);
     staticProcessor.contentTypes[".less"] = "plain/text";

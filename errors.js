@@ -105,5 +105,9 @@ exports.errors = Object.assign(new maishu_toolkit_1.Errors(), {
     fileNotExists(path) {
         let msg = `File "${path}" is not exists.`;
         return new Error(msg);
+    },
+    staticDirectoryNotExists() {
+        let msg = `Static directory is not exists.`;
+        return new Error(msg);
     }
 });

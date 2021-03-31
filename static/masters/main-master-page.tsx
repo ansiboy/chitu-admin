@@ -165,10 +165,10 @@ export class MainMasterPage extends MasterPage<State> {
     }
 
     render() {
-        let { menuItems: menuData } = this.state;
+        let { menuItems } = this.state;
         let currentPageUrl: string = this.state.currentPageUrl || '';
 
-        let firstLevelNodes = menuData.filter(o => o.type == "menu");
+        let firstLevelNodes = menuItems.filter(o => o.type == "menu");
         let currentNode: MenuItem | null | undefined
         if (this.state.resourceId) {
             currentNode = this.findMenuItemByResourceId(firstLevelNodes, this.state.resourceId)

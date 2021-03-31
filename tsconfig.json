@@ -9,6 +9,7 @@
         "allowUnusedLabels": true,
         "allowUmdGlobalAccess": true,
         "esModuleInterop": true,
+        "strict": true
     },
     "exclude": [
         "./static",

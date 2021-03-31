@@ -67,7 +67,7 @@ export let errors = Object.assign(new Errors(), {
         let msg = `Null result is unexpected.`
         return new Error(msg)
     },
-    moduleIsNull(path) {
+    moduleIsNull(path: string) {
         let msg = `Module ${path} is null.`
         return new Error(msg);
     },
@@ -101,6 +101,10 @@ export let errors = Object.assign(new Errors(), {
     },
     fileNotExists(path: string) {
         let msg = `File "${path}" is not exists.`;
+        return new Error(msg);
+    },
+    staticDirectoryNotExists() {
+        let msg = `Static directory is not exists.`;
         return new Error(msg);
     }
 })

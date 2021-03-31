@@ -19,6 +19,7 @@
         "json5": "^2.1.1",
         "less": "^3.9.0",
         "log4js": "^5.2.2",
+        "maishu-admin-scaffold": "^1.5.0",
         "maishu-chitu": "^3.27.0",
         "maishu-chitu-react": "^1.27.0",
         "maishu-chitu-service": "^1.21.0",

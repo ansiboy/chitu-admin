@@ -111,7 +111,7 @@ export interface RequireConfig {
 	* @example
 	* urlArgs: "bust= + (new Date()).getTime()
 	*
- 	* As of RequireJS 2.2.0, urlArgs can be a function. If a
+	  * As of RequireJS 2.2.0, urlArgs can be a function. If a
 	* function, it will receive the module ID and the URL as
 	* parameters, and it should return a string that will be added
 	* to the end of the URL. Return an empty string if no args.
@@ -206,8 +206,10 @@ export interface PermissionConfig {
 	[path: string]: PermissionConfigItem
 }
 
-export declare type WebsiteConfig = {
-	requirejs?: RequireConfig,
-	menuItems?: SimpleMenuItem[],
-	gateway?: string,
-}
+// export declare type WebsiteConfig = {
+// 	requirejs?: RequireConfig,
+// 	menuItems?: SimpleMenuItem[],
+// 	gateway?: string,
+// }
+
+export { WebsiteConfig } from "maishu-admin-scaffold/static/website-config";

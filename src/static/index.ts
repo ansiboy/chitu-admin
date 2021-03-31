@@ -1,3 +1,5 @@
+export { errorHandle } from "./error-handle";
+export { Service, ServiceModule } from "./services/service";
 export { WebsiteConfig, RequireConfig } from "./types";
 export { DataListPage, DataListPageState } from "./pages/data-list-page";
 export { BasePage } from "./pages/base-page";

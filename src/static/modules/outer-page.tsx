@@ -1,4 +1,4 @@
-import { Page } from "maishu-chitu-react";
+import { Application, Page } from "maishu-chitu-react";
 
 
 export default function (page: Page) {
@@ -16,7 +16,7 @@ export default function (page: Page) {
         iframe.src = targetURL;
         iframe.name = name;
 
-        let d = page.app.parseUrl(targetURL);
+        let d = (page.app as Application).parseUrl(targetURL);
 
         // if (d.values.height)
         //     iframe.height = d.values.height as string;

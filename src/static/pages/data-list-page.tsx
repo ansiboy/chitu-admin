@@ -211,7 +211,7 @@ export abstract class DataListPage<T, P extends PageProps = PageProps, S extends
         return <button className="btn btn-minier btn-info"
             onClick={() => this.executeEdit(dataItem)}
             disabled={!itemCanUpdate(dataItem)}>
-            <i className="icon-pencil"></i>
+            <i className="fa fa-pencil"></i>
         </button>
     }
 

@@ -44,13 +44,13 @@ export async function start(settings: Settings) {
         staticRootDirectory = rootDirectory.findDirectory(`/${STATIC}`);
     }
 
-    if (controllerDirectory) {
-        mergeVirtualDirecotries(controllerDirectory, path.join(__dirname, "controllers"));
-    }
-    else {
-        rootDirectory.setPath("controllers", path.join(__dirname, "controllers"));
-        controllerDirectory = rootDirectory.findDirectory(`/${CONTROLLERS}`);
-    }
+    // if (controllerDirectory) {
+    //     mergeVirtualDirecotries(controllerDirectory, path.join(__dirname, "controllers"));
+    // }
+    // else {
+    //     rootDirectory.setPath("controllers", path.join(__dirname, "controllers"));
+    //     controllerDirectory = rootDirectory.findDirectory(`/${CONTROLLERS}`);
+    // }
 
     if (staticRootDirectory == null)
         throw errors.staticDirectoryNotExists();

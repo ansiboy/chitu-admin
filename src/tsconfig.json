@@ -3,17 +3,14 @@
         "experimentalDecorators": true,
         "target": "es6",
         "module": "commonjs",
-        "outDir": "./",
+        "outDir": "../out",
         "declaration": false,
         "jsx": "react",
         "allowUnusedLabels": true,
         "allowUmdGlobalAccess": true,
         "esModuleInterop": true,
-        "strict": true
+        "strict": false
     },
     "exclude": [
-        "./static",
-        "static.ts",
-        "demo"
     ]
 }
